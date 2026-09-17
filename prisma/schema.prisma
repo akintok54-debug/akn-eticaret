@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  erpProductId  String?  @unique
+
+  sku           String   @unique
+  barcode       String?  @unique
+  name          String
+  brand         String
+  category      String
+  description   String   @default("")
+
+  purchasePrice Float     @default(0)
+  retailPrice   Float
+  dealerPrice   Float
+  vatRate       Float     @default(20)
+
+  stock         Int       @default(0)
+  criticalStock Int       @default(0)
+
+  image         String?
+  active        Boolean   @default(true)
+
+  lastErpSyncAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  orderItems    OrderItem[]
+
+  @@index([name])
+  @@index([brand])
+  @@index([category])
+}
+
+model Customer {
+  id            String   @id @default(cuid())
+  erpCustomerId String?  @unique
+
+  fullName      String
+  phone         String   @unique
+  email         String?
+
+  type          String   @default("retail")
+  dealerStatus  String   @default("none")
+
+  companyName   String?
+  taxOffice     String?
+  taxNumber     String?
+
+  active        Boolean  @default(true)
+
+  lastErpSyncAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  addresses     Address[]
+  orders        Order[]
+
+  @@index([fullName])
+  @@index([type])
+  @@index([dealerStatus])
+}
+
+model Address {
+  id          String   @id @default(cuid())
+
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  title       String   @default("Adres")
+  fullName    String
+  phone       String
+
+  city        String
+  district    String
+  address     String
+
+  invoiceType String   @default("individual")
+  companyName String?
+  taxOffice   String?
+  taxNumber   String?
+
+  isDefault   Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([customerId])
+}
+
+model Order {
+  id              String    @id @default(cuid())
+  erpOrderId      String?   @unique
+
+  orderNumber     String    @unique
+
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+
+  city            String
+  district        String
+  deliveryAddress String
+
+  invoiceType     String    @default("individual")
+  companyName     String?
+  taxOffice       String?
+  taxNumber       String?
+
+  shippingMethod  String
+  paymentMethod   String
+
+  status          String    @default("Yeni")
+
+  subtotal        Float
+  shippingTotal   Float     @default(0)
+  discountTotal   Float     @default(0)
+  total           Float
+
+  lastErpSyncAt   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  items           OrderItem[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  productName String
+  sku         String
+  barcode     String?
+
+  unitPrice   Float
+  quantity    Int
+  vatRate     Float
+  lineTotal   Float
+
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+}
