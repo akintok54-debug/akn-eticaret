@@ -186,7 +186,7 @@ export default function AdminLayout({
 
                 {opened && (
                   <div className="mt-1 space-y-1 pl-3">
-                    {group.items.map((item) => {
+                    {group.items?.map((item) => {
                       const active =
                         pathname === item.href ||
                         pathname.startsWith(item.href + "/");
