@@ -6,7 +6,7 @@ import { useOrders } from "@/context/OrderContext";
 import { money } from "@/lib/store";
 
 export default function AdminPage() {
-    const { products, error } = useProducts();
+    const { products } = useProducts();
     const { orders } = useOrders();
 
     const cards = [
@@ -21,7 +21,11 @@ export default function AdminPage() {
     ];
 
     const activeProducts = products.filter((p) => p.active).length;
-    const newOrders = orders.filter((o) => o.status === "Yeni").length;
+
+    const newOrders = orders.filter(
+        (o) => o.status === "Yeni"
+    ).length;
+
     const criticalStock = products.filter(
         (p) => p.stock <= p.criticalStock
     ).length;
@@ -48,15 +52,6 @@ export default function AdminPage() {
                 </p>
             </div>
 
-            {error && (
-                <div
-                    role="alert"
-                    className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-                >
-                    {error}
-                </div>
-            )}
-
             <div className="mb-8 grid grid-cols-2 gap-4 xl:grid-cols-4">
                 {[
                     ["Aktif Ürün", activeProducts],
@@ -68,7 +63,9 @@ export default function AdminPage() {
                         key={title}
                         className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
                     >
-                        <p className="text-xs font-medium text-slate-500">{title}</p>
+                        <p className="text-xs font-medium text-slate-500">
+                            {title}
+                        </p>
 
                         <strong className="mt-3 block text-2xl font-bold text-slate-950">
                             {value}
@@ -96,7 +93,9 @@ export default function AdminPage() {
                     >
                         <div className="flex items-start justify-between gap-4">
                             <div>
-                                <h3 className="font-semibold text-slate-950">{title}</h3>
+                                <h3 className="font-semibold text-slate-950">
+                                    {title}
+                                </h3>
 
                                 <p className="mt-2 text-sm leading-6 text-slate-500">
                                     {description}
