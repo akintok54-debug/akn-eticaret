@@ -1,112 +1,119 @@
+﻿"use client";
+
 import Link from "next/link";
+import { useProducts } from "@/context/ProductContext";
+import { useOrders } from "@/context/OrderContext";
+import { money } from "@/lib/store";
 
 export default function AdminPage() {
-  return (
-    <main className="min-h-screen bg-slate-100 text-slate-900">
-      <header className="border-b bg-slate-950 text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5">
-          <div>
-            <div className="text-xl font-black">
-              AKN YÖNETİM
-            </div>
-            <div className="text-xs text-slate-400">
-              E-Ticaret Yönetim Paneli
-            </div>
-          </div>
+    const { products, error } = useProducts();
+    const { orders } = useOrders();
 
-          <Link
-            href="/"
-            className="rounded-xl bg-white px-4 py-2 text-sm font-bold text-slate-900"
-          >
-            Mağazaya Git
-          </Link>
-        </div>
-      </header>
+    const cards = [
+        ["Ürünler", "Ürün, fiyat ve stok yönetimi", "/admin/urunler"],
+        ["Siparişler", "Sipariş takibi ve durum güncelleme", "/admin/siparisler"],
+        ["Bayi Başvuruları", "İşletme başvurularını değerlendirin", "/admin/bayiler"],
+        ["Müşteriler", "Müşteri kayıtlarını görüntüleyin", "/admin/musteriler"],
+        ["Ürün Aktarımı", "Dosyadan ürün aktarın", "/admin/urunler/aktarim"],
+        ["Toplu İşlemler", "Fiyat ve stok güncelleyin", "/admin/urunler/toplu"],
+        ["Kategoriler", "Ürün gruplarını düzenleyin", "/admin/kategoriler"],
+        ["Markalar", "Katalog markalarını düzenleyin", "/admin/markalar"],
+    ];
 
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <h1 className="text-3xl font-black">
-          Yönetim Paneli
-        </h1>
+    const activeProducts = products.filter((p) => p.active).length;
+    const newOrders = orders.filter((o) => o.status === "Yeni").length;
+    const criticalStock = products.filter(
+        (p) => p.stock <= p.criticalStock
+    ).length;
 
-        <p className="mt-2 text-slate-500">
-          AKN Motosiklet e-ticaret yönetimi
-        </p>
+    const orderTotal = money(
+        orders
+            .filter((o) => o.status !== "İptal")
+            .reduce((total, order) => total + order.total, 0)
+    );
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Link
-            href="/admin/urunler"
-            className="rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1"
-          >
-            <div className="text-3xl">📦</div>
-            <div className="mt-4 text-lg font-black">
-              Ürünler
+    return (
+        <main className="px-5 py-8 lg:px-8 lg:py-10">
+            <div className="mb-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    Mağazanızın kontrol merkezi
+                </p>
+
+                <h1 className="mt-2 text-3xl font-bold text-slate-950">
+                    Genel Bakış
+                </h1>
+
+                <p className="mt-2 text-sm text-slate-500">
+                    Ürün, sipariş, müşteri ve mağaza operasyonlarını tek ekrandan yönetin.
+                </p>
             </div>
-            <div className="mt-1 text-sm text-slate-500">
-              Ürün, fiyat ve stok yönetimi
-            </div>
-          </Link>
 
-          <div className="rounded-2xl border bg-white p-6 opacity-70">
-            <div className="text-3xl">🛒</div>
-            <div className="mt-4 text-lg font-black">
-              Siparişler
-            </div>
-            <div className="mt-1 text-sm text-slate-500">
-              Sonraki aşamada aktif olacak
-            </div>
-          </div>
+            {error && (
+                <div
+                    role="alert"
+                    className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                    {error}
+                </div>
+            )}
 
-          <div className="rounded-2xl border bg-white p-6 opacity-70">
-            <div className="text-3xl">👥</div>
-            <div className="mt-4 text-lg font-black">
-              Müşteriler
-            </div>
-            <div className="mt-1 text-sm text-slate-500">
-              Sonraki aşamada aktif olacak
-            </div>
-          </div>
+            <div className="mb-8 grid grid-cols-2 gap-4 xl:grid-cols-4">
+                {[
+                    ["Aktif Ürün", activeProducts],
+                    ["Yeni Sipariş", newOrders],
+                    ["Kritik Stok", criticalStock],
+                    ["Sipariş Toplamı", orderTotal],
+                ].map(([title, value]) => (
+                    <div
+                        key={title}
+                        className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                    >
+                        <p className="text-xs font-medium text-slate-500">{title}</p>
 
-          <div className="rounded-2xl border bg-white p-6 opacity-70">
-            <div className="text-3xl">🏢</div>
-            <div className="mt-4 text-lg font-black">
-              Bayiler
+                        <strong className="mt-3 block text-2xl font-bold text-slate-950">
+                            {value}
+                        </strong>
+                    </div>
+                ))}
             </div>
-            <div className="mt-1 text-sm text-slate-500">
-              B2B bayi yönetimi
+
+            <div className="mb-4">
+                <h2 className="text-lg font-semibold text-slate-950">
+                    Hızlı İşlemler
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                    En sık kullanılan yönetim alanlarına hızlı erişim.
+                </p>
             </div>
-          </div>
-        </div>
 
-        <div className="mt-8 rounded-2xl border bg-white p-6">
-          <h2 className="text-xl font-black">
-            Sistem Durumu
-          </h2>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {cards.map(([title, description, href]) => (
+                    <Link
+                        href={href}
+                        key={href}
+                        className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+                    >
+                        <div className="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 className="font-semibold text-slate-950">{title}</h3>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Status title="Mağaza" value="Aktif" />
-            <Status title="Sepet" value="Aktif" />
-            <Status title="Sipariş Akışı" value="Aktif" />
-            <Status title="ERP Bağlantısı" value="Henüz Bağlı Değil" />
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
+                                <p className="mt-2 text-sm leading-6 text-slate-500">
+                                    {description}
+                                </p>
+                            </div>
 
-function Status({
-  title,
-  value,
-}: {
-  title: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-xl bg-slate-50 p-4">
-      <div className="text-xs font-bold text-slate-500">
-        {title}
-      </div>
-      <div className="mt-1 font-black">{value}</div>
-    </div>
-  );
+                            <span className="text-slate-400 transition group-hover:text-slate-950">
+                                ↗
+                            </span>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800">
+                Sipariş toplamları tahsilat raporu değildir. Havale ödemelerini banka hareketlerinden doğrulayın.
+            </div>
+        </main>
+    );
 }
