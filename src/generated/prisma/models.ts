@@ -8,9 +8,14 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Product'
-export type * from './models/Customer'
-export type * from './models/Address'
-export type * from './models/Order'
-export type * from './models/OrderItem'
-export type * from './commonInputTypes'
+export type * from './models/Product.ts'
+export type * from './models/ProductVariant.ts'
+export type * from './models/ProductCompatibility.ts'
+export type * from './models/Customer.ts'
+export type * from './models/Address.ts'
+export type * from './models/Order.ts'
+export type * from './models/OrderItem.ts'
+export type * from './models/ProductAttribute.ts'
+export type * from './models/ShoppingCart.ts'
+export type * from './models/ShoppingCartItem.ts'
+export type * from './commonInputTypes.ts'

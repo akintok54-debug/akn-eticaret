@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.ts'
+export type * from './prismaNamespace.ts'
 
 export const Decimal = runtime.Decimal
 
@@ -52,10 +52,15 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Product: 'Product',
+  ProductVariant: 'ProductVariant',
+  ProductCompatibility: 'ProductCompatibility',
   Customer: 'Customer',
   Address: 'Address',
   Order: 'Order',
-  OrderItem: 'OrderItem'
+  OrderItem: 'OrderItem',
+  ProductAttribute: 'ProductAttribute',
+  ShoppingCart: 'ShoppingCart',
+  ShoppingCartItem: 'ShoppingCartItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -97,6 +102,44 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ProductVariantScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  erpVariantId: 'erpVariantId',
+  sku: 'sku',
+  barcode: 'barcode',
+  name: 'name',
+  color: 'color',
+  size: 'size',
+  purchasePrice: 'purchasePrice',
+  retailPrice: 'retailPrice',
+  dealerPrice: 'dealerPrice',
+  stock: 'stock',
+  image: 'image',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductVariantScalarFieldEnum = (typeof ProductVariantScalarFieldEnum)[keyof typeof ProductVariantScalarFieldEnum]
+
+
+export const ProductCompatibilityScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  make: 'make',
+  model: 'model',
+  yearFrom: 'yearFrom',
+  yearTo: 'yearTo',
+  engine: 'engine',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductCompatibilityScalarFieldEnum = (typeof ProductCompatibilityScalarFieldEnum)[keyof typeof ProductCompatibilityScalarFieldEnum]
 
 
 export const CustomerScalarFieldEnum = {
@@ -142,6 +185,8 @@ export type AddressScalarFieldEnum = (typeof AddressScalarFieldEnum)[keyof typeo
 
 export const OrderScalarFieldEnum = {
   id: 'id',
+  guestSessionId: 'guestSessionId',
+  checkoutKey: 'checkoutKey',
   erpOrderId: 'erpOrderId',
   orderNumber: 'orderNumber',
   customerId: 'customerId',
@@ -158,6 +203,9 @@ export const OrderScalarFieldEnum = {
   shippingMethod: 'shippingMethod',
   paymentMethod: 'paymentMethod',
   status: 'status',
+  returnReason: 'returnReason',
+  returnedAt: 'returnedAt',
+  returnNote: 'returnNote',
   subtotal: 'subtotal',
   shippingTotal: 'shippingTotal',
   discountTotal: 'discountTotal',
@@ -185,6 +233,54 @@ export const OrderItemScalarFieldEnum = {
 } as const
 
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
+
+
+export const ProductAttributeScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  name: 'name',
+  value: 'value',
+  unit: 'unit',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductAttributeScalarFieldEnum = (typeof ProductAttributeScalarFieldEnum)[keyof typeof ProductAttributeScalarFieldEnum]
+
+
+export const ShoppingCartScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  customerId: 'customerId',
+  customerName: 'customerName',
+  customerPhone: 'customerPhone',
+  customerEmail: 'customerEmail',
+  status: 'status',
+  checkoutStarted: 'checkoutStarted',
+  itemCount: 'itemCount',
+  total: 'total',
+  lastActivityAt: 'lastActivityAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShoppingCartScalarFieldEnum = (typeof ShoppingCartScalarFieldEnum)[keyof typeof ShoppingCartScalarFieldEnum]
+
+
+export const ShoppingCartItemScalarFieldEnum = {
+  id: 'id',
+  cartId: 'cartId',
+  productId: 'productId',
+  productName: 'productName',
+  image: 'image',
+  price: 'price',
+  quantity: 'quantity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShoppingCartItemScalarFieldEnum = (typeof ShoppingCartItemScalarFieldEnum)[keyof typeof ShoppingCartItemScalarFieldEnum]
 
 
 export const SortOrder = {

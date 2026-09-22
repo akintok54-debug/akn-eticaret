@@ -37,7 +37,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const savedCart = localStorage.getItem("akn-cart");
 
       if (savedCart) {
-        setItems(JSON.parse(savedCart));
+        const parsed: unknown = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) {
+          // Restore an external browser snapshot only after hydration.
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setItems(parsed.filter((item): item is CartItem => item && typeof item.id === "string" && typeof item.name === "string" && Number.isFinite(item.price) && item.price >= 0 && Number.isInteger(item.quantity) && item.quantity > 0 && item.quantity <= 999));
+        }
       }
     } catch {
       localStorage.removeItem("akn-cart");
@@ -48,14 +53,48 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (loaded) {
-      localStorage.setItem("akn-cart", JSON.stringify(items));
+      try { localStorage.setItem("akn-cart", JSON.stringify(items)); } catch { /* Shopping still works when browser storage is unavailable. */ }
     }
   }, [items, loaded]);
 
+
+  useEffect(() => {
+    if (!loaded) return;
+
+    try {
+      let sessionId = localStorage.getItem("akn-cart-session");
+
+      if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        localStorage.setItem("akn-cart-session", sessionId);
+      }
+
+      const timer = window.setTimeout(() => {
+        void fetch("/api/cart-tracking", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sessionId,
+            items,
+          }),
+        }).catch(() => {
+          // Sepet takibi başarısız olsa bile alışveriş devam eder.
+        });
+      }, 500);
+
+      return () => window.clearTimeout(timer);
+    } catch {
+      return;
+    }
+  }, [items, loaded]);
   function addItem(
     item: Omit<CartItem, "quantity">,
     quantity: number = 1
   ) {
+    if (!Number.isFinite(quantity) || quantity < 1 || !Number.isFinite(item.price) || item.price < 0) return;
+    quantity = Math.min(999, Math.floor(quantity));
     setItems((currentItems) => {
       const existingItem = currentItems.find(
         (cartItem) => cartItem.id === item.id
@@ -66,7 +105,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           cartItem.id === item.id
             ? {
                 ...cartItem,
-                quantity: cartItem.quantity + quantity,
+                quantity: Math.min(999, cartItem.quantity + quantity),
               }
             : cartItem
         );
@@ -89,6 +128,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function updateQuantity(id: string, quantity: number) {
+    if (!Number.isFinite(quantity)) return;
+    quantity = Math.min(999, Math.floor(quantity));
     if (quantity <= 0) {
       removeItem(id);
       return;
@@ -141,3 +182,4 @@ export function useCart() {
 
   return context;
 }
+

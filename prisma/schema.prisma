@@ -18,51 +18,107 @@ model Product {
   category      String
   description   String   @default("")
 
-  purchasePrice Float     @default(0)
+  purchasePrice Float    @default(0)
   retailPrice   Float
   dealerPrice   Float
-  vatRate       Float     @default(20)
+  vatRate       Float    @default(20)
 
-  stock         Int       @default(0)
-  criticalStock Int       @default(0)
+  stock         Int      @default(0)
+  criticalStock Int      @default(0)
 
   image         String?
-  active        Boolean   @default(true)
-
-  lastErpSyncAt DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  orderItems    OrderItem[]
-
-  @@index([name])
-  @@index([brand])
-  @@index([category])
-}
-
-model Customer {
-  id            String   @id @default(cuid())
-  erpCustomerId String?  @unique
-
-  fullName      String
-  phone         String   @unique
-  email         String?
-
-  type          String   @default("retail")
-  dealerStatus  String   @default("none")
-
-  companyName   String?
-  taxOffice     String?
-  taxNumber     String?
-
   active        Boolean  @default(true)
 
   lastErpSyncAt DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  addresses     Address[]
-  orders        Order[]
+  orderItems      OrderItem[]
+  variants        ProductVariant[]
+  compatibilities ProductCompatibility[]
+  attributes      ProductAttribute[]
+  @@index([name])
+  @@index([brand])
+  @@index([category])
+}
+
+model ProductVariant {
+  id        String @id @default(cuid())
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  erpVariantId String? @unique
+  sku          String  @unique
+  barcode      String? @unique
+
+  name  String?
+  color String?
+  size  String?
+
+  purchasePrice Float?
+  retailPrice   Float?
+  dealerPrice   Float?
+
+  stock  Int     @default(0)
+  image  String?
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([color])
+  @@index([size])
+}
+
+model ProductCompatibility {
+  id String @id @default(cuid())
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  make  String
+  model String
+
+  yearFrom Int?
+  yearTo   Int?
+
+  engine String?
+  note   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([make])
+  @@index([model])
+  @@unique([productId, make, model, yearFrom, yearTo])
+}
+
+model Customer {
+  id            String  @id @default(cuid())
+  erpCustomerId String? @unique
+
+  fullName String
+  phone    String @unique
+  email    String?
+
+  type         String @default("retail")
+  dealerStatus String @default("none")
+
+  companyName String?
+  taxOffice   String?
+  taxNumber   String?
+
+  active Boolean @default(true)
+
+  lastErpSyncAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  addresses Address[]
+  orders    Order[]
 
   @@index([fullName])
   @@index([type])
@@ -70,95 +126,160 @@ model Customer {
 }
 
 model Address {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  customerId  String
-  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  title       String   @default("Adres")
-  fullName    String
-  phone       String
+  title    String @default("Adres")
+  fullName String
+  phone    String
 
-  city        String
-  district    String
-  address     String
+  city     String
+  district String
+  address  String
 
-  invoiceType String   @default("individual")
+  invoiceType String @default("individual")
   companyName String?
   taxOffice   String?
   taxNumber   String?
 
-  isDefault   Boolean  @default(false)
+  isDefault Boolean @default(false)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([customerId])
 }
 
 model Order {
-  id              String    @id @default(cuid())
-  erpOrderId      String?   @unique
+  id             String  @id @default(cuid())
+  guestSessionId String?
+  checkoutKey    String? @unique
+  erpOrderId     String? @unique
 
-  orderNumber     String    @unique
+  orderNumber String @unique
 
-  customerId      String?
-  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
-  customerName    String
-  customerPhone   String
-  customerEmail   String?
+  customerName  String
+  customerPhone String
+  customerEmail String?
 
   city            String
   district        String
   deliveryAddress String
 
-  invoiceType     String    @default("individual")
-  companyName     String?
-  taxOffice       String?
-  taxNumber       String?
+  invoiceType String @default("individual")
+  companyName String?
+  taxOffice   String?
+  taxNumber   String?
 
-  shippingMethod  String
-  paymentMethod   String
+  shippingMethod String
+  paymentMethod  String
 
-  status          String    @default("Yeni")
+  status String @default("Yeni")
+  returnReason String?
+  returnedAt   DateTime?
+  returnNote   String?
+  subtotal      Float
+  shippingTotal Float @default(0)
+  discountTotal Float @default(0)
+  total         Float
 
-  subtotal        Float
-  shippingTotal   Float     @default(0)
-  discountTotal   Float     @default(0)
-  total           Float
+  lastErpSyncAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  lastErpSyncAt   DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  items           OrderItem[]
+  items OrderItem[]
 
   @@index([customerId])
+  @@index([guestSessionId])
   @@index([status])
   @@index([createdAt])
 }
 
 model OrderItem {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  orderId     String
-  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId String
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  productId   String?
-  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
   productName String
   sku         String
   barcode     String?
 
-  unitPrice   Float
-  quantity    Int
-  vatRate     Float
-  lineTotal   Float
+  unitPrice Float
+  quantity  Int
+  vatRate   Float
+  lineTotal Float
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([orderId])
+  @@index([productId])
+}
+model ProductAttribute {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  name  String
+  value String
+  unit  String?
+  note  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([name])
+  @@unique([productId, name, value])
+}
+model ShoppingCart {
+  id             String   @id @default(cuid())
+  sessionId      String   @unique
+  customerId     String?
+  customerName   String?
+  customerPhone  String?
+  customerEmail  String?
+
+  status         String   @default("Aktif")
+  checkoutStarted Boolean  @default(false)
+
+  itemCount      Int      @default(0)
+  total          Float    @default(0)
+
+  lastActivityAt DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  items ShoppingCartItem[]
+
+  @@index([status])
+  @@index([lastActivityAt])
+  @@index([customerId])
+}
+
+model ShoppingCartItem {
+  id       String @id @default(cuid())
+  cartId   String
+  cart     ShoppingCart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  productId   String
+  productName String
+  image       String?
+  price       Float
+  quantity    Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId])
+  @@index([cartId])
   @@index([productId])
 }
