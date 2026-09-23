@@ -30,8 +30,8 @@ model Product {
   active Boolean @default(true)
 
   lastErpSyncAt DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   orderItems      OrderItem[]
   variants        ProductVariant[]
@@ -91,10 +91,10 @@ model ProductCompatibility {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([productId, make, model, yearFrom, yearTo])
   @@index([productId])
   @@index([make])
   @@index([model])
-  @@unique([productId, make, model, yearFrom, yearTo])
 }
 
 model Customer {
@@ -102,7 +102,7 @@ model Customer {
   erpCustomerId String? @unique
 
   fullName String
-  phone    String @unique
+  phone    String  @unique
   email    String?
 
   type         String @default("retail")
@@ -115,11 +115,17 @@ model Customer {
   active Boolean @default(true)
 
   lastErpSyncAt DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   addresses Address[]
   orders    Order[]
+  groupId   String?
+  group     CustomerGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  shoppingCarts      ShoppingCart[]
+  dealerApplications DealerApplication[]
+  supportTickets     SupportTicket[]
 
   @@index([fullName])
   @@index([type])
@@ -140,7 +146,7 @@ model Address {
   district String
   address  String
 
-  invoiceType String @default("individual")
+  invoiceType String  @default("individual")
   companyName String?
   taxOffice   String?
   taxNumber   String?
@@ -172,7 +178,7 @@ model Order {
   district        String
   deliveryAddress String
 
-  invoiceType String @default("individual")
+  invoiceType String  @default("individual")
   companyName String?
   taxOffice   String?
   taxNumber   String?
@@ -180,7 +186,7 @@ model Order {
   shippingMethod String
   paymentMethod  String
 
-  status       String @default("Yeni")
+  status       String    @default("Yeni")
   returnReason String?
   returnedAt   DateTime?
   returnNote   String?
@@ -191,8 +197,8 @@ model Order {
   total         Float
 
   lastErpSyncAt DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   items OrderItem[]
 
@@ -206,7 +212,7 @@ model OrderItem {
   id String @id @default(cuid())
 
   orderId String
-  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   productId String?
   product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
@@ -227,7 +233,7 @@ model OrderItem {
 }
 
 model ProductAttribute {
-  id        String @id @default(cuid())
+  id        String  @id @default(cuid())
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
@@ -239,9 +245,9 @@ model ProductAttribute {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([productId, name, value])
   @@index([productId])
   @@index([name])
-  @@unique([productId, name, value])
 }
 
 model ShoppingCart {
@@ -249,6 +255,7 @@ model ShoppingCart {
   sessionId String @unique
 
   customerId    String?
+  customer      Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
   customerName  String?
   customerPhone String?
   customerEmail String?
@@ -283,7 +290,8 @@ model ShoppingCart {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  items ShoppingCartItem[]
+  items     ShoppingCartItem[]
+  reminders CartReminder[]
 
   @@index([status])
   @@index([lastActivityAt])
@@ -311,4 +319,131 @@ model ShoppingCartItem {
   @@unique([cartId, productId])
   @@index([cartId])
   @@index([productId])
+}
+
+model CustomerGroup {
+  id String @id @default(cuid())
+
+  name        String  @unique
+  code        String  @unique
+  description String?
+
+  type String @default("retail")
+
+  discountRate Float @default(0)
+
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customers Customer[]
+
+  @@index([type])
+  @@index([active])
+}
+
+model DealerApplication {
+  id String @id @default(cuid())
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  fullName String
+  phone    String
+  email    String?
+
+  companyName String
+
+  taxOffice String?
+  taxNumber String?
+
+  city     String?
+  district String?
+  address  String?
+
+  note String?
+
+  status String @default("pending")
+
+  reviewedAt DateTime?
+  reviewedBy String?
+  reviewNote String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([phone])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model SupportTicket {
+  id String @id @default(cuid())
+
+  ticketNumber String @unique
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  customerName  String?
+  customerPhone String?
+  customerEmail String?
+
+  subject String
+
+  category String @default("general")
+  priority String @default("normal")
+  status   String @default("open")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  closedAt  DateTime?
+
+  messages SupportMessage[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+}
+
+model SupportMessage {
+  id String @id @default(cuid())
+
+  ticketId String
+  ticket   SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  senderType String
+  senderName String?
+
+  message String
+
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+  @@index([createdAt])
+}
+
+model CartReminder {
+  id String @id @default(cuid())
+
+  cartId String
+  cart   ShoppingCart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  channel String
+  status  String @default("pending")
+
+  recipient String?
+  message   String?
+
+  sentAt DateTime?
+  error  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([cartId])
+  @@index([status])
+  @@index([createdAt])
 }

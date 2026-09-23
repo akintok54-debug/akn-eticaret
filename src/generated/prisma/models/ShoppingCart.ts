@@ -352,7 +352,9 @@ export type ShoppingCartWhereInput = {
   lastActivityAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
+  customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   items?: Prisma.ShoppingCartItemListRelationFilter
+  reminders?: Prisma.CartReminderListRelationFilter
 }
 
 export type ShoppingCartOrderByWithRelationInput = {
@@ -377,7 +379,9 @@ export type ShoppingCartOrderByWithRelationInput = {
   lastActivityAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  customer?: Prisma.CustomerOrderByWithRelationInput
   items?: Prisma.ShoppingCartItemOrderByRelationAggregateInput
+  reminders?: Prisma.CartReminderOrderByRelationAggregateInput
 }
 
 export type ShoppingCartWhereUniqueInput = Prisma.AtLeast<{
@@ -405,7 +409,9 @@ export type ShoppingCartWhereUniqueInput = Prisma.AtLeast<{
   lastActivityAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
+  customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   items?: Prisma.ShoppingCartItemListRelationFilter
+  reminders?: Prisma.CartReminderListRelationFilter
 }, "id" | "sessionId">
 
 export type ShoppingCartOrderByWithAggregationInput = {
@@ -467,7 +473,6 @@ export type ShoppingCartScalarWhereWithAggregatesInput = {
 export type ShoppingCartCreateInput = {
   id?: string
   sessionId: string
-  customerId?: string | null
   customerName?: string | null
   customerPhone?: string | null
   customerEmail?: string | null
@@ -486,7 +491,9 @@ export type ShoppingCartCreateInput = {
   lastActivityAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  customer?: Prisma.CustomerCreateNestedOneWithoutShoppingCartsInput
   items?: Prisma.ShoppingCartItemCreateNestedManyWithoutCartInput
+  reminders?: Prisma.CartReminderCreateNestedManyWithoutCartInput
 }
 
 export type ShoppingCartUncheckedCreateInput = {
@@ -512,12 +519,12 @@ export type ShoppingCartUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.ShoppingCartItemUncheckedCreateNestedManyWithoutCartInput
+  reminders?: Prisma.CartReminderUncheckedCreateNestedManyWithoutCartInput
 }
 
 export type ShoppingCartUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -536,7 +543,9 @@ export type ShoppingCartUpdateInput = {
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneWithoutShoppingCartsNestedInput
   items?: Prisma.ShoppingCartItemUpdateManyWithoutCartNestedInput
+  reminders?: Prisma.CartReminderUpdateManyWithoutCartNestedInput
 }
 
 export type ShoppingCartUncheckedUpdateInput = {
@@ -562,6 +571,7 @@ export type ShoppingCartUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.ShoppingCartItemUncheckedUpdateManyWithoutCartNestedInput
+  reminders?: Prisma.CartReminderUncheckedUpdateManyWithoutCartNestedInput
 }
 
 export type ShoppingCartCreateManyInput = {
@@ -591,7 +601,6 @@ export type ShoppingCartCreateManyInput = {
 export type ShoppingCartUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -634,6 +643,16 @@ export type ShoppingCartUncheckedUpdateManyInput = {
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ShoppingCartListRelationFilter = {
+  every?: Prisma.ShoppingCartWhereInput
+  some?: Prisma.ShoppingCartWhereInput
+  none?: Prisma.ShoppingCartWhereInput
+}
+
+export type ShoppingCartOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type ShoppingCartCountOrderByAggregateInput = {
@@ -725,6 +744,48 @@ export type ShoppingCartScalarRelationFilter = {
   isNot?: Prisma.ShoppingCartWhereInput
 }
 
+export type ShoppingCartCreateNestedManyWithoutCustomerInput = {
+  create?: Prisma.XOR<Prisma.ShoppingCartCreateWithoutCustomerInput, Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput> | Prisma.ShoppingCartCreateWithoutCustomerInput[] | Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput[]
+  connectOrCreate?: Prisma.ShoppingCartCreateOrConnectWithoutCustomerInput | Prisma.ShoppingCartCreateOrConnectWithoutCustomerInput[]
+  createMany?: Prisma.ShoppingCartCreateManyCustomerInputEnvelope
+  connect?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+}
+
+export type ShoppingCartUncheckedCreateNestedManyWithoutCustomerInput = {
+  create?: Prisma.XOR<Prisma.ShoppingCartCreateWithoutCustomerInput, Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput> | Prisma.ShoppingCartCreateWithoutCustomerInput[] | Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput[]
+  connectOrCreate?: Prisma.ShoppingCartCreateOrConnectWithoutCustomerInput | Prisma.ShoppingCartCreateOrConnectWithoutCustomerInput[]
+  createMany?: Prisma.ShoppingCartCreateManyCustomerInputEnvelope
+  connect?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+}
+
+export type ShoppingCartUpdateManyWithoutCustomerNestedInput = {
+  create?: Prisma.XOR<Prisma.ShoppingCartCreateWithoutCustomerInput, Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput> | Prisma.ShoppingCartCreateWithoutCustomerInput[] | Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput[]
+  connectOrCreate?: Prisma.ShoppingCartCreateOrConnectWithoutCustomerInput | Prisma.ShoppingCartCreateOrConnectWithoutCustomerInput[]
+  upsert?: Prisma.ShoppingCartUpsertWithWhereUniqueWithoutCustomerInput | Prisma.ShoppingCartUpsertWithWhereUniqueWithoutCustomerInput[]
+  createMany?: Prisma.ShoppingCartCreateManyCustomerInputEnvelope
+  set?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+  disconnect?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+  delete?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+  connect?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+  update?: Prisma.ShoppingCartUpdateWithWhereUniqueWithoutCustomerInput | Prisma.ShoppingCartUpdateWithWhereUniqueWithoutCustomerInput[]
+  updateMany?: Prisma.ShoppingCartUpdateManyWithWhereWithoutCustomerInput | Prisma.ShoppingCartUpdateManyWithWhereWithoutCustomerInput[]
+  deleteMany?: Prisma.ShoppingCartScalarWhereInput | Prisma.ShoppingCartScalarWhereInput[]
+}
+
+export type ShoppingCartUncheckedUpdateManyWithoutCustomerNestedInput = {
+  create?: Prisma.XOR<Prisma.ShoppingCartCreateWithoutCustomerInput, Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput> | Prisma.ShoppingCartCreateWithoutCustomerInput[] | Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput[]
+  connectOrCreate?: Prisma.ShoppingCartCreateOrConnectWithoutCustomerInput | Prisma.ShoppingCartCreateOrConnectWithoutCustomerInput[]
+  upsert?: Prisma.ShoppingCartUpsertWithWhereUniqueWithoutCustomerInput | Prisma.ShoppingCartUpsertWithWhereUniqueWithoutCustomerInput[]
+  createMany?: Prisma.ShoppingCartCreateManyCustomerInputEnvelope
+  set?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+  disconnect?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+  delete?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+  connect?: Prisma.ShoppingCartWhereUniqueInput | Prisma.ShoppingCartWhereUniqueInput[]
+  update?: Prisma.ShoppingCartUpdateWithWhereUniqueWithoutCustomerInput | Prisma.ShoppingCartUpdateWithWhereUniqueWithoutCustomerInput[]
+  updateMany?: Prisma.ShoppingCartUpdateManyWithWhereWithoutCustomerInput | Prisma.ShoppingCartUpdateManyWithWhereWithoutCustomerInput[]
+  deleteMany?: Prisma.ShoppingCartScalarWhereInput | Prisma.ShoppingCartScalarWhereInput[]
+}
+
 export type ShoppingCartCreateNestedOneWithoutItemsInput = {
   create?: Prisma.XOR<Prisma.ShoppingCartCreateWithoutItemsInput, Prisma.ShoppingCartUncheckedCreateWithoutItemsInput>
   connectOrCreate?: Prisma.ShoppingCartCreateOrConnectWithoutItemsInput
@@ -739,10 +800,23 @@ export type ShoppingCartUpdateOneRequiredWithoutItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ShoppingCartUpdateToOneWithWhereWithoutItemsInput, Prisma.ShoppingCartUpdateWithoutItemsInput>, Prisma.ShoppingCartUncheckedUpdateWithoutItemsInput>
 }
 
-export type ShoppingCartCreateWithoutItemsInput = {
+export type ShoppingCartCreateNestedOneWithoutRemindersInput = {
+  create?: Prisma.XOR<Prisma.ShoppingCartCreateWithoutRemindersInput, Prisma.ShoppingCartUncheckedCreateWithoutRemindersInput>
+  connectOrCreate?: Prisma.ShoppingCartCreateOrConnectWithoutRemindersInput
+  connect?: Prisma.ShoppingCartWhereUniqueInput
+}
+
+export type ShoppingCartUpdateOneRequiredWithoutRemindersNestedInput = {
+  create?: Prisma.XOR<Prisma.ShoppingCartCreateWithoutRemindersInput, Prisma.ShoppingCartUncheckedCreateWithoutRemindersInput>
+  connectOrCreate?: Prisma.ShoppingCartCreateOrConnectWithoutRemindersInput
+  upsert?: Prisma.ShoppingCartUpsertWithoutRemindersInput
+  connect?: Prisma.ShoppingCartWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ShoppingCartUpdateToOneWithWhereWithoutRemindersInput, Prisma.ShoppingCartUpdateWithoutRemindersInput>, Prisma.ShoppingCartUncheckedUpdateWithoutRemindersInput>
+}
+
+export type ShoppingCartCreateWithoutCustomerInput = {
   id?: string
   sessionId: string
-  customerId?: string | null
   customerName?: string | null
   customerPhone?: string | null
   customerEmail?: string | null
@@ -761,6 +835,111 @@ export type ShoppingCartCreateWithoutItemsInput = {
   lastActivityAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  items?: Prisma.ShoppingCartItemCreateNestedManyWithoutCartInput
+  reminders?: Prisma.CartReminderCreateNestedManyWithoutCartInput
+}
+
+export type ShoppingCartUncheckedCreateWithoutCustomerInput = {
+  id?: string
+  sessionId: string
+  customerName?: string | null
+  customerPhone?: string | null
+  customerEmail?: string | null
+  status?: string
+  checkoutStarted?: boolean
+  itemCount?: number
+  total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
+  lastActivityAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.ShoppingCartItemUncheckedCreateNestedManyWithoutCartInput
+  reminders?: Prisma.CartReminderUncheckedCreateNestedManyWithoutCartInput
+}
+
+export type ShoppingCartCreateOrConnectWithoutCustomerInput = {
+  where: Prisma.ShoppingCartWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShoppingCartCreateWithoutCustomerInput, Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput>
+}
+
+export type ShoppingCartCreateManyCustomerInputEnvelope = {
+  data: Prisma.ShoppingCartCreateManyCustomerInput | Prisma.ShoppingCartCreateManyCustomerInput[]
+  skipDuplicates?: boolean
+}
+
+export type ShoppingCartUpsertWithWhereUniqueWithoutCustomerInput = {
+  where: Prisma.ShoppingCartWhereUniqueInput
+  update: Prisma.XOR<Prisma.ShoppingCartUpdateWithoutCustomerInput, Prisma.ShoppingCartUncheckedUpdateWithoutCustomerInput>
+  create: Prisma.XOR<Prisma.ShoppingCartCreateWithoutCustomerInput, Prisma.ShoppingCartUncheckedCreateWithoutCustomerInput>
+}
+
+export type ShoppingCartUpdateWithWhereUniqueWithoutCustomerInput = {
+  where: Prisma.ShoppingCartWhereUniqueInput
+  data: Prisma.XOR<Prisma.ShoppingCartUpdateWithoutCustomerInput, Prisma.ShoppingCartUncheckedUpdateWithoutCustomerInput>
+}
+
+export type ShoppingCartUpdateManyWithWhereWithoutCustomerInput = {
+  where: Prisma.ShoppingCartScalarWhereInput
+  data: Prisma.XOR<Prisma.ShoppingCartUpdateManyMutationInput, Prisma.ShoppingCartUncheckedUpdateManyWithoutCustomerInput>
+}
+
+export type ShoppingCartScalarWhereInput = {
+  AND?: Prisma.ShoppingCartScalarWhereInput | Prisma.ShoppingCartScalarWhereInput[]
+  OR?: Prisma.ShoppingCartScalarWhereInput[]
+  NOT?: Prisma.ShoppingCartScalarWhereInput | Prisma.ShoppingCartScalarWhereInput[]
+  id?: Prisma.StringFilter<"ShoppingCart"> | string
+  sessionId?: Prisma.StringFilter<"ShoppingCart"> | string
+  customerId?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  customerName?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  customerPhone?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  customerEmail?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  status?: Prisma.StringFilter<"ShoppingCart"> | string
+  checkoutStarted?: Prisma.BoolFilter<"ShoppingCart"> | boolean
+  itemCount?: Prisma.IntFilter<"ShoppingCart"> | number
+  total?: Prisma.FloatFilter<"ShoppingCart"> | number
+  checkoutStartedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  abandonedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  recoveredAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  orderId?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  orderNumber?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  reminderSentAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  reminderCount?: Prisma.IntFilter<"ShoppingCart"> | number
+  lastActivityAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
+}
+
+export type ShoppingCartCreateWithoutItemsInput = {
+  id?: string
+  sessionId: string
+  customerName?: string | null
+  customerPhone?: string | null
+  customerEmail?: string | null
+  status?: string
+  checkoutStarted?: boolean
+  itemCount?: number
+  total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
+  lastActivityAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  customer?: Prisma.CustomerCreateNestedOneWithoutShoppingCartsInput
+  reminders?: Prisma.CartReminderCreateNestedManyWithoutCartInput
 }
 
 export type ShoppingCartUncheckedCreateWithoutItemsInput = {
@@ -785,6 +964,7 @@ export type ShoppingCartUncheckedCreateWithoutItemsInput = {
   lastActivityAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
+  reminders?: Prisma.CartReminderUncheckedCreateNestedManyWithoutCartInput
 }
 
 export type ShoppingCartCreateOrConnectWithoutItemsInput = {
@@ -806,6 +986,31 @@ export type ShoppingCartUpdateToOneWithWhereWithoutItemsInput = {
 export type ShoppingCartUpdateWithoutItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  itemCount?: Prisma.IntFieldUpdateOperationsInput | number
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneWithoutShoppingCartsNestedInput
+  reminders?: Prisma.CartReminderUpdateManyWithoutCartNestedInput
+}
+
+export type ShoppingCartUncheckedUpdateWithoutItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -825,12 +1030,201 @@ export type ShoppingCartUpdateWithoutItemsInput = {
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reminders?: Prisma.CartReminderUncheckedUpdateManyWithoutCartNestedInput
 }
 
-export type ShoppingCartUncheckedUpdateWithoutItemsInput = {
+export type ShoppingCartCreateWithoutRemindersInput = {
+  id?: string
+  sessionId: string
+  customerName?: string | null
+  customerPhone?: string | null
+  customerEmail?: string | null
+  status?: string
+  checkoutStarted?: boolean
+  itemCount?: number
+  total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
+  lastActivityAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  customer?: Prisma.CustomerCreateNestedOneWithoutShoppingCartsInput
+  items?: Prisma.ShoppingCartItemCreateNestedManyWithoutCartInput
+}
+
+export type ShoppingCartUncheckedCreateWithoutRemindersInput = {
+  id?: string
+  sessionId: string
+  customerId?: string | null
+  customerName?: string | null
+  customerPhone?: string | null
+  customerEmail?: string | null
+  status?: string
+  checkoutStarted?: boolean
+  itemCount?: number
+  total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
+  lastActivityAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.ShoppingCartItemUncheckedCreateNestedManyWithoutCartInput
+}
+
+export type ShoppingCartCreateOrConnectWithoutRemindersInput = {
+  where: Prisma.ShoppingCartWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShoppingCartCreateWithoutRemindersInput, Prisma.ShoppingCartUncheckedCreateWithoutRemindersInput>
+}
+
+export type ShoppingCartUpsertWithoutRemindersInput = {
+  update: Prisma.XOR<Prisma.ShoppingCartUpdateWithoutRemindersInput, Prisma.ShoppingCartUncheckedUpdateWithoutRemindersInput>
+  create: Prisma.XOR<Prisma.ShoppingCartCreateWithoutRemindersInput, Prisma.ShoppingCartUncheckedCreateWithoutRemindersInput>
+  where?: Prisma.ShoppingCartWhereInput
+}
+
+export type ShoppingCartUpdateToOneWithWhereWithoutRemindersInput = {
+  where?: Prisma.ShoppingCartWhereInput
+  data: Prisma.XOR<Prisma.ShoppingCartUpdateWithoutRemindersInput, Prisma.ShoppingCartUncheckedUpdateWithoutRemindersInput>
+}
+
+export type ShoppingCartUpdateWithoutRemindersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  itemCount?: Prisma.IntFieldUpdateOperationsInput | number
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneWithoutShoppingCartsNestedInput
+  items?: Prisma.ShoppingCartItemUpdateManyWithoutCartNestedInput
+}
+
+export type ShoppingCartUncheckedUpdateWithoutRemindersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  itemCount?: Prisma.IntFieldUpdateOperationsInput | number
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.ShoppingCartItemUncheckedUpdateManyWithoutCartNestedInput
+}
+
+export type ShoppingCartCreateManyCustomerInput = {
+  id?: string
+  sessionId: string
+  customerName?: string | null
+  customerPhone?: string | null
+  customerEmail?: string | null
+  status?: string
+  checkoutStarted?: boolean
+  itemCount?: number
+  total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
+  lastActivityAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ShoppingCartUpdateWithoutCustomerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  itemCount?: Prisma.IntFieldUpdateOperationsInput | number
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.ShoppingCartItemUpdateManyWithoutCartNestedInput
+  reminders?: Prisma.CartReminderUpdateManyWithoutCartNestedInput
+}
+
+export type ShoppingCartUncheckedUpdateWithoutCustomerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  itemCount?: Prisma.IntFieldUpdateOperationsInput | number
+  total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.ShoppingCartItemUncheckedUpdateManyWithoutCartNestedInput
+  reminders?: Prisma.CartReminderUncheckedUpdateManyWithoutCartNestedInput
+}
+
+export type ShoppingCartUncheckedUpdateManyWithoutCustomerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  sessionId?: Prisma.StringFieldUpdateOperationsInput | string
   customerName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -858,10 +1252,12 @@ export type ShoppingCartUncheckedUpdateWithoutItemsInput = {
 
 export type ShoppingCartCountOutputType = {
   items: number
+  reminders: number
 }
 
 export type ShoppingCartCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | ShoppingCartCountOutputTypeCountItemsArgs
+  reminders?: boolean | ShoppingCartCountOutputTypeCountRemindersArgs
 }
 
 /**
@@ -879,6 +1275,13 @@ export type ShoppingCartCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types
  */
 export type ShoppingCartCountOutputTypeCountItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ShoppingCartItemWhereInput
+}
+
+/**
+ * ShoppingCartCountOutputType without action
+ */
+export type ShoppingCartCountOutputTypeCountRemindersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CartReminderWhereInput
 }
 
 
@@ -904,7 +1307,9 @@ export type ShoppingCartSelect<ExtArgs extends runtime.Types.Extensions.Internal
   lastActivityAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  customer?: boolean | Prisma.ShoppingCart$customerArgs<ExtArgs>
   items?: boolean | Prisma.ShoppingCart$itemsArgs<ExtArgs>
+  reminders?: boolean | Prisma.ShoppingCart$remindersArgs<ExtArgs>
   _count?: boolean | Prisma.ShoppingCartCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingCart"]>
 
@@ -930,6 +1335,7 @@ export type ShoppingCartSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   lastActivityAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  customer?: boolean | Prisma.ShoppingCart$customerArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingCart"]>
 
 export type ShoppingCartSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -954,6 +1360,7 @@ export type ShoppingCartSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   lastActivityAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  customer?: boolean | Prisma.ShoppingCart$customerArgs<ExtArgs>
 }, ExtArgs["result"]["shoppingCart"]>
 
 export type ShoppingCartSelectScalar = {
@@ -982,16 +1389,24 @@ export type ShoppingCartSelectScalar = {
 
 export type ShoppingCartOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sessionId" | "customerId" | "customerName" | "customerPhone" | "customerEmail" | "status" | "checkoutStarted" | "itemCount" | "total" | "checkoutStartedAt" | "abandonedAt" | "recoveredAt" | "completedAt" | "orderId" | "orderNumber" | "reminderSentAt" | "reminderCount" | "lastActivityAt" | "createdAt" | "updatedAt", ExtArgs["result"]["shoppingCart"]>
 export type ShoppingCartInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  customer?: boolean | Prisma.ShoppingCart$customerArgs<ExtArgs>
   items?: boolean | Prisma.ShoppingCart$itemsArgs<ExtArgs>
+  reminders?: boolean | Prisma.ShoppingCart$remindersArgs<ExtArgs>
   _count?: boolean | Prisma.ShoppingCartCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type ShoppingCartIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type ShoppingCartIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ShoppingCartIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  customer?: boolean | Prisma.ShoppingCart$customerArgs<ExtArgs>
+}
+export type ShoppingCartIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  customer?: boolean | Prisma.ShoppingCart$customerArgs<ExtArgs>
+}
 
 export type $ShoppingCartPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ShoppingCart"
   objects: {
+    customer: Prisma.$CustomerPayload<ExtArgs> | null
     items: Prisma.$ShoppingCartItemPayload<ExtArgs>[]
+    reminders: Prisma.$CartReminderPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1409,7 +1824,9 @@ readonly fields: ShoppingCartFieldRefs;
  */
 export interface Prisma__ShoppingCartClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  customer<T extends Prisma.ShoppingCart$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShoppingCart$customerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.ShoppingCart$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShoppingCart$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShoppingCartItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reminders<T extends Prisma.ShoppingCart$remindersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShoppingCart$remindersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CartReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1714,6 +2131,10 @@ export type ShoppingCartCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.ShoppingCartCreateManyInput | Prisma.ShoppingCartCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShoppingCartIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1784,6 +2205,10 @@ export type ShoppingCartUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many ShoppingCarts to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShoppingCartIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1853,6 +2278,25 @@ export type ShoppingCartDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * ShoppingCart.customer
+ */
+export type ShoppingCart$customerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Customer
+   */
+  select?: Prisma.CustomerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Customer
+   */
+  omit?: Prisma.CustomerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerInclude<ExtArgs> | null
+  where?: Prisma.CustomerWhereInput
+}
+
+/**
  * ShoppingCart.items
  */
 export type ShoppingCart$itemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1874,6 +2318,30 @@ export type ShoppingCart$itemsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ShoppingCartItemScalarFieldEnum | Prisma.ShoppingCartItemScalarFieldEnum[]
+}
+
+/**
+ * ShoppingCart.reminders
+ */
+export type ShoppingCart$remindersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CartReminder
+   */
+  select?: Prisma.CartReminderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CartReminder
+   */
+  omit?: Prisma.CartReminderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CartReminderInclude<ExtArgs> | null
+  where?: Prisma.CartReminderWhereInput
+  orderBy?: Prisma.CartReminderOrderByWithRelationInput | Prisma.CartReminderOrderByWithRelationInput[]
+  cursor?: Prisma.CartReminderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CartReminderScalarFieldEnum | Prisma.CartReminderScalarFieldEnum[]
 }
 
 /**

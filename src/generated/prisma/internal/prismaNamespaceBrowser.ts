@@ -60,7 +60,12 @@ export const ModelName = {
   OrderItem: 'OrderItem',
   ProductAttribute: 'ProductAttribute',
   ShoppingCart: 'ShoppingCart',
-  ShoppingCartItem: 'ShoppingCartItem'
+  ShoppingCartItem: 'ShoppingCartItem',
+  CustomerGroup: 'CustomerGroup',
+  DealerApplication: 'DealerApplication',
+  SupportTicket: 'SupportTicket',
+  SupportMessage: 'SupportMessage',
+  CartReminder: 'CartReminder'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -156,7 +161,8 @@ export const CustomerScalarFieldEnum = {
   active: 'active',
   lastErpSyncAt: 'lastErpSyncAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  groupId: 'groupId'
 } as const
 
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
@@ -289,6 +295,91 @@ export const ShoppingCartItemScalarFieldEnum = {
 } as const
 
 export type ShoppingCartItemScalarFieldEnum = (typeof ShoppingCartItemScalarFieldEnum)[keyof typeof ShoppingCartItemScalarFieldEnum]
+
+
+export const CustomerGroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  type: 'type',
+  discountRate: 'discountRate',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomerGroupScalarFieldEnum = (typeof CustomerGroupScalarFieldEnum)[keyof typeof CustomerGroupScalarFieldEnum]
+
+
+export const DealerApplicationScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  fullName: 'fullName',
+  phone: 'phone',
+  email: 'email',
+  companyName: 'companyName',
+  taxOffice: 'taxOffice',
+  taxNumber: 'taxNumber',
+  city: 'city',
+  district: 'district',
+  address: 'address',
+  note: 'note',
+  status: 'status',
+  reviewedAt: 'reviewedAt',
+  reviewedBy: 'reviewedBy',
+  reviewNote: 'reviewNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DealerApplicationScalarFieldEnum = (typeof DealerApplicationScalarFieldEnum)[keyof typeof DealerApplicationScalarFieldEnum]
+
+
+export const SupportTicketScalarFieldEnum = {
+  id: 'id',
+  ticketNumber: 'ticketNumber',
+  customerId: 'customerId',
+  customerName: 'customerName',
+  customerPhone: 'customerPhone',
+  customerEmail: 'customerEmail',
+  subject: 'subject',
+  category: 'category',
+  priority: 'priority',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  closedAt: 'closedAt'
+} as const
+
+export type SupportTicketScalarFieldEnum = (typeof SupportTicketScalarFieldEnum)[keyof typeof SupportTicketScalarFieldEnum]
+
+
+export const SupportMessageScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  senderType: 'senderType',
+  senderName: 'senderName',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type SupportMessageScalarFieldEnum = (typeof SupportMessageScalarFieldEnum)[keyof typeof SupportMessageScalarFieldEnum]
+
+
+export const CartReminderScalarFieldEnum = {
+  id: 'id',
+  cartId: 'cartId',
+  channel: 'channel',
+  status: 'status',
+  recipient: 'recipient',
+  message: 'message',
+  sentAt: 'sentAt',
+  error: 'error',
+  createdAt: 'createdAt'
+} as const
+
+export type CartReminderScalarFieldEnum = (typeof CartReminderScalarFieldEnum)[keyof typeof CartReminderScalarFieldEnum]
 
 
 export const SortOrder = {

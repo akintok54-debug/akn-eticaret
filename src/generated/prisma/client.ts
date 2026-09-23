@@ -91,3 +91,28 @@ export type ShoppingCart = Prisma.ShoppingCartModel
  * 
  */
 export type ShoppingCartItem = Prisma.ShoppingCartItemModel
+/**
+ * Model CustomerGroup
+ * 
+ */
+export type CustomerGroup = Prisma.CustomerGroupModel
+/**
+ * Model DealerApplication
+ * 
+ */
+export type DealerApplication = Prisma.DealerApplicationModel
+/**
+ * Model SupportTicket
+ * 
+ */
+export type SupportTicket = Prisma.SupportTicketModel
+/**
+ * Model SupportMessage
+ * 
+ */
+export type SupportMessage = Prisma.SupportMessageModel
+/**
+ * Model CartReminder
+ * 
+ */
+export type CartReminder = Prisma.CartReminderModel

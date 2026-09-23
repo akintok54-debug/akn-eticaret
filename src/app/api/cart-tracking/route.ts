@@ -97,6 +97,8 @@ export async function GET(request: Request) {
     const carts = await prisma.shoppingCart.findMany({
       include: {
         items: true,
+        customer: true,
+        reminders: true,
       },
       orderBy: {
         lastActivityAt: "desc",
@@ -235,12 +237,23 @@ export async function POST(request: Request) {
     };
 
     /*
-     * Müşteri bilgileri
+     * Müşteri bağlantısı
      */
     if (customerId !== undefined) {
-      updateData.customerId = customerId;
+      updateData.customer = customerId
+        ? {
+          connect: {
+            id: customerId,
+          },
+        }
+        : {
+          disconnect: true,
+        };
     }
 
+    /*
+     * Müşteri iletişim bilgileri
+     */
     if (customerName !== undefined) {
       updateData.customerName = customerName;
     }
@@ -315,7 +328,8 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Yeni ürün listesi gönderilmişse sepet içeriğini yenile.
+     * Yeni ürün listesi gönderilmişse
+     * sepet içeriğini yenile.
      */
     if (hasItems) {
       updateData.itemCount = itemCount;
@@ -340,7 +354,14 @@ export async function POST(request: Request) {
     const createData: Prisma.ShoppingCartCreateInput = {
       sessionId,
 
-      customerId: customerId ?? null,
+      customer: customerId
+        ? {
+          connect: {
+            id: customerId,
+          },
+        }
+        : undefined,
+
       customerName: customerName ?? null,
       customerPhone: customerPhone ?? null,
       customerEmail: customerEmail ?? null,
@@ -411,6 +432,8 @@ export async function POST(request: Request) {
 
         include: {
           items: true,
+          customer: true,
+          reminders: true,
         },
       });
     } catch (error) {
@@ -432,6 +455,8 @@ export async function POST(request: Request) {
 
           include: {
             items: true,
+            customer: true,
+            reminders: true,
           },
         });
       } else {

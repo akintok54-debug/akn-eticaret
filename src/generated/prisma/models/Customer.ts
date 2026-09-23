@@ -39,6 +39,7 @@ export type CustomerMinAggregateOutputType = {
   lastErpSyncAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  groupId: string | null
 }
 
 export type CustomerMaxAggregateOutputType = {
@@ -56,6 +57,7 @@ export type CustomerMaxAggregateOutputType = {
   lastErpSyncAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  groupId: string | null
 }
 
 export type CustomerCountAggregateOutputType = {
@@ -73,6 +75,7 @@ export type CustomerCountAggregateOutputType = {
   lastErpSyncAt: number
   createdAt: number
   updatedAt: number
+  groupId: number
   _all: number
 }
 
@@ -92,6 +95,7 @@ export type CustomerMinAggregateInputType = {
   lastErpSyncAt?: true
   createdAt?: true
   updatedAt?: true
+  groupId?: true
 }
 
 export type CustomerMaxAggregateInputType = {
@@ -109,6 +113,7 @@ export type CustomerMaxAggregateInputType = {
   lastErpSyncAt?: true
   createdAt?: true
   updatedAt?: true
+  groupId?: true
 }
 
 export type CustomerCountAggregateInputType = {
@@ -126,6 +131,7 @@ export type CustomerCountAggregateInputType = {
   lastErpSyncAt?: true
   createdAt?: true
   updatedAt?: true
+  groupId?: true
   _all?: true
 }
 
@@ -216,6 +222,7 @@ export type CustomerGroupByOutputType = {
   lastErpSyncAt: Date | null
   createdAt: Date
   updatedAt: Date
+  groupId: string | null
   _count: CustomerCountAggregateOutputType | null
   _min: CustomerMinAggregateOutputType | null
   _max: CustomerMaxAggregateOutputType | null
@@ -254,8 +261,13 @@ export type CustomerWhereInput = {
   lastErpSyncAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  groupId?: Prisma.StringNullableFilter<"Customer"> | string | null
   addresses?: Prisma.AddressListRelationFilter
   orders?: Prisma.OrderListRelationFilter
+  group?: Prisma.XOR<Prisma.CustomerGroupNullableScalarRelationFilter, Prisma.CustomerGroupWhereInput> | null
+  shoppingCarts?: Prisma.ShoppingCartListRelationFilter
+  dealerApplications?: Prisma.DealerApplicationListRelationFilter
+  supportTickets?: Prisma.SupportTicketListRelationFilter
 }
 
 export type CustomerOrderByWithRelationInput = {
@@ -273,8 +285,13 @@ export type CustomerOrderByWithRelationInput = {
   lastErpSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrderInput | Prisma.SortOrder
   addresses?: Prisma.AddressOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
+  group?: Prisma.CustomerGroupOrderByWithRelationInput
+  shoppingCarts?: Prisma.ShoppingCartOrderByRelationAggregateInput
+  dealerApplications?: Prisma.DealerApplicationOrderByRelationAggregateInput
+  supportTickets?: Prisma.SupportTicketOrderByRelationAggregateInput
 }
 
 export type CustomerWhereUniqueInput = Prisma.AtLeast<{
@@ -295,8 +312,13 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   lastErpSyncAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  groupId?: Prisma.StringNullableFilter<"Customer"> | string | null
   addresses?: Prisma.AddressListRelationFilter
   orders?: Prisma.OrderListRelationFilter
+  group?: Prisma.XOR<Prisma.CustomerGroupNullableScalarRelationFilter, Prisma.CustomerGroupWhereInput> | null
+  shoppingCarts?: Prisma.ShoppingCartListRelationFilter
+  dealerApplications?: Prisma.DealerApplicationListRelationFilter
+  supportTickets?: Prisma.SupportTicketListRelationFilter
 }, "id" | "erpCustomerId" | "phone">
 
 export type CustomerOrderByWithAggregationInput = {
@@ -314,6 +336,7 @@ export type CustomerOrderByWithAggregationInput = {
   lastErpSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.CustomerCountOrderByAggregateInput
   _max?: Prisma.CustomerMaxOrderByAggregateInput
   _min?: Prisma.CustomerMinOrderByAggregateInput
@@ -337,6 +360,7 @@ export type CustomerScalarWhereWithAggregatesInput = {
   lastErpSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Customer"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
+  groupId?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
 }
 
 export type CustomerCreateInput = {
@@ -356,6 +380,10 @@ export type CustomerCreateInput = {
   updatedAt?: Date | string
   addresses?: Prisma.AddressCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
+  group?: Prisma.CustomerGroupCreateNestedOneWithoutCustomersInput
+  shoppingCarts?: Prisma.ShoppingCartCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateInput = {
@@ -373,8 +401,12 @@ export type CustomerUncheckedCreateInput = {
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId?: string | null
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUpdateInput = {
@@ -394,6 +426,10 @@ export type CustomerUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   addresses?: Prisma.AddressUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
+  group?: Prisma.CustomerGroupUpdateOneWithoutCustomersNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateInput = {
@@ -411,8 +447,12 @@ export type CustomerUncheckedUpdateInput = {
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateManyInput = {
@@ -430,6 +470,7 @@ export type CustomerCreateManyInput = {
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId?: string | null
 }
 
 export type CustomerUpdateManyMutationInput = {
@@ -464,6 +505,7 @@ export type CustomerUncheckedUpdateManyInput = {
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type CustomerCountOrderByAggregateInput = {
@@ -481,6 +523,7 @@ export type CustomerCountOrderByAggregateInput = {
   lastErpSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type CustomerMaxOrderByAggregateInput = {
@@ -498,6 +541,7 @@ export type CustomerMaxOrderByAggregateInput = {
   lastErpSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type CustomerMinOrderByAggregateInput = {
@@ -515,6 +559,7 @@ export type CustomerMinOrderByAggregateInput = {
   lastErpSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type CustomerScalarRelationFilter = {
@@ -525,6 +570,16 @@ export type CustomerScalarRelationFilter = {
 export type CustomerNullableScalarRelationFilter = {
   is?: Prisma.CustomerWhereInput | null
   isNot?: Prisma.CustomerWhereInput | null
+}
+
+export type CustomerListRelationFilter = {
+  every?: Prisma.CustomerWhereInput
+  some?: Prisma.CustomerWhereInput
+  none?: Prisma.CustomerWhereInput
+}
+
+export type CustomerOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type CustomerCreateNestedOneWithoutAddressesInput = {
@@ -557,6 +612,96 @@ export type CustomerUpdateOneWithoutOrdersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutOrdersInput, Prisma.CustomerUpdateWithoutOrdersInput>, Prisma.CustomerUncheckedUpdateWithoutOrdersInput>
 }
 
+export type CustomerCreateNestedOneWithoutShoppingCartsInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutShoppingCartsInput, Prisma.CustomerUncheckedCreateWithoutShoppingCartsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutShoppingCartsInput
+  connect?: Prisma.CustomerWhereUniqueInput
+}
+
+export type CustomerUpdateOneWithoutShoppingCartsNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutShoppingCartsInput, Prisma.CustomerUncheckedCreateWithoutShoppingCartsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutShoppingCartsInput
+  upsert?: Prisma.CustomerUpsertWithoutShoppingCartsInput
+  disconnect?: Prisma.CustomerWhereInput | boolean
+  delete?: Prisma.CustomerWhereInput | boolean
+  connect?: Prisma.CustomerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutShoppingCartsInput, Prisma.CustomerUpdateWithoutShoppingCartsInput>, Prisma.CustomerUncheckedUpdateWithoutShoppingCartsInput>
+}
+
+export type CustomerCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutGroupInput, Prisma.CustomerUncheckedCreateWithoutGroupInput> | Prisma.CustomerCreateWithoutGroupInput[] | Prisma.CustomerUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutGroupInput | Prisma.CustomerCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.CustomerCreateManyGroupInputEnvelope
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+}
+
+export type CustomerUncheckedCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutGroupInput, Prisma.CustomerUncheckedCreateWithoutGroupInput> | Prisma.CustomerCreateWithoutGroupInput[] | Prisma.CustomerUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutGroupInput | Prisma.CustomerCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.CustomerCreateManyGroupInputEnvelope
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+}
+
+export type CustomerUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutGroupInput, Prisma.CustomerUncheckedCreateWithoutGroupInput> | Prisma.CustomerCreateWithoutGroupInput[] | Prisma.CustomerUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutGroupInput | Prisma.CustomerCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.CustomerUpsertWithWhereUniqueWithoutGroupInput | Prisma.CustomerUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.CustomerCreateManyGroupInputEnvelope
+  set?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  disconnect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  delete?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  update?: Prisma.CustomerUpdateWithWhereUniqueWithoutGroupInput | Prisma.CustomerUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.CustomerUpdateManyWithWhereWithoutGroupInput | Prisma.CustomerUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+}
+
+export type CustomerUncheckedUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutGroupInput, Prisma.CustomerUncheckedCreateWithoutGroupInput> | Prisma.CustomerCreateWithoutGroupInput[] | Prisma.CustomerUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutGroupInput | Prisma.CustomerCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.CustomerUpsertWithWhereUniqueWithoutGroupInput | Prisma.CustomerUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.CustomerCreateManyGroupInputEnvelope
+  set?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  disconnect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  delete?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  connect?: Prisma.CustomerWhereUniqueInput | Prisma.CustomerWhereUniqueInput[]
+  update?: Prisma.CustomerUpdateWithWhereUniqueWithoutGroupInput | Prisma.CustomerUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.CustomerUpdateManyWithWhereWithoutGroupInput | Prisma.CustomerUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+}
+
+export type CustomerCreateNestedOneWithoutDealerApplicationsInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutDealerApplicationsInput, Prisma.CustomerUncheckedCreateWithoutDealerApplicationsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutDealerApplicationsInput
+  connect?: Prisma.CustomerWhereUniqueInput
+}
+
+export type CustomerUpdateOneWithoutDealerApplicationsNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutDealerApplicationsInput, Prisma.CustomerUncheckedCreateWithoutDealerApplicationsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutDealerApplicationsInput
+  upsert?: Prisma.CustomerUpsertWithoutDealerApplicationsInput
+  disconnect?: Prisma.CustomerWhereInput | boolean
+  delete?: Prisma.CustomerWhereInput | boolean
+  connect?: Prisma.CustomerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutDealerApplicationsInput, Prisma.CustomerUpdateWithoutDealerApplicationsInput>, Prisma.CustomerUncheckedUpdateWithoutDealerApplicationsInput>
+}
+
+export type CustomerCreateNestedOneWithoutSupportTicketsInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutSupportTicketsInput, Prisma.CustomerUncheckedCreateWithoutSupportTicketsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutSupportTicketsInput
+  connect?: Prisma.CustomerWhereUniqueInput
+}
+
+export type CustomerUpdateOneWithoutSupportTicketsNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutSupportTicketsInput, Prisma.CustomerUncheckedCreateWithoutSupportTicketsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutSupportTicketsInput
+  upsert?: Prisma.CustomerUpsertWithoutSupportTicketsInput
+  disconnect?: Prisma.CustomerWhereInput | boolean
+  delete?: Prisma.CustomerWhereInput | boolean
+  connect?: Prisma.CustomerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutSupportTicketsInput, Prisma.CustomerUpdateWithoutSupportTicketsInput>, Prisma.CustomerUncheckedUpdateWithoutSupportTicketsInput>
+}
+
 export type CustomerCreateWithoutAddressesInput = {
   id?: string
   erpCustomerId?: string | null
@@ -573,6 +718,10 @@ export type CustomerCreateWithoutAddressesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
+  group?: Prisma.CustomerGroupCreateNestedOneWithoutCustomersInput
+  shoppingCarts?: Prisma.ShoppingCartCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutAddressesInput = {
@@ -590,7 +739,11 @@ export type CustomerUncheckedCreateWithoutAddressesInput = {
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId?: string | null
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutAddressesInput = {
@@ -625,6 +778,10 @@ export type CustomerUpdateWithoutAddressesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
+  group?: Prisma.CustomerGroupUpdateOneWithoutCustomersNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutAddressesInput = {
@@ -642,7 +799,11 @@ export type CustomerUncheckedUpdateWithoutAddressesInput = {
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateWithoutOrdersInput = {
@@ -661,6 +822,10 @@ export type CustomerCreateWithoutOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   addresses?: Prisma.AddressCreateNestedManyWithoutCustomerInput
+  group?: Prisma.CustomerGroupCreateNestedOneWithoutCustomersInput
+  shoppingCarts?: Prisma.ShoppingCartCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutOrdersInput = {
@@ -678,7 +843,11 @@ export type CustomerUncheckedCreateWithoutOrdersInput = {
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  groupId?: string | null
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutCustomerInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutOrdersInput = {
@@ -713,6 +882,10 @@ export type CustomerUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   addresses?: Prisma.AddressUpdateManyWithoutCustomerNestedInput
+  group?: Prisma.CustomerGroupUpdateOneWithoutCustomersNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutOrdersInput = {
@@ -730,7 +903,492 @@ export type CustomerUncheckedUpdateWithoutOrdersInput = {
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutCustomerNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerCreateWithoutShoppingCartsInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  addresses?: Prisma.AddressCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
+  group?: Prisma.CustomerGroupCreateNestedOneWithoutCustomersInput
+  dealerApplications?: Prisma.DealerApplicationCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutShoppingCartsInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groupId?: string | null
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutShoppingCartsInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutShoppingCartsInput, Prisma.CustomerUncheckedCreateWithoutShoppingCartsInput>
+}
+
+export type CustomerUpsertWithoutShoppingCartsInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutShoppingCartsInput, Prisma.CustomerUncheckedUpdateWithoutShoppingCartsInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutShoppingCartsInput, Prisma.CustomerUncheckedCreateWithoutShoppingCartsInput>
+  where?: Prisma.CustomerWhereInput
+}
+
+export type CustomerUpdateToOneWithWhereWithoutShoppingCartsInput = {
+  where?: Prisma.CustomerWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutShoppingCartsInput, Prisma.CustomerUncheckedUpdateWithoutShoppingCartsInput>
+}
+
+export type CustomerUpdateWithoutShoppingCartsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  addresses?: Prisma.AddressUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
+  group?: Prisma.CustomerGroupUpdateOneWithoutCustomersNestedInput
+  dealerApplications?: Prisma.DealerApplicationUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutShoppingCartsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerCreateWithoutGroupInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  addresses?: Prisma.AddressCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
+  shoppingCarts?: Prisma.ShoppingCartCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutGroupInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutGroupInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutGroupInput, Prisma.CustomerUncheckedCreateWithoutGroupInput>
+}
+
+export type CustomerCreateManyGroupInputEnvelope = {
+  data: Prisma.CustomerCreateManyGroupInput | Prisma.CustomerCreateManyGroupInput[]
+  skipDuplicates?: boolean
+}
+
+export type CustomerUpsertWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutGroupInput, Prisma.CustomerUncheckedUpdateWithoutGroupInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutGroupInput, Prisma.CustomerUncheckedCreateWithoutGroupInput>
+}
+
+export type CustomerUpdateWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutGroupInput, Prisma.CustomerUncheckedUpdateWithoutGroupInput>
+}
+
+export type CustomerUpdateManyWithWhereWithoutGroupInput = {
+  where: Prisma.CustomerScalarWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateManyMutationInput, Prisma.CustomerUncheckedUpdateManyWithoutGroupInput>
+}
+
+export type CustomerScalarWhereInput = {
+  AND?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+  OR?: Prisma.CustomerScalarWhereInput[]
+  NOT?: Prisma.CustomerScalarWhereInput | Prisma.CustomerScalarWhereInput[]
+  id?: Prisma.StringFilter<"Customer"> | string
+  erpCustomerId?: Prisma.StringNullableFilter<"Customer"> | string | null
+  fullName?: Prisma.StringFilter<"Customer"> | string
+  phone?: Prisma.StringFilter<"Customer"> | string
+  email?: Prisma.StringNullableFilter<"Customer"> | string | null
+  type?: Prisma.StringFilter<"Customer"> | string
+  dealerStatus?: Prisma.StringFilter<"Customer"> | string
+  companyName?: Prisma.StringNullableFilter<"Customer"> | string | null
+  taxOffice?: Prisma.StringNullableFilter<"Customer"> | string | null
+  taxNumber?: Prisma.StringNullableFilter<"Customer"> | string | null
+  active?: Prisma.BoolFilter<"Customer"> | boolean
+  lastErpSyncAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
+  groupId?: Prisma.StringNullableFilter<"Customer"> | string | null
+}
+
+export type CustomerCreateWithoutDealerApplicationsInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  addresses?: Prisma.AddressCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
+  group?: Prisma.CustomerGroupCreateNestedOneWithoutCustomersInput
+  shoppingCarts?: Prisma.ShoppingCartCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutDealerApplicationsInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groupId?: string | null
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedCreateNestedManyWithoutCustomerInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutDealerApplicationsInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutDealerApplicationsInput, Prisma.CustomerUncheckedCreateWithoutDealerApplicationsInput>
+}
+
+export type CustomerUpsertWithoutDealerApplicationsInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutDealerApplicationsInput, Prisma.CustomerUncheckedUpdateWithoutDealerApplicationsInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutDealerApplicationsInput, Prisma.CustomerUncheckedCreateWithoutDealerApplicationsInput>
+  where?: Prisma.CustomerWhereInput
+}
+
+export type CustomerUpdateToOneWithWhereWithoutDealerApplicationsInput = {
+  where?: Prisma.CustomerWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutDealerApplicationsInput, Prisma.CustomerUncheckedUpdateWithoutDealerApplicationsInput>
+}
+
+export type CustomerUpdateWithoutDealerApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  addresses?: Prisma.AddressUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
+  group?: Prisma.CustomerGroupUpdateOneWithoutCustomersNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutDealerApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerCreateWithoutSupportTicketsInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  addresses?: Prisma.AddressCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
+  group?: Prisma.CustomerGroupCreateNestedOneWithoutCustomersInput
+  shoppingCarts?: Prisma.ShoppingCartCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutSupportTicketsInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groupId?: string | null
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedCreateNestedManyWithoutCustomerInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutSupportTicketsInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutSupportTicketsInput, Prisma.CustomerUncheckedCreateWithoutSupportTicketsInput>
+}
+
+export type CustomerUpsertWithoutSupportTicketsInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutSupportTicketsInput, Prisma.CustomerUncheckedUpdateWithoutSupportTicketsInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutSupportTicketsInput, Prisma.CustomerUncheckedCreateWithoutSupportTicketsInput>
+  where?: Prisma.CustomerWhereInput
+}
+
+export type CustomerUpdateToOneWithWhereWithoutSupportTicketsInput = {
+  where?: Prisma.CustomerWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutSupportTicketsInput, Prisma.CustomerUncheckedUpdateWithoutSupportTicketsInput>
+}
+
+export type CustomerUpdateWithoutSupportTicketsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  addresses?: Prisma.AddressUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
+  group?: Prisma.CustomerGroupUpdateOneWithoutCustomersNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutSupportTicketsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerCreateManyGroupInput = {
+  id?: string
+  erpCustomerId?: string | null
+  fullName: string
+  phone: string
+  email?: string | null
+  type?: string
+  dealerStatus?: string
+  companyName?: string | null
+  taxOffice?: string | null
+  taxNumber?: string | null
+  active?: boolean
+  lastErpSyncAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CustomerUpdateWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  addresses?: Prisma.AddressUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  shoppingCarts?: Prisma.ShoppingCartUncheckedUpdateManyWithoutCustomerNestedInput
+  dealerApplications?: Prisma.DealerApplicationUncheckedUpdateManyWithoutCustomerNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateManyWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  erpCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  dealerStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -741,11 +1399,17 @@ export type CustomerUncheckedUpdateWithoutOrdersInput = {
 export type CustomerCountOutputType = {
   addresses: number
   orders: number
+  shoppingCarts: number
+  dealerApplications: number
+  supportTickets: number
 }
 
 export type CustomerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   addresses?: boolean | CustomerCountOutputTypeCountAddressesArgs
   orders?: boolean | CustomerCountOutputTypeCountOrdersArgs
+  shoppingCarts?: boolean | CustomerCountOutputTypeCountShoppingCartsArgs
+  dealerApplications?: boolean | CustomerCountOutputTypeCountDealerApplicationsArgs
+  supportTickets?: boolean | CustomerCountOutputTypeCountSupportTicketsArgs
 }
 
 /**
@@ -772,6 +1436,27 @@ export type CustomerCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Types
   where?: Prisma.OrderWhereInput
 }
 
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountShoppingCartsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShoppingCartWhereInput
+}
+
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountDealerApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DealerApplicationWhereInput
+}
+
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountSupportTicketsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupportTicketWhereInput
+}
+
 
 export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -788,8 +1473,13 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   lastErpSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  groupId?: boolean
   addresses?: boolean | Prisma.Customer$addressesArgs<ExtArgs>
   orders?: boolean | Prisma.Customer$ordersArgs<ExtArgs>
+  group?: boolean | Prisma.Customer$groupArgs<ExtArgs>
+  shoppingCarts?: boolean | Prisma.Customer$shoppingCartsArgs<ExtArgs>
+  dealerApplications?: boolean | Prisma.Customer$dealerApplicationsArgs<ExtArgs>
+  supportTickets?: boolean | Prisma.Customer$supportTicketsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
@@ -808,6 +1498,8 @@ export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   lastErpSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  groupId?: boolean
+  group?: boolean | Prisma.Customer$groupArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
 export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -825,6 +1517,8 @@ export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   lastErpSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  groupId?: boolean
+  group?: boolean | Prisma.Customer$groupArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
 export type CustomerSelectScalar = {
@@ -842,22 +1536,35 @@ export type CustomerSelectScalar = {
   lastErpSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  groupId?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "erpCustomerId" | "fullName" | "phone" | "email" | "type" | "dealerStatus" | "companyName" | "taxOffice" | "taxNumber" | "active" | "lastErpSyncAt" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "erpCustomerId" | "fullName" | "phone" | "email" | "type" | "dealerStatus" | "companyName" | "taxOffice" | "taxNumber" | "active" | "lastErpSyncAt" | "createdAt" | "updatedAt" | "groupId", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   addresses?: boolean | Prisma.Customer$addressesArgs<ExtArgs>
   orders?: boolean | Prisma.Customer$ordersArgs<ExtArgs>
+  group?: boolean | Prisma.Customer$groupArgs<ExtArgs>
+  shoppingCarts?: boolean | Prisma.Customer$shoppingCartsArgs<ExtArgs>
+  dealerApplications?: boolean | Prisma.Customer$dealerApplicationsArgs<ExtArgs>
+  supportTickets?: boolean | Prisma.Customer$supportTicketsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type CustomerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type CustomerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type CustomerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  group?: boolean | Prisma.Customer$groupArgs<ExtArgs>
+}
+export type CustomerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  group?: boolean | Prisma.Customer$groupArgs<ExtArgs>
+}
 
 export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Customer"
   objects: {
     addresses: Prisma.$AddressPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
+    group: Prisma.$CustomerGroupPayload<ExtArgs> | null
+    shoppingCarts: Prisma.$ShoppingCartPayload<ExtArgs>[]
+    dealerApplications: Prisma.$DealerApplicationPayload<ExtArgs>[]
+    supportTickets: Prisma.$SupportTicketPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -874,6 +1581,7 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     lastErpSyncAt: Date | null
     createdAt: Date
     updatedAt: Date
+    groupId: string | null
   }, ExtArgs["result"]["customer"]>
   composites: {}
 }
@@ -1270,6 +1978,10 @@ export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime
   readonly [Symbol.toStringTag]: "PrismaPromise"
   addresses<T extends Prisma.Customer$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.Customer$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  group<T extends Prisma.Customer$groupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$groupArgs<ExtArgs>>): Prisma.Prisma__CustomerGroupClient<runtime.Types.Result.GetResult<Prisma.$CustomerGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  shoppingCarts<T extends Prisma.Customer$shoppingCartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$shoppingCartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShoppingCartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  dealerApplications<T extends Prisma.Customer$dealerApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$dealerApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DealerApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supportTickets<T extends Prisma.Customer$supportTicketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1313,6 +2025,7 @@ export interface CustomerFieldRefs {
   readonly lastErpSyncAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Customer", 'DateTime'>
+  readonly groupId: Prisma.FieldRef<"Customer", 'String'>
 }
     
 
@@ -1567,6 +2280,10 @@ export type CustomerCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    */
   data: Prisma.CustomerCreateManyInput | Prisma.CustomerCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1637,6 +2354,10 @@ export type CustomerUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * Limit how many Customers to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1751,6 +2472,97 @@ export type Customer$ordersArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * Customer.group
+ */
+export type Customer$groupArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CustomerGroup
+   */
+  select?: Prisma.CustomerGroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CustomerGroup
+   */
+  omit?: Prisma.CustomerGroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerGroupInclude<ExtArgs> | null
+  where?: Prisma.CustomerGroupWhereInput
+}
+
+/**
+ * Customer.shoppingCarts
+ */
+export type Customer$shoppingCartsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShoppingCart
+   */
+  select?: Prisma.ShoppingCartSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShoppingCart
+   */
+  omit?: Prisma.ShoppingCartOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShoppingCartInclude<ExtArgs> | null
+  where?: Prisma.ShoppingCartWhereInput
+  orderBy?: Prisma.ShoppingCartOrderByWithRelationInput | Prisma.ShoppingCartOrderByWithRelationInput[]
+  cursor?: Prisma.ShoppingCartWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShoppingCartScalarFieldEnum | Prisma.ShoppingCartScalarFieldEnum[]
+}
+
+/**
+ * Customer.dealerApplications
+ */
+export type Customer$dealerApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DealerApplication
+   */
+  select?: Prisma.DealerApplicationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DealerApplication
+   */
+  omit?: Prisma.DealerApplicationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DealerApplicationInclude<ExtArgs> | null
+  where?: Prisma.DealerApplicationWhereInput
+  orderBy?: Prisma.DealerApplicationOrderByWithRelationInput | Prisma.DealerApplicationOrderByWithRelationInput[]
+  cursor?: Prisma.DealerApplicationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DealerApplicationScalarFieldEnum | Prisma.DealerApplicationScalarFieldEnum[]
+}
+
+/**
+ * Customer.supportTickets
+ */
+export type Customer$supportTicketsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupportTicket
+   */
+  select?: Prisma.SupportTicketSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupportTicket
+   */
+  omit?: Prisma.SupportTicketOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupportTicketInclude<ExtArgs> | null
+  where?: Prisma.SupportTicketWhereInput
+  orderBy?: Prisma.SupportTicketOrderByWithRelationInput | Prisma.SupportTicketOrderByWithRelationInput[]
+  cursor?: Prisma.SupportTicketWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupportTicketScalarFieldEnum | Prisma.SupportTicketScalarFieldEnum[]
 }
 
 /**
