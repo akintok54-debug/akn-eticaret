@@ -77,17 +77,12 @@ export function CatalogProvider({
       localStorage.removeItem("akn-brands");
     }
 
-    setCategories(unique([...savedCategories, ...productCategories]));
-    setBrands(unique([...savedBrands, ...productBrands]));
+    // Hydrate locally saved catalog drafts; persisted products are merged below.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCategories(unique(savedCategories));
+    setBrands(unique(savedBrands));
     setLoaded(true);
   }, []);
-
-  useEffect(() => {
-    if (!loaded) return;
-
-    setCategories((current) => unique([...current, ...productCategories]));
-    setBrands((current) => unique([...current, ...productBrands]));
-  }, [productCategories, productBrands, loaded]);
 
   useEffect(() => {
     if (loaded) {
@@ -220,8 +215,8 @@ export function CatalogProvider({
   return (
     <CatalogContext.Provider
       value={{
-        categories,
-        brands,
+        categories: unique([...categories, ...productCategories]),
+        brands: unique([...brands, ...productBrands]),
         addCategory,
         renameCategory,
         deleteCategory,

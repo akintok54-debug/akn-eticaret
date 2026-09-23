@@ -1,0 +1,5 @@
+import { z } from "zod";
+import { adminGuard } from "@/lib/admin";
+import { prisma } from "@/lib/prisma";
+export async function GET(request:Request){const denied=adminGuard(request);if(denied)return denied;try{const customers=await prisma.customer.findMany({include:{addresses:{take:1}},orderBy:{createdAt:"desc"},take:500});return Response.json({customers:customers.map(c=>({...c,city:c.addresses[0]?.city??"",district:c.addresses[0]?.district??"",address:c.addresses[0]?.address??""}))},{headers:{"Cache-Control":"no-store"}});}catch{return Response.json({message:"Müşteriler alınamadı."},{status:503});}}
+export async function PATCH(request:Request){const denied=adminGuard(request);if(denied)return denied;try{const parsed=z.object({id:z.string().min(1),status:z.enum(["none","pending","approved","passive"])}).safeParse(await request.json());if(!parsed.success)return Response.json({message:"Geçersiz durum."},{status:400});await prisma.customer.update({where:{id:parsed.data.id},data:{dealerStatus:parsed.data.status}});return Response.json({success:true});}catch{return Response.json({message:"Bayi durumu güncellenemedi."},{status:503});}}

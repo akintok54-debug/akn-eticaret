@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { adminGuard } from "@/lib/admin";
 
 const stockSchema = z.object({
   amount: z.number().int(),
@@ -16,6 +17,7 @@ export async function PATCH(
   request: Request,
   context: RouteContext
 ) {
+  const denied = adminGuard(request); if (denied) return denied;
   try {
     const { id } = await context.params;
     const body = await request.json();
@@ -59,12 +61,14 @@ export async function PATCH(
       );
     }
 
-    const product = await prisma.product.update({
-      where: { id },
+    const updated = await prisma.product.updateMany({
+      where: { id, stock: { gte: Math.max(0, -parsed.data.amount) } },
       data: {
-        stock: newStock,
+        stock: { increment: parsed.data.amount },
       },
     });
+    if (!updated.count) return NextResponse.json({ success: false, message: "Yetersiz stok." }, { status: 409 });
+    const product = await prisma.product.findUniqueOrThrow({ where: { id } });
 
     return NextResponse.json({
       success: true,

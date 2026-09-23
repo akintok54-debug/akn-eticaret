@@ -45,3 +45,17 @@ next-env.d.ts
 /prisma/dev.db-*
 *.bak
 *.bak*
+.vercel
+.env*
+
+!.env.example
+/.vercel-other-project-backup/
+
+# local agent/log/backup files
+/.agent-logs/
+/scripts/yedek-*/
+/akn-urunler-*-YEDEK.json
+/prisma/schema-*-YEDEK.prisma
+
+/akn-kategori-uygula*.ts
+/akn-urunler-726.json

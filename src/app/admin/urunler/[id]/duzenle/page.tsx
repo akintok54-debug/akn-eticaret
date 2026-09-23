@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import {
-  useEffect,
   useState,
   type FormEvent,
   type ReactNode,
@@ -28,13 +28,8 @@ export default function EditProductPage() {
     (item) => item.id === params.id
   );
 
-  const [active, setActive] = useState(true);
-
-  useEffect(() => {
-    if (product) {
-      setActive(product.active);
-    }
-  }, [product]);
+  const [activeOverride, setActive] = useState<boolean | null>(null);
+  const active = activeOverride ?? product?.active ?? true;
 
   if (!loaded) {
     return (
@@ -67,14 +62,14 @@ export default function EditProductPage() {
 
   const currentProduct = product;
 
-  function handleSubmit(
+  async function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
     const form = new FormData(event.currentTarget);
 
-    updateProduct(currentProduct.id, {
+    const saved = await updateProduct(currentProduct.id, {
       name: String(form.get("name") || "").trim(),
       sku: String(form.get("sku") || "").trim(),
       barcode: String(form.get("barcode") || "").trim(),
@@ -107,7 +102,7 @@ export default function EditProductPage() {
       active,
     });
 
-    router.push("/admin/urunler");
+    if (saved) router.push("/admin/urunler");
   }
 
   return (
@@ -243,7 +238,7 @@ export default function EditProductPage() {
             />
 
             {currentProduct.image && (
-              <img
+              <Image width={160} height={160} unoptimized
                 src={currentProduct.image}
                 alt={currentProduct.name}
                 className="mt-4 h-40 w-40 rounded-xl border object-contain"

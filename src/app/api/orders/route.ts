@@ -1,0 +1,59 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@/lib/prisma";
+import { guestSession } from "@/lib/guest-session";
+import { checkoutSchema, checkoutSettings, shippingCost } from "@/lib/checkout";
+import { orderView } from "@/lib/order-view";
+import { isAdmin } from "@/lib/admin";
+
+export async function GET(request: Request) {
+ try {
+  const admin = isAdmin(request);
+  const guest = admin ? null : await guestSession();
+  if (!admin && !guest) return Response.json({orders:[]},{headers:{"Cache-Control":"no-store"}});
+  const orders = await prisma.order.findMany({where:admin?{}:{guestSessionId:guest},include:{items:true},orderBy:{createdAt:"desc"},take:100});
+  return Response.json({orders:orders.map(orderView)},{headers:{"Cache-Control":"no-store"}});
+ } catch { return Response.json({message:"Siparişler alınamadı."},{status:503}); }
+}
+
+export async function POST(request: Request) {
+ if (!checkoutSettings().enabled) return Response.json({message:"Mağazamız satışa hazırlanıyor. Sipariş alımı henüz açık değil."},{status:503});
+ const origin=request.headers.get("origin");
+ if (!origin || (origin!==new URL(request.url).origin && origin!==process.env.SITE_URL)) return Response.json({message:"Geçersiz istek kaynağı."},{status:403});
+ try {
+  const parsed=checkoutSchema.safeParse(await request.json());
+  if (!parsed.success) return Response.json({message:"Teslimat, fatura ve sepet bilgilerinizi kontrol edin."},{status:400});
+  const data=parsed.data;
+  const guest=await guestSession(true);
+  const key=`${guest}:${data.checkoutKey}`;
+  const existing=await prisma.order.findUnique({where:{checkoutKey:key},include:{items:true}});
+  if(existing) return Response.json({order:orderView(existing)});
+  const quantities=new Map<string,number>();
+  for(const item of data.items) quantities.set(item.productId,(quantities.get(item.productId)??0)+item.quantity);
+  if([...quantities.values()].some(q=>q>999)) return Response.json({message:"Ürün adedi sınırı aşıldı."},{status:400});
+  const order=await prisma.$transaction(async tx=>{
+   const products=await tx.product.findMany({where:{id:{in:[...quantities.keys()]},active:true}});
+   if(products.length!==quantities.size) throw new Error("STOCK");
+   let subtotalCents=0;
+   const lines=[];
+   for(const product of products.sort((a,b)=>a.id.localeCompare(b.id))){
+    const quantity=quantities.get(product.id)!;
+    const changed=await tx.product.updateMany({where:{id:product.id,active:true,stock:{gte:quantity}},data:{stock:{decrement:quantity}}});
+    if(!changed.count) throw new Error("STOCK");
+    const cents=Math.round(product.retailPrice*100);
+    if(!Number.isSafeInteger(cents)||cents<0) throw new Error("PRICE");
+    subtotalCents+=cents*quantity;
+    lines.push({productId:product.id,productName:product.name,sku:product.sku,barcode:product.barcode,unitPrice:cents/100,quantity,vatRate:product.vatRate,lineTotal:cents*quantity/100});
+   }
+   const subtotal=subtotalCents/100;
+   const shipping=shippingCost(subtotal);
+   if (Math.round(data.expectedTotal * 100) !== subtotalCents + Math.round(shipping * 100)) throw new Error("PRICE_CHANGED");
+   return tx.order.create({data:{checkoutKey:key,guestSessionId:guest,orderNumber:`AKN-${randomUUID().replace(/-/g,"").slice(0,16).toUpperCase()}`,customerName:data.customer.fullName,customerPhone:data.customer.phone,customerEmail:data.customer.email,city:data.delivery.city,district:data.delivery.district,deliveryAddress:data.delivery.address,invoiceType:data.invoice.type,companyName:data.invoice.companyName,taxOffice:data.invoice.taxOffice,taxNumber:data.invoice.taxNumber,shippingMethod:"standard",paymentMethod:"transfer",subtotal,shippingTotal:shipping,total:(subtotalCents+Math.round(shipping*100))/100,items:{create:lines}},include:{items:true}});
+  });
+  return Response.json({order:orderView(order)},{status:201});
+ } catch(error) {
+  if(error instanceof SyntaxError) return Response.json({message:"Geçersiz istek."},{status:400});
+  if(error instanceof Error && error.message==="PRICE_CHANGED") return Response.json({message:"Fiyat veya kargo tutarı değişti. Sepetinizi güncelleyip yeniden onaylayın."},{status:409});
+  if(error instanceof Error && error.message==="STOCK") return Response.json({message:"Sepetinizdeki bir ürün için yeterli stok kalmadı. Sepetinizi güncelleyin."},{status:409});
+  return Response.json({message:"Sipariş kaydedilemedi. Lütfen tekrar deneyin; sepetiniz korunuyor."},{status:503});
+ }
+}

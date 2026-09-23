@@ -119,7 +119,7 @@ export default function BulkProductsPage() {
     );
   }
 
-  function applyPrice() {
+  async function applyPrice() {
     if (ids.length === 0) return;
 
     const value = Number(priceValue);
@@ -145,7 +145,7 @@ export default function BulkProductsPage() {
       return;
     }
 
-    updateManyProducts(ids, (product) => {
+    const saved = await updateManyProducts(ids, (product) => {
       const changes: Product = { ...product };
 
       if (
@@ -167,10 +167,11 @@ export default function BulkProductsPage() {
       return changes;
     });
 
+    if (!saved) return;
     alert("Toplu fiyat güncellemesi tamamlandı.");
   }
 
-  function applyStock() {
+  async function applyStock() {
     const value = Number(stockValue);
 
     if (
@@ -190,7 +191,7 @@ export default function BulkProductsPage() {
       return;
     }
 
-    updateManyProducts(ids, (product) => {
+    const saved = await updateManyProducts(ids, (product) => {
       let stock = product.stock;
 
       if (stockOperation === "add") {
@@ -211,10 +212,11 @@ export default function BulkProductsPage() {
       };
     });
 
+    if (!saved) return;
     alert("Toplu stok işlemi tamamlandı.");
   }
 
-  function applyVat() {
+  async function applyVat() {
     const vat = Number(vatValue);
 
     if (
@@ -234,15 +236,16 @@ export default function BulkProductsPage() {
       return;
     }
 
-    updateManyProducts(ids, (product) => ({
+    const saved = await updateManyProducts(ids, (product) => ({
       ...product,
       vatRate: vat,
     }));
 
+    if (!saved) return;
     alert("KDV güncellendi.");
   }
 
-  function setStatus(active: boolean) {
+  async function setStatus(active: boolean) {
     if (ids.length === 0) return;
 
     if (
@@ -255,10 +258,11 @@ export default function BulkProductsPage() {
       return;
     }
 
-    updateManyProducts(ids, (product) => ({
+    const saved = await updateManyProducts(ids, (product) => ({
       ...product,
       active,
     }));
+    if (!saved) return;
   }
 
   return (

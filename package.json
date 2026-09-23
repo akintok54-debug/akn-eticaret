@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/start.mjs",
+    "test": "node --test tests/commerce.test.mjs",
+    "db:deploy": "prisma migrate deploy",
+    "launch:check": "node scripts/check-readiness.mjs",
+    "admin:prepare": "node scripts/prepare-admin.mjs",
     "lint": "eslint",
     "postinstall": "prisma generate"
   },
@@ -16,7 +20,8 @@
     "next": "16.3.5",
     "pg": "^8.23.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

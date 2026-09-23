@@ -272,7 +272,7 @@ export default function ProductTransferPage() {
       if (missing.length) {
         alert(
           "Eksik kolon: " +
-            missing.join(", ")
+          missing.join(", ")
         );
 
         return;
@@ -362,7 +362,7 @@ export default function ProductTransferPage() {
             active:
               booleanValue(
                 value(row, "aktif") ||
-                  "1"
+                "1"
               ),
           });
         });
@@ -373,7 +373,7 @@ export default function ProductTransferPage() {
     reader.readAsText(file, "UTF-8");
   }
 
-  function importProducts() {
+  async function importProducts() {
     if (!preview.length) return;
 
     if (
@@ -385,10 +385,10 @@ export default function ProductTransferPage() {
     }
 
     const result =
-      addManyProducts(preview);
+      await addManyProducts(preview);
 
     alert(
-      `İşlem tamamlandı.\nYeni: ${result.added}\nGüncellenen: ${result.updated}`
+      `İşlem tamamlandı.\nYeni: ${result.added}\nGüncellenen: ${result.updated}\nBaşarısız: ${result.failed}`
     );
 
     setPreview([]);

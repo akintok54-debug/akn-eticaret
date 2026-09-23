@@ -1,0 +1,8 @@
+.env
+.env.*
+.vercel-other-project-backup
+.git
+node_modules
+.next
+tests
+*.log

@@ -13,12 +13,12 @@ export default function NewProductPage() {
 
   const [active, setActive] = useState(true);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const form = new FormData(event.currentTarget);
 
-    addProduct({
+    const saved = await addProduct({
       id: crypto.randomUUID(),
       sku: String(form.get("sku") || "").trim(),
       barcode: String(form.get("barcode") || "").trim(),
@@ -36,7 +36,7 @@ export default function NewProductPage() {
       active,
     });
 
-    router.push("/admin/urunler");
+    if (saved) router.push("/admin/urunler");
   }
 
   return (

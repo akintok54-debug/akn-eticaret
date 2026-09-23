@@ -14,14 +14,16 @@ type AddToCartProps = {
 };
 
 export default function AddToCart({ product }: AddToCartProps) {
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
+  const remaining = product.stock - (items.find(item => item.id === product.id)?.quantity ?? 0);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
   function handleAddToCart() {
+    if (remaining <= 0) return;
     const safeQuantity = Math.max(
       1,
-      Math.min(quantity, product.stock)
+      Math.min(Math.floor(quantity), remaining)
     );
 
     addItem(
@@ -46,6 +48,8 @@ export default function AddToCart({ product }: AddToCartProps) {
       <div className="flex gap-3">
         <input
           type="number"
+          aria-label="Ürün adedi"
+          step="1"
           min="1"
           max={product.stock}
           value={quantity}
@@ -66,7 +70,7 @@ export default function AddToCart({ product }: AddToCartProps) {
         <button
           type="button"
           onClick={handleAddToCart}
-          disabled={product.stock <= 0}
+          disabled={remaining <= 0}
           className="flex-1 rounded-xl bg-red-600 px-6 py-4 font-black text-white disabled:cursor-not-allowed disabled:bg-slate-300"
         >
           {product.stock > 0 ? "Sepete Ekle" : "Stokta Yok"}

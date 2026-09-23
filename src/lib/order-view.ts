@@ -1,0 +1,4 @@
+import type { Order, OrderItem } from "@/generated/prisma/client";
+export function orderView(order: Order & {items: OrderItem[]}) {
+  return { id: order.id, orderNumber: order.orderNumber, createdAt: order.createdAt.toISOString(), customer: { fullName: order.customerName, phone: order.customerPhone, email: order.customerEmail ?? "" }, delivery: { city: order.city, district: order.district, address: order.deliveryAddress }, invoice: { type: order.invoiceType, companyName: order.companyName ?? "", taxOffice: order.taxOffice ?? "", taxNumber: order.taxNumber ?? "" }, shippingMethod: order.shippingMethod, paymentMethod: order.paymentMethod, subtotal: order.subtotal, shippingTotal: order.shippingTotal, total: order.total, status: order.status, items: order.items.map(i=>({ productId:i.productId,name:i.productName,price:i.unitPrice,quantity:i.quantity,image:null })) };
+}

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { adminGuard, isAdmin } from "@/lib/admin";
 
 const updateSchema = z.object({
   erpProductId: z.string().trim().min(1).nullable().optional(),
@@ -37,7 +38,7 @@ export async function GET(
       where: { id },
     });
 
-    if (!product) {
+    if (!product || (!product.active && !isAdmin(_request))) {
       return NextResponse.json(
         {
           success: false,
@@ -49,7 +50,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      product,
+      product: isAdmin(_request) ? product : { id: product.id, sku: product.sku, barcode: product.barcode, name: product.name, brand: product.brand, category: product.category, description: product.description, retailPrice: product.retailPrice, vatRate: product.vatRate, stock: product.stock, image: product.image, active: product.active },
     });
   } catch (error) {
     console.error("GET /api/products/[id]:", error);
@@ -68,6 +69,7 @@ export async function PATCH(
   request: Request,
   context: RouteContext
 ) {
+  const denied = adminGuard(request); if (denied) return denied;
   try {
     const { id } = await context.params;
     const body = await request.json();
@@ -126,6 +128,7 @@ export async function DELETE(
   _request: Request,
   context: RouteContext
 ) {
+  const denied = adminGuard(_request); if (denied) return denied;
   try {
     const { id } = await context.params;
 

@@ -1,225 +1,203 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
-
+import { useState } from "react";
+import StoreHeader from "@/components/layout/StoreHeader";
+import StoreFooter from "@/components/layout/StoreFooter";
 import AddToCart from "@/components/AddToCart";
 import { useProducts } from "@/context/ProductContext";
+import { money } from "@/lib/store";
 
 export default function ProductDetailPage() {
-  const params = useParams<{ id: string }>();
-  const { products } = useProducts();
+    const { id } = useParams<{ id: string }>();
+    const { products, loaded, error } = useProducts();
+    const [imageOpen, setImageOpen] = useState(false);
 
-  const product = products.find(
-    (item) => item.id === params.id
-  );
-
-  if (!product || !product.active) {
-    return (
-      <main className="min-h-screen bg-slate-50 px-4 py-16">
-        <div className="mx-auto max-w-xl rounded-2xl border bg-white p-10 text-center">
-          <div className="text-5xl">📦</div>
-
-          <h1 className="mt-5 text-2xl font-black">
-            Ürün bulunamadı
-          </h1>
-
-          <p className="mt-2 text-slate-500">
-            Ürün kaldırılmış, pasif durumda veya mevcut değil.
-          </p>
-
-          <Link
-            href="/urunler"
-            className="mt-6 inline-block rounded-xl bg-slate-950 px-6 py-3 font-black text-white"
-          >
-            Ürünlere Dön
-          </Link>
-        </div>
-      </main>
+    const p = products.find(
+        (product) => product.id === id && product.active
     );
-  }
 
-  const stockStatus =
-    product.stock <= 0
-      ? "Tükendi"
-      : product.stock <= product.criticalStock
-        ? `Son ${product.stock} adet`
-        : `${product.stock} adet stokta`;
+    return (
+        <>
+            <StoreHeader />
 
-  return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5">
-          <Link
-            href="/"
-            className="text-xl font-black"
-          >
-            AKN MOTOSİKLET
-          </Link>
-
-          <div className="flex gap-2">
-            <Link
-              href="/urunler"
-              className="rounded-xl border px-4 py-2 font-bold"
-            >
-              Ürünler
-            </Link>
-
-            <Link
-              href="/sepet"
-              className="rounded-xl bg-slate-950 px-4 py-2 font-bold text-white"
-            >
-              Sepetim
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <div className="mb-5 text-sm text-slate-500">
-          <Link href="/urunler">
-            Ürünler
-          </Link>
-          {" / "}
-          {product.category}
-          {" / "}
-          {product.name}
-        </div>
-
-        <div className="grid gap-8 rounded-3xl border bg-white p-5 md:grid-cols-2 md:p-8">
-          <section>
-            <div className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl bg-slate-100">
-              {product.image ? (
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-full w-full object-contain p-6"
-                />
-              ) : (
-                <div className="text-center">
-                  <div className="text-6xl">
-                    📦
-                  </div>
-
-                  <div className="mt-3 font-bold text-slate-400">
-                    Görsel Yok
-                  </div>
+            <main className="store-container">
+                <div className="page-heading">
+                    <p>
+                        <Link href="/">Ana sayfa</Link> /{" "}
+                        <Link href="/urunler">Ürünler</Link> /{" "}
+                        {p?.name ?? "Ürün"}
+                    </p>
                 </div>
-              )}
-            </div>
-          </section>
 
-          <section className="flex flex-col">
-            <div className="text-sm font-black text-red-600">
-              {product.brand}
-            </div>
+                {!loaded ? (
+                    <div className="catalog-message mb-12" role="status">
+                        Ürün yükleniyor…
+                    </div>
+                ) : error ? (
+                    <div className="catalog-message mb-12" role="alert">
+                        {error}
+                    </div>
+                ) : !p ? (
+                    <div className="catalog-message mb-12">
+                        Ürün bulunamadı.{" "}
+                        <Link href="/urunler" className="underline">
+                            Kataloğa dönün.
+                        </Link>
+                    </div>
+                ) : (
+                    <>
+                        <div className="grid md:grid-cols-2 gap-10 mb-10">
+                            <div
+                                className={`relative aspect-square rounded-lg bg-slate-50 flex items-center justify-center ${p.image ? "cursor-zoom-in" : ""
+                                    }`}
+                                onClick={() => {
+                                    if (p.image) setImageOpen(true);
+                                }}
+                            >
+                                {p.image ? (
+                                    <Image
+                                        src={p.image}
+                                        alt={p.name}
+                                        fill
+                                        unoptimized
+                                        sizes="(max-width:700px) 100vw, 50vw"
+                                        style={{
+                                            objectFit: "contain",
+                                            padding: 35,
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="text-center text-slate-400">
+                                        <span className="text-5xl block font-black">
+                                            AKN
+                                        </span>
 
-            <h1 className="mt-2 text-3xl font-black md:text-4xl">
-              {product.name}
-            </h1>
+                                        <span className="text-sm block mt-4">
+                                            Ürün görseli hazırlanıyor
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
 
-            <div className="mt-3 text-sm text-slate-500">
-              {product.category}
-            </div>
+                            <div>
+                                <Link
+                                    href={`/urunler?brand=${encodeURIComponent(
+                                        p.brand
+                                    )}`}
+                                    className="overline"
+                                >
+                                    {p.brand}
+                                </Link>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
-              <Info
-                label="Stok Kodu"
-                value={product.sku}
-              />
+                                <h1 className="text-3xl lg:text-4xl font-bold mt-4 leading-tight">
+                                    {p.name}
+                                </h1>
 
-              <Info
-                label="Barkod"
-                value={product.barcode}
-              />
+                                <p className="text-xs text-slate-400 mt-4">
+                                    Stok kodu: {p.sku} · {p.category}
+                                </p>
 
-              <Info
-                label="KDV"
-                value={`%${product.vatRate}`}
-              />
+                                <p className="text-sm text-slate-600 mt-6 leading-7">
+                                    {p.description}
+                                </p>
 
-              <Info
-                label="Stok"
-                value={stockStatus}
-              />
-            </div>
+                                <p className="text-sm text-emerald-700 mt-6">
+                                    {p.stock > 0
+                                        ? `● ${p.stock} adet stokta`
+                                        : "Stokta yok"}
+                                </p>
 
-            <div className="mt-7 border-y py-6">
-              <div className="text-sm font-bold text-slate-500">
-                Perakende Fiyatı
-              </div>
+                                <strong className="text-4xl block mt-3">
+                                    {money(p.retailPrice)}
+                                </strong>
 
-              <div className="mt-1 text-4xl font-black">
-                ₺
-                {product.retailPrice.toLocaleString(
-                  "tr-TR",
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }
+                                <span className="text-xs text-slate-400">
+                                    KDV dahil
+                                </span>
+
+                                <AddToCart
+                                    product={{
+                                        id: p.id,
+                                        name: p.name,
+                                        price: p.retailPrice,
+                                        image: p.image,
+                                        stock: p.stock,
+                                    }}
+                                />
+
+                                <div className="notice mt-7">
+                                    Sipariş öncesinde parçanın motosikletinizin
+                                    marka, model ve üretim yılıyla uyumunu kontrol
+                                    edin.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="form-panel mb-12">
+                            <h2>Ürün bilgileri</h2>
+
+                            <dl className="grid grid-cols-2 sm:grid-cols-4 gap-5 text-sm">
+                                <div>
+                                    <dt className="text-slate-400">Marka</dt>
+                                    <dd className="mt-2">{p.brand}</dd>
+                                </div>
+
+                                <div>
+                                    <dt className="text-slate-400">Kategori</dt>
+                                    <dd className="mt-2">{p.category}</dd>
+                                </div>
+
+                                <div>
+                                    <dt className="text-slate-400">Stok kodu</dt>
+                                    <dd className="mt-2">{p.sku}</dd>
+                                </div>
+
+                                <div>
+                                    <dt className="text-slate-400">Barkod</dt>
+                                    <dd className="mt-2">
+                                        {p.barcode || "Belirtilmedi"}
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        {imageOpen && p.image && (
+                            <div
+                                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4"
+                                onClick={() => setImageOpen(false)}
+                            >
+                                <button
+                                    type="button"
+                                    onClick={() => setImageOpen(false)}
+                                    className="absolute right-5 top-5 z-10 h-12 w-12 rounded-full bg-white text-2xl font-black text-black"
+                                    aria-label="Kapat"
+                                >
+                                    ×
+                                </button>
+
+                                <div
+                                    className="relative h-[90vh] w-[95vw]"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <Image
+                                        src={p.image}
+                                        alt={p.name}
+                                        fill
+                                        unoptimized
+                                        sizes="95vw"
+                                        style={{ objectFit: "contain" }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
-              </div>
+            </main>
 
-              <div className="mt-2 text-xs text-slate-500">
-                KDV %{product.vatRate}
-              </div>
-            </div>
-
-            {product.description && (
-              <div className="mt-6">
-                <h2 className="font-black">
-                  Ürün Açıklaması
-                </h2>
-
-                <p className="mt-2 leading-7 text-slate-600">
-                  {product.description}
-                </p>
-              </div>
-            )}
-
-            <div className="mt-auto pt-8">
-              {product.stock > 0 ? (
-                <AddToCart
-                  product={{
-                    id: product.id,
-                    name: product.name,
-                    price: product.retailPrice,
-                    image: product.image,
-                    stock: product.stock,
-                  }}
-                />
-              ) : (
-                <button
-                  disabled
-                  className="w-full rounded-xl bg-slate-300 py-4 font-black text-slate-600"
-                >
-                  Stokta Yok
-                </button>
-              )}
-            </div>
-          </section>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function Info({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-xl bg-slate-50 p-3">
-      <div className="text-xs font-bold text-slate-400">
-        {label}
-      </div>
-
-      <div className="mt-1 break-all font-black">
-        {value || "-"}
-      </div>
-    </div>
-  );
+            <StoreFooter />
+        </>
+    );
 }

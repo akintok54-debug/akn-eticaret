@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { adminGuard, isAdmin } from "@/lib/admin";
 
 const productSchema = z.object({
   erpProductId: z.string().trim().min(1).nullable().optional(),
@@ -20,9 +21,16 @@ const productSchema = z.object({
   active: z.boolean().default(true),
 });
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!process.env.DATABASE_URL) {
+    return NextResponse.json(
+      { success: !isAdmin(request), count: 0, products: [], message: "Ürün kataloğumuz hazırlanıyor." },
+      { status: isAdmin(request) ? 503 : 200, headers: { "Cache-Control": "no-store" } }
+    );
+  }
   try {
     const products = await prisma.product.findMany({
+      where: isAdmin(request) ? {} : { active: true },
       orderBy: {
         createdAt: "desc",
       },
@@ -31,8 +39,8 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       count: products.length,
-      products,
-    });
+      products: isAdmin(request) ? products : products.map(p => ({ id:p.id,sku:p.sku,barcode:p.barcode,name:p.name,brand:p.brand,category:p.category,description:p.description,retailPrice:p.retailPrice,vatRate:p.vatRate,stock:p.stock,image:p.image,active:p.active })),
+    }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("GET /api/products:", error);
 
@@ -47,6 +55,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const denied = adminGuard(request); if (denied) return denied;
   try {
     const body = await request.json();
     const parsed = productSchema.safeParse(body);

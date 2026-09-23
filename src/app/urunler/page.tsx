@@ -1,239 +1,262 @@
 "use client";
 
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-
-import AddToCart from "@/components/AddToCart";
+import StoreHeader from "@/components/layout/StoreHeader";
+import StoreFooter from "@/components/layout/StoreFooter";
+import StoreProductCard from "@/components/product/StoreProductCard";
 import { useProducts } from "@/context/ProductContext";
-import { useCustomers } from "@/context/CustomerContext";
+import { store } from "@/lib/store";
+
+function Catalog() {
+    const params = useSearchParams();
+    const { products, loaded, error, refreshProducts } = useProducts();
+
+    const urlQuery = params.get("q") ?? "";
+    const urlCategory = params.get("category") ?? "";
+    const urlBrand = params.get("brand") ?? "";
+
+    const [query, setQuery] = useState(urlQuery);
+    const [category, setCategory] = useState(urlCategory);
+    const [brand, setBrand] = useState(urlBrand);
+    const [sort, setSort] = useState("default");
+    const [inStock, setInStock] = useState(false);
+
+    // Üst menüden URL değiştiğinde filtreyi de güncelle.
+    useEffect(() => {
+        setQuery(urlQuery);
+        setCategory(urlCategory);
+        setBrand(urlBrand);
+    }, [urlQuery, urlCategory, urlBrand]);
+
+    const active = products.filter((p) => p.active);
+
+    const categories = useMemo(() => {
+        const productCategories = active.map((p) => p.category);
+
+        return Array.from(
+            new Set([
+                ...store.categories,
+                ...productCategories,
+                ...(category ? [category] : []),
+            ])
+        ).sort((a, b) => a.localeCompare(b, "tr"));
+    }, [active, category]);
+
+    const brands = Array.from(
+        new Set(active.map((p) => p.brand))
+    ).sort((a, b) => a.localeCompare(b, "tr"));
+
+    const q = query.trim().toLocaleLowerCase("tr-TR");
+
+    const filtered = active
+        .filter((p) => {
+            const matchesQuery =
+                !q ||
+                [p.name, p.sku, p.barcode, p.brand].some((value) =>
+                    (value || "")
+                        .toLocaleLowerCase("tr-TR")
+                        .includes(q)
+                );
+
+            // Ana kategori seçilirse alt kategorileri de getir.
+            // Örnek:
+            // Motor & Mekanik
+            // Motor & Mekanik > Yakıt Sistemi
+            // Motor & Mekanik > Soğutma & Devirdaim
+            const matchesCategory =
+                !category ||
+                p.category === category ||
+                p.category.startsWith(`${category} >`);
+
+            const matchesBrand =
+                !brand || p.brand === brand;
+
+            const matchesStock =
+                !inStock || p.stock > 0;
+
+            return (
+                matchesQuery &&
+                matchesCategory &&
+                matchesBrand &&
+                matchesStock
+            );
+        })
+        .sort((a, b) =>
+            sort === "asc"
+                ? a.retailPrice - b.retailPrice
+                : sort === "desc"
+                    ? b.retailPrice - a.retailPrice
+                    : sort === "name"
+                        ? a.name.localeCompare(b.name, "tr")
+                        : 0
+        );
+
+    return (
+        <>
+            <StoreHeader />
+
+            <main className="store-container">
+                <div className="page-heading">
+                    <p>
+                        <Link href="/">Ana sayfa</Link> / Ürünler
+                    </p>
+
+                    <span className="overline">
+                        AKN MOTOSİKLET KATALOĞU
+                    </span>
+
+                    <h1>{category || "Tüm ürünler"}</h1>
+                </div>
+
+                <div className="catalog-layout">
+                    <aside className="catalog-filters">
+                        <label>
+                            Ürün ara
+                            <input
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Ürün, marka, stok kodu"
+                            />
+                        </label>
+
+                        <label>
+                            Kategori
+                            <select
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                            >
+                                <option value="">Tüm kategoriler</option>
+
+                                {categories.map((c) => (
+                                    <option key={c} value={c}>
+                                        {c}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+
+                        <label>
+                            Marka
+                            <select
+                                value={brand}
+                                onChange={(e) => setBrand(e.target.value)}
+                            >
+                                <option value="">Tüm markalar</option>
+
+                                {brands.map((b) => (
+                                    <option key={b} value={b}>
+                                        {b}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+
+                        <label
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 9,
+                            }}
+                        >
+                            <input
+                                style={{ width: 16, margin: 0 }}
+                                type="checkbox"
+                                checked={inStock}
+                                onChange={(e) =>
+                                    setInStock(e.target.checked)
+                                }
+                            />
+                            Yalnızca stoktakiler
+                        </label>
+
+                        <button
+                            className="text-xs underline"
+                            onClick={() => {
+                                setQuery("");
+                                setCategory("");
+                                setBrand("");
+                                setInStock(false);
+                            }}
+                        >
+                            Filtreleri temizle
+                        </button>
+                    </aside>
+
+                    <section>
+                        <div className="catalog-toolbar">
+                            <span>
+                                {loaded
+                                    ? `${filtered.length} ürün bulundu`
+                                    : "Ürünler yükleniyor…"}
+                            </span>
+
+                            <select
+                                aria-label="Ürün sıralaması"
+                                value={sort}
+                                onChange={(e) => setSort(e.target.value)}
+                            >
+                                <option value="default">
+                                    Önerilen sıralama
+                                </option>
+                                <option value="asc">
+                                    Fiyat: düşükten yükseğe
+                                </option>
+                                <option value="desc">
+                                    Fiyat: yüksekten düşüğe
+                                </option>
+                                <option value="name">
+                                    Ürün adı: A–Z
+                                </option>
+                            </select>
+                        </div>
+
+                        {error ? (
+                            <div role="alert" className="catalog-message">
+                                {error}
+                                <button onClick={() => void refreshProducts()}>
+                                    Tekrar dene
+                                </button>
+                            </div>
+                        ) : !loaded ? (
+                            <div role="status" className="catalog-message">
+                                Katalog hazırlanıyor…
+                            </div>
+                        ) : filtered.length ? (
+                            <div className="product-grid">
+                                {filtered.map((p) => (
+                                    <StoreProductCard
+                                        key={p.id}
+                                        product={p}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="catalog-message">
+                                Aramanıza uygun ürün bulunamadı. Filtreleri
+                                değiştirerek tekrar deneyin.
+                            </div>
+                        )}
+                    </section>
+                </div>
+            </main>
+
+            <StoreFooter />
+        </>
+    );
+}
 
 export default function ProductsPage() {
-  const { products } = useProducts();
-  const { isApprovedDealer } = useCustomers();
-
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [brand, setBrand] = useState("");
-
-  const activeProducts = products.filter(
-    (product) => product.active
-  );
-
-  const categories = Array.from(
-    new Set(
-      activeProducts.map(
-        (product) => product.category
-      )
-    )
-  ).sort();
-
-  const brands = Array.from(
-    new Set(
-      activeProducts.map(
-        (product) => product.brand
-      )
-    )
-  ).sort();
-
-  const filtered = useMemo(() => {
-    const query = search
-      .trim()
-      .toLocaleLowerCase("tr-TR");
-
-    return activeProducts.filter((product) => {
-      const matchesSearch =
-        !query ||
-        product.name
-          .toLocaleLowerCase("tr-TR")
-          .includes(query) ||
-        product.sku
-          .toLocaleLowerCase("tr-TR")
-          .includes(query) ||
-        product.barcode
-          .toLocaleLowerCase("tr-TR")
-          .includes(query) ||
-        product.brand
-          .toLocaleLowerCase("tr-TR")
-          .includes(query);
-
-      const matchesCategory =
-        !category ||
-        product.category === category;
-
-      const matchesBrand =
-        !brand ||
-        product.brand === brand;
-
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesBrand
-      );
-    });
-  }, [
-    activeProducts,
-    search,
-    category,
-    brand,
-  ]);
-
-  return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5">
-          <Link
-            href="/"
-            className="text-xl font-black"
-          >
-            AKN MOTOSİKLET
-          </Link>
-
-          <Link
-            href="/sepet"
-            className="rounded-xl bg-slate-950 px-4 py-2 font-bold text-white"
-          >
-            Sepetim
-          </Link>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <h1 className="text-3xl font-black">
-          Tüm Ürünler
-        </h1>
-
-        <div className="mt-6 grid gap-3 rounded-2xl border bg-white p-4 md:grid-cols-3">
-          <input
-            value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
-            placeholder="Ürün, barkod, stok kodu veya marka ara"
-            className="rounded-xl border px-4 py-3"
-          />
-
-          <select
-            value={category}
-            onChange={(event) =>
-              setCategory(event.target.value)
-            }
-            className="rounded-xl border bg-white px-4 py-3"
-          >
-            <option value="">
-              Tüm Kategoriler
-            </option>
-
-            {categories.map((item) => (
-              <option
-                key={item}
-                value={item}
-              >
-                {item}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={brand}
-            onChange={(event) =>
-              setBrand(event.target.value)
-            }
-            className="rounded-xl border bg-white px-4 py-3"
-          >
-            <option value="">
-              Tüm Markalar
-            </option>
-
-            {brands.map((item) => (
-              <option
-                key={item}
-                value={item}
-              >
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mt-4 text-sm font-bold text-slate-500">
-          {filtered.length} ürün bulundu
-        </div>
-
-        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((product) => (
-            <article
-              key={product.id}
-              className="overflow-hidden rounded-2xl border bg-white"
-            >
-              <Link
-                href={`/urun/${product.id}`}
-                className="block"
-              >
-                <div className="flex aspect-square items-center justify-center bg-slate-100">
-                  {product.image ? (
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="h-full w-full object-contain p-4"
-                    />
-                  ) : (
-                    <div className="text-sm font-bold text-slate-400">
-                      Görsel Yok
-                    </div>
-                  )}
+    return (
+        <Suspense
+            fallback={
+                <div className="catalog-message">
+                    Katalog yükleniyor…
                 </div>
-
-                <div className="p-4 pb-2">
-                  <div className="text-xs font-bold text-red-600">
-                    {product.brand}
-                  </div>
-
-                  <h2 className="mt-1 min-h-12 font-black">
-                    {product.name}
-                  </h2>
-
-                  <div className="mt-1 text-xs text-slate-500">
-                    {product.category}
-                  </div>
-
-                  <div className="mt-4 text-2xl font-black">
-                    ₺
-                    {(isApprovedDealer ? product.dealerPrice : product.retailPrice).toLocaleString(
-                      "tr-TR",
-                      {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }
-                    )}
-                  </div>
-
-                  <div className="mt-1 text-xs text-slate-500">
-                    Stok: {product.stock}
-                  </div>
-                </div>
-              </Link>
-
-              <div className="p-4 pt-2">
-                <AddToCart
-                  product={{
-                    id: product.id,
-                    name: product.name,
-                    price: isApprovedDealer ? product.dealerPrice : product.retailPrice,
-                    image: product.image,
-                    stock: product.stock,
-                  }}
-                />
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {filtered.length === 0 && (
-          <div className="mt-8 rounded-2xl border bg-white p-10 text-center font-bold text-slate-500">
-            Aramanıza uygun ürün bulunamadı.
-          </div>
-        )}
-      </div>
-    </main>
-  );
+            }
+        >
+            <Catalog />
+        </Suspense>
+    );
 }

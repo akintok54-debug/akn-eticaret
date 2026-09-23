@@ -29,11 +29,13 @@ export type AggregateShoppingCart = {
 export type ShoppingCartAvgAggregateOutputType = {
   itemCount: number | null
   total: number | null
+  reminderCount: number | null
 }
 
 export type ShoppingCartSumAggregateOutputType = {
   itemCount: number | null
   total: number | null
+  reminderCount: number | null
 }
 
 export type ShoppingCartMinAggregateOutputType = {
@@ -47,6 +49,14 @@ export type ShoppingCartMinAggregateOutputType = {
   checkoutStarted: boolean | null
   itemCount: number | null
   total: number | null
+  checkoutStartedAt: Date | null
+  abandonedAt: Date | null
+  recoveredAt: Date | null
+  completedAt: Date | null
+  orderId: string | null
+  orderNumber: string | null
+  reminderSentAt: Date | null
+  reminderCount: number | null
   lastActivityAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -63,6 +73,14 @@ export type ShoppingCartMaxAggregateOutputType = {
   checkoutStarted: boolean | null
   itemCount: number | null
   total: number | null
+  checkoutStartedAt: Date | null
+  abandonedAt: Date | null
+  recoveredAt: Date | null
+  completedAt: Date | null
+  orderId: string | null
+  orderNumber: string | null
+  reminderSentAt: Date | null
+  reminderCount: number | null
   lastActivityAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -79,6 +97,14 @@ export type ShoppingCartCountAggregateOutputType = {
   checkoutStarted: number
   itemCount: number
   total: number
+  checkoutStartedAt: number
+  abandonedAt: number
+  recoveredAt: number
+  completedAt: number
+  orderId: number
+  orderNumber: number
+  reminderSentAt: number
+  reminderCount: number
   lastActivityAt: number
   createdAt: number
   updatedAt: number
@@ -89,11 +115,13 @@ export type ShoppingCartCountAggregateOutputType = {
 export type ShoppingCartAvgAggregateInputType = {
   itemCount?: true
   total?: true
+  reminderCount?: true
 }
 
 export type ShoppingCartSumAggregateInputType = {
   itemCount?: true
   total?: true
+  reminderCount?: true
 }
 
 export type ShoppingCartMinAggregateInputType = {
@@ -107,6 +135,14 @@ export type ShoppingCartMinAggregateInputType = {
   checkoutStarted?: true
   itemCount?: true
   total?: true
+  checkoutStartedAt?: true
+  abandonedAt?: true
+  recoveredAt?: true
+  completedAt?: true
+  orderId?: true
+  orderNumber?: true
+  reminderSentAt?: true
+  reminderCount?: true
   lastActivityAt?: true
   createdAt?: true
   updatedAt?: true
@@ -123,6 +159,14 @@ export type ShoppingCartMaxAggregateInputType = {
   checkoutStarted?: true
   itemCount?: true
   total?: true
+  checkoutStartedAt?: true
+  abandonedAt?: true
+  recoveredAt?: true
+  completedAt?: true
+  orderId?: true
+  orderNumber?: true
+  reminderSentAt?: true
+  reminderCount?: true
   lastActivityAt?: true
   createdAt?: true
   updatedAt?: true
@@ -139,6 +183,14 @@ export type ShoppingCartCountAggregateInputType = {
   checkoutStarted?: true
   itemCount?: true
   total?: true
+  checkoutStartedAt?: true
+  abandonedAt?: true
+  recoveredAt?: true
+  completedAt?: true
+  orderId?: true
+  orderNumber?: true
+  reminderSentAt?: true
+  reminderCount?: true
   lastActivityAt?: true
   createdAt?: true
   updatedAt?: true
@@ -242,6 +294,14 @@ export type ShoppingCartGroupByOutputType = {
   checkoutStarted: boolean
   itemCount: number
   total: number
+  checkoutStartedAt: Date | null
+  abandonedAt: Date | null
+  recoveredAt: Date | null
+  completedAt: Date | null
+  orderId: string | null
+  orderNumber: string | null
+  reminderSentAt: Date | null
+  reminderCount: number
   lastActivityAt: Date
   createdAt: Date
   updatedAt: Date
@@ -281,6 +341,14 @@ export type ShoppingCartWhereInput = {
   checkoutStarted?: Prisma.BoolFilter<"ShoppingCart"> | boolean
   itemCount?: Prisma.IntFilter<"ShoppingCart"> | number
   total?: Prisma.FloatFilter<"ShoppingCart"> | number
+  checkoutStartedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  abandonedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  recoveredAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  orderId?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  orderNumber?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  reminderSentAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  reminderCount?: Prisma.IntFilter<"ShoppingCart"> | number
   lastActivityAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
@@ -298,6 +366,14 @@ export type ShoppingCartOrderByWithRelationInput = {
   checkoutStarted?: Prisma.SortOrder
   itemCount?: Prisma.SortOrder
   total?: Prisma.SortOrder
+  checkoutStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  abandonedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  recoveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  orderId?: Prisma.SortOrderInput | Prisma.SortOrder
+  orderNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  reminderSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  reminderCount?: Prisma.SortOrder
   lastActivityAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -318,6 +394,14 @@ export type ShoppingCartWhereUniqueInput = Prisma.AtLeast<{
   checkoutStarted?: Prisma.BoolFilter<"ShoppingCart"> | boolean
   itemCount?: Prisma.IntFilter<"ShoppingCart"> | number
   total?: Prisma.FloatFilter<"ShoppingCart"> | number
+  checkoutStartedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  abandonedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  recoveredAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  orderId?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  orderNumber?: Prisma.StringNullableFilter<"ShoppingCart"> | string | null
+  reminderSentAt?: Prisma.DateTimeNullableFilter<"ShoppingCart"> | Date | string | null
+  reminderCount?: Prisma.IntFilter<"ShoppingCart"> | number
   lastActivityAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShoppingCart"> | Date | string
@@ -335,6 +419,14 @@ export type ShoppingCartOrderByWithAggregationInput = {
   checkoutStarted?: Prisma.SortOrder
   itemCount?: Prisma.SortOrder
   total?: Prisma.SortOrder
+  checkoutStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  abandonedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  recoveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  orderId?: Prisma.SortOrderInput | Prisma.SortOrder
+  orderNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  reminderSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  reminderCount?: Prisma.SortOrder
   lastActivityAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -359,6 +451,14 @@ export type ShoppingCartScalarWhereWithAggregatesInput = {
   checkoutStarted?: Prisma.BoolWithAggregatesFilter<"ShoppingCart"> | boolean
   itemCount?: Prisma.IntWithAggregatesFilter<"ShoppingCart"> | number
   total?: Prisma.FloatWithAggregatesFilter<"ShoppingCart"> | number
+  checkoutStartedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ShoppingCart"> | Date | string | null
+  abandonedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ShoppingCart"> | Date | string | null
+  recoveredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ShoppingCart"> | Date | string | null
+  completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ShoppingCart"> | Date | string | null
+  orderId?: Prisma.StringNullableWithAggregatesFilter<"ShoppingCart"> | string | null
+  orderNumber?: Prisma.StringNullableWithAggregatesFilter<"ShoppingCart"> | string | null
+  reminderSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ShoppingCart"> | Date | string | null
+  reminderCount?: Prisma.IntWithAggregatesFilter<"ShoppingCart"> | number
   lastActivityAt?: Prisma.DateTimeWithAggregatesFilter<"ShoppingCart"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ShoppingCart"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ShoppingCart"> | Date | string
@@ -375,6 +475,14 @@ export type ShoppingCartCreateInput = {
   checkoutStarted?: boolean
   itemCount?: number
   total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
   lastActivityAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -392,6 +500,14 @@ export type ShoppingCartUncheckedCreateInput = {
   checkoutStarted?: boolean
   itemCount?: number
   total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
   lastActivityAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -409,6 +525,14 @@ export type ShoppingCartUpdateInput = {
   checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemCount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -426,6 +550,14 @@ export type ShoppingCartUncheckedUpdateInput = {
   checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemCount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -443,6 +575,14 @@ export type ShoppingCartCreateManyInput = {
   checkoutStarted?: boolean
   itemCount?: number
   total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
   lastActivityAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -459,6 +599,14 @@ export type ShoppingCartUpdateManyMutationInput = {
   checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemCount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -475,6 +623,14 @@ export type ShoppingCartUncheckedUpdateManyInput = {
   checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemCount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -491,6 +647,14 @@ export type ShoppingCartCountOrderByAggregateInput = {
   checkoutStarted?: Prisma.SortOrder
   itemCount?: Prisma.SortOrder
   total?: Prisma.SortOrder
+  checkoutStartedAt?: Prisma.SortOrder
+  abandonedAt?: Prisma.SortOrder
+  recoveredAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
+  orderId?: Prisma.SortOrder
+  orderNumber?: Prisma.SortOrder
+  reminderSentAt?: Prisma.SortOrder
+  reminderCount?: Prisma.SortOrder
   lastActivityAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -499,6 +663,7 @@ export type ShoppingCartCountOrderByAggregateInput = {
 export type ShoppingCartAvgOrderByAggregateInput = {
   itemCount?: Prisma.SortOrder
   total?: Prisma.SortOrder
+  reminderCount?: Prisma.SortOrder
 }
 
 export type ShoppingCartMaxOrderByAggregateInput = {
@@ -512,6 +677,14 @@ export type ShoppingCartMaxOrderByAggregateInput = {
   checkoutStarted?: Prisma.SortOrder
   itemCount?: Prisma.SortOrder
   total?: Prisma.SortOrder
+  checkoutStartedAt?: Prisma.SortOrder
+  abandonedAt?: Prisma.SortOrder
+  recoveredAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
+  orderId?: Prisma.SortOrder
+  orderNumber?: Prisma.SortOrder
+  reminderSentAt?: Prisma.SortOrder
+  reminderCount?: Prisma.SortOrder
   lastActivityAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -528,6 +701,14 @@ export type ShoppingCartMinOrderByAggregateInput = {
   checkoutStarted?: Prisma.SortOrder
   itemCount?: Prisma.SortOrder
   total?: Prisma.SortOrder
+  checkoutStartedAt?: Prisma.SortOrder
+  abandonedAt?: Prisma.SortOrder
+  recoveredAt?: Prisma.SortOrder
+  completedAt?: Prisma.SortOrder
+  orderId?: Prisma.SortOrder
+  orderNumber?: Prisma.SortOrder
+  reminderSentAt?: Prisma.SortOrder
+  reminderCount?: Prisma.SortOrder
   lastActivityAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -536,6 +717,7 @@ export type ShoppingCartMinOrderByAggregateInput = {
 export type ShoppingCartSumOrderByAggregateInput = {
   itemCount?: Prisma.SortOrder
   total?: Prisma.SortOrder
+  reminderCount?: Prisma.SortOrder
 }
 
 export type ShoppingCartScalarRelationFilter = {
@@ -568,6 +750,14 @@ export type ShoppingCartCreateWithoutItemsInput = {
   checkoutStarted?: boolean
   itemCount?: number
   total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
   lastActivityAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -584,6 +774,14 @@ export type ShoppingCartUncheckedCreateWithoutItemsInput = {
   checkoutStarted?: boolean
   itemCount?: number
   total?: number
+  checkoutStartedAt?: Date | string | null
+  abandonedAt?: Date | string | null
+  recoveredAt?: Date | string | null
+  completedAt?: Date | string | null
+  orderId?: string | null
+  orderNumber?: string | null
+  reminderSentAt?: Date | string | null
+  reminderCount?: number
   lastActivityAt?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -616,6 +814,14 @@ export type ShoppingCartUpdateWithoutItemsInput = {
   checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemCount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -632,6 +838,14 @@ export type ShoppingCartUncheckedUpdateWithoutItemsInput = {
   checkoutStarted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemCount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.FloatFieldUpdateOperationsInput | number
+  checkoutStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  abandonedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recoveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reminderSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reminderCount?: Prisma.IntFieldUpdateOperationsInput | number
   lastActivityAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -679,6 +893,14 @@ export type ShoppingCartSelect<ExtArgs extends runtime.Types.Extensions.Internal
   checkoutStarted?: boolean
   itemCount?: boolean
   total?: boolean
+  checkoutStartedAt?: boolean
+  abandonedAt?: boolean
+  recoveredAt?: boolean
+  completedAt?: boolean
+  orderId?: boolean
+  orderNumber?: boolean
+  reminderSentAt?: boolean
+  reminderCount?: boolean
   lastActivityAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -697,6 +919,14 @@ export type ShoppingCartSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   checkoutStarted?: boolean
   itemCount?: boolean
   total?: boolean
+  checkoutStartedAt?: boolean
+  abandonedAt?: boolean
+  recoveredAt?: boolean
+  completedAt?: boolean
+  orderId?: boolean
+  orderNumber?: boolean
+  reminderSentAt?: boolean
+  reminderCount?: boolean
   lastActivityAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -713,6 +943,14 @@ export type ShoppingCartSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   checkoutStarted?: boolean
   itemCount?: boolean
   total?: boolean
+  checkoutStartedAt?: boolean
+  abandonedAt?: boolean
+  recoveredAt?: boolean
+  completedAt?: boolean
+  orderId?: boolean
+  orderNumber?: boolean
+  reminderSentAt?: boolean
+  reminderCount?: boolean
   lastActivityAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -729,12 +967,20 @@ export type ShoppingCartSelectScalar = {
   checkoutStarted?: boolean
   itemCount?: boolean
   total?: boolean
+  checkoutStartedAt?: boolean
+  abandonedAt?: boolean
+  recoveredAt?: boolean
+  completedAt?: boolean
+  orderId?: boolean
+  orderNumber?: boolean
+  reminderSentAt?: boolean
+  reminderCount?: boolean
   lastActivityAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ShoppingCartOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sessionId" | "customerId" | "customerName" | "customerPhone" | "customerEmail" | "status" | "checkoutStarted" | "itemCount" | "total" | "lastActivityAt" | "createdAt" | "updatedAt", ExtArgs["result"]["shoppingCart"]>
+export type ShoppingCartOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sessionId" | "customerId" | "customerName" | "customerPhone" | "customerEmail" | "status" | "checkoutStarted" | "itemCount" | "total" | "checkoutStartedAt" | "abandonedAt" | "recoveredAt" | "completedAt" | "orderId" | "orderNumber" | "reminderSentAt" | "reminderCount" | "lastActivityAt" | "createdAt" | "updatedAt", ExtArgs["result"]["shoppingCart"]>
 export type ShoppingCartInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | Prisma.ShoppingCart$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.ShoppingCartCountOutputTypeDefaultArgs<ExtArgs>
@@ -758,6 +1004,14 @@ export type $ShoppingCartPayload<ExtArgs extends runtime.Types.Extensions.Intern
     checkoutStarted: boolean
     itemCount: number
     total: number
+    checkoutStartedAt: Date | null
+    abandonedAt: Date | null
+    recoveredAt: Date | null
+    completedAt: Date | null
+    orderId: string | null
+    orderNumber: string | null
+    reminderSentAt: Date | null
+    reminderCount: number
     lastActivityAt: Date
     createdAt: Date
     updatedAt: Date
@@ -1195,6 +1449,14 @@ export interface ShoppingCartFieldRefs {
   readonly checkoutStarted: Prisma.FieldRef<"ShoppingCart", 'Boolean'>
   readonly itemCount: Prisma.FieldRef<"ShoppingCart", 'Int'>
   readonly total: Prisma.FieldRef<"ShoppingCart", 'Float'>
+  readonly checkoutStartedAt: Prisma.FieldRef<"ShoppingCart", 'DateTime'>
+  readonly abandonedAt: Prisma.FieldRef<"ShoppingCart", 'DateTime'>
+  readonly recoveredAt: Prisma.FieldRef<"ShoppingCart", 'DateTime'>
+  readonly completedAt: Prisma.FieldRef<"ShoppingCart", 'DateTime'>
+  readonly orderId: Prisma.FieldRef<"ShoppingCart", 'String'>
+  readonly orderNumber: Prisma.FieldRef<"ShoppingCart", 'String'>
+  readonly reminderSentAt: Prisma.FieldRef<"ShoppingCart", 'DateTime'>
+  readonly reminderCount: Prisma.FieldRef<"ShoppingCart", 'Int'>
   readonly lastActivityAt: Prisma.FieldRef<"ShoppingCart", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"ShoppingCart", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ShoppingCart", 'DateTime'>

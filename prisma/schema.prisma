@@ -8,26 +8,26 @@ datasource db {
 }
 
 model Product {
-  id            String   @id @default(cuid())
-  erpProductId  String?  @unique
+  id           String  @id @default(cuid())
+  erpProductId String? @unique
 
-  sku           String   @unique
-  barcode       String?  @unique
-  name          String
-  brand         String
-  category      String
-  description   String   @default("")
+  sku         String  @unique
+  barcode     String? @unique
+  name        String
+  brand       String
+  category    String
+  description String  @default("")
 
-  purchasePrice Float    @default(0)
+  purchasePrice Float @default(0)
   retailPrice   Float
   dealerPrice   Float
-  vatRate       Float    @default(20)
+  vatRate       Float @default(20)
 
-  stock         Int      @default(0)
-  criticalStock Int      @default(0)
+  stock         Int @default(0)
+  criticalStock Int @default(0)
 
-  image         String?
-  active        Boolean  @default(true)
+  image  String?
+  active Boolean @default(true)
 
   lastErpSyncAt DateTime?
   createdAt     DateTime @default(now())
@@ -37,13 +37,14 @@ model Product {
   variants        ProductVariant[]
   compatibilities ProductCompatibility[]
   attributes      ProductAttribute[]
+
   @@index([name])
   @@index([brand])
   @@index([category])
 }
 
 model ProductVariant {
-  id        String @id @default(cuid())
+  id String @id @default(cuid())
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -179,10 +180,11 @@ model Order {
   shippingMethod String
   paymentMethod  String
 
-  status String @default("Yeni")
+  status       String @default("Yeni")
   returnReason String?
   returnedAt   DateTime?
   returnNote   String?
+
   subtotal      Float
   shippingTotal Float @default(0)
   discountTotal Float @default(0)
@@ -223,8 +225,9 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
 }
+
 model ProductAttribute {
-  id        String  @id @default(cuid())
+  id        String @id @default(cuid())
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
@@ -240,19 +243,41 @@ model ProductAttribute {
   @@index([name])
   @@unique([productId, name, value])
 }
+
 model ShoppingCart {
-  id             String   @id @default(cuid())
-  sessionId      String   @unique
-  customerId     String?
-  customerName   String?
-  customerPhone  String?
-  customerEmail  String?
+  id        String @id @default(cuid())
+  sessionId String @unique
 
-  status         String   @default("Aktif")
-  checkoutStarted Boolean  @default(false)
+  customerId    String?
+  customerName  String?
+  customerPhone String?
+  customerEmail String?
 
-  itemCount      Int      @default(0)
-  total          Float    @default(0)
+  status          String  @default("Aktif")
+  checkoutStarted Boolean @default(false)
+
+  itemCount Int   @default(0)
+  total     Float @default(0)
+
+  // Odeme asamasina ne zaman gecildi
+  checkoutStartedAt DateTime?
+
+  // Sepet ne zaman terk edildi
+  abandonedAt DateTime?
+
+  // Terk edilen sepet daha sonra geri kazanildiysa
+  recoveredAt DateTime?
+
+  // Gercek siparise donustugu zaman
+  completedAt DateTime?
+
+  // Olusan siparis bilgileri
+  orderId     String?
+  orderNumber String?
+
+  // Hatirlatma takibi
+  reminderSentAt DateTime?
+  reminderCount  Int       @default(0)
 
   lastActivityAt DateTime @default(now())
   createdAt      DateTime @default(now())
@@ -263,12 +288,16 @@ model ShoppingCart {
   @@index([status])
   @@index([lastActivityAt])
   @@index([customerId])
+  @@index([checkoutStarted])
+  @@index([completedAt])
+  @@index([orderId])
 }
 
 model ShoppingCartItem {
-  id       String @id @default(cuid())
-  cartId   String
-  cart     ShoppingCart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  id String @id @default(cuid())
+
+  cartId String
+  cart   ShoppingCart @relation(fields: [cartId], references: [id], onDelete: Cascade)
 
   productId   String
   productName String
