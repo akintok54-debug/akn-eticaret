@@ -70,10 +70,14 @@ const menu = [
     title: "Entegrasyonlar",
     items: [
       { title: "Entegrasyonlar", href: "/admin/entegrasyonlar" },
-      { title: "Excel / CSV", href: "/admin/entegrasyonlar/excel" },
+      { title: "Bahadır ERP V2", href: "/admin/entegrasyonlar/bahadir-erp-v2" },
+      { title: "Excel / CSV", href: "/admin/urunler/aktarim" },
       { title: "Feed / XML", href: "/admin/entegrasyonlar/feed" },
       { title: "Google Merchant", href: "/admin/entegrasyonlar/google-merchant" },
-      { title: "Facebook Katalog", href: "/admin/entegrasyonlar/facebook" },
+      { title: "Meta Pixel / CAPI", href: "/admin/entegrasyonlar/meta" },
+      { title: "Google Analytics 4", href: "/admin/entegrasyonlar/google-analytics" },
+      { title: "Google Tag Manager", href: "/admin/entegrasyonlar/google-tag-manager" },
+      { title: "TikTok Pixel", href: "/admin/entegrasyonlar/tiktok-pixel" },
       { title: "API Yönetimi", href: "/admin/entegrasyonlar/api" },
     ],
   },
@@ -116,7 +120,7 @@ const menu = [
   },
 ];
 
-const available = new Set(["/admin/ayarlar/seo","/admin/mail-sms","/admin/guvenlik","/admin/urunler","/admin/kategoriler","/admin/markalar","/admin/varyantlar","/admin/ek-bilgiler","/admin/ek-ozellikler","/admin/urunler/aktarim","/admin/urunler/toplu","/admin/siparisler","/admin/taslak-siparisler","/admin/iptal-iade","/admin/aktif-sepetler","/admin/terk-edilen-sepetler","/admin/terk-edilen-siparisler","/admin/sepet-hatirlatma","/admin/risk-kriterleri","/admin/musteriler","/admin/bayiler","/admin/uye-gruplari","/admin/destek-talepleri","/admin/hediye-cekleri","/admin/entegrasyonlar","/admin/istatistikler","/admin/istatistikler/siparis","/admin/istatistikler/urun","/admin/raporlar","/admin/ayarlar","/admin/kargo-ayarlari","/admin/odeme-ayarlari"]);
+const available = new Set(["/admin/ayarlar/seo","/admin/mail-sms","/admin/guvenlik","/admin/urunler","/admin/kategoriler","/admin/markalar","/admin/varyantlar","/admin/ek-bilgiler","/admin/ek-ozellikler","/admin/urunler/aktarim","/admin/urunler/toplu","/admin/siparisler","/admin/taslak-siparisler","/admin/iptal-iade","/admin/aktif-sepetler","/admin/terk-edilen-sepetler","/admin/terk-edilen-siparisler","/admin/sepet-hatirlatma","/admin/risk-kriterleri","/admin/musteriler","/admin/bayiler","/admin/uye-gruplari","/admin/destek-talepleri","/admin/hediye-cekleri","/admin/entegrasyonlar","/admin/entegrasyonlar/feed","/admin/entegrasyonlar/google-merchant","/admin/entegrasyonlar/meta","/admin/entegrasyonlar/google-analytics","/admin/entegrasyonlar/google-tag-manager","/admin/entegrasyonlar/tiktok-pixel","/admin/entegrasyonlar/api","/admin/istatistikler","/admin/istatistikler/siparis","/admin/istatistikler/urun","/admin/raporlar","/admin/ayarlar","/admin/kargo-ayarlari","/admin/odeme-ayarlari"]);
 
 
 const navigation = menu.filter(group => group.href || group.items?.some(item => available.has(item.href)));

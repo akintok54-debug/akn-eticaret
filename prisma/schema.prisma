@@ -531,6 +531,13 @@ model CatalogEntry {
   @@unique([kind, name])
 }
 
+model IntegrationSetting {
+  slug      String   @id
+  enabled   Boolean  @default(false)
+  values    Json
+  updatedAt DateTime @updatedAt
+}
+
 model SiteConfiguration {
   id              String   @id @default("main")
   siteTitle       String   @default("AKN Motosiklet | Yedek Parça ve Aksesuar")

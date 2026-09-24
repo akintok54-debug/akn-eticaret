@@ -123,6 +123,11 @@ export type Coupon = Prisma.CouponModel
  */
 export type CatalogEntry = Prisma.CatalogEntryModel
 /**
+ * Model IntegrationSetting
+ * 
+ */
+export type IntegrationSetting = Prisma.IntegrationSettingModel
+/**
  * Model SiteConfiguration
  * 
  */

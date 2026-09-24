@@ -418,6 +418,7 @@ export const ModelName = {
   StoreSettings: 'StoreSettings',
   Coupon: 'Coupon',
   CatalogEntry: 'CatalogEntry',
+  IntegrationSetting: 'IntegrationSetting',
   SiteConfiguration: 'SiteConfiguration'
 } as const
 
@@ -434,7 +435,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "productVariant" | "productCompatibility" | "customer" | "address" | "order" | "orderItem" | "productAttribute" | "shoppingCart" | "shoppingCartItem" | "customerGroup" | "dealerApplication" | "supportTicket" | "supportMessage" | "cartReminder" | "customerAccount" | "customerSession" | "guestSession" | "storeSettings" | "coupon" | "catalogEntry" | "siteConfiguration"
+    modelProps: "product" | "productVariant" | "productCompatibility" | "customer" | "address" | "order" | "orderItem" | "productAttribute" | "shoppingCart" | "shoppingCartItem" | "customerGroup" | "dealerApplication" | "supportTicket" | "supportMessage" | "cartReminder" | "customerAccount" | "customerSession" | "guestSession" | "storeSettings" | "coupon" | "catalogEntry" | "integrationSetting" | "siteConfiguration"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1992,6 +1993,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    IntegrationSetting: {
+      payload: Prisma.$IntegrationSettingPayload<ExtArgs>
+      fields: Prisma.IntegrationSettingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IntegrationSettingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IntegrationSettingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        findFirst: {
+          args: Prisma.IntegrationSettingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IntegrationSettingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        findMany: {
+          args: Prisma.IntegrationSettingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>[]
+        }
+        create: {
+          args: Prisma.IntegrationSettingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        createMany: {
+          args: Prisma.IntegrationSettingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IntegrationSettingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>[]
+        }
+        delete: {
+          args: Prisma.IntegrationSettingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        update: {
+          args: Prisma.IntegrationSettingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        deleteMany: {
+          args: Prisma.IntegrationSettingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IntegrationSettingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IntegrationSettingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>[]
+        }
+        upsert: {
+          args: Prisma.IntegrationSettingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntegrationSettingPayload>
+        }
+        aggregate: {
+          args: Prisma.IntegrationSettingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIntegrationSetting>
+        }
+        groupBy: {
+          args: Prisma.IntegrationSettingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntegrationSettingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IntegrationSettingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntegrationSettingCountAggregateOutputType> | number
+        }
+      }
+    }
     SiteConfiguration: {
       payload: Prisma.$SiteConfigurationPayload<ExtArgs>
       fields: Prisma.SiteConfigurationFieldRefs
@@ -2492,6 +2567,16 @@ export const CatalogEntryScalarFieldEnum = {
 export type CatalogEntryScalarFieldEnum = (typeof CatalogEntryScalarFieldEnum)[keyof typeof CatalogEntryScalarFieldEnum]
 
 
+export const IntegrationSettingScalarFieldEnum = {
+  slug: 'slug',
+  enabled: 'enabled',
+  values: 'values',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IntegrationSettingScalarFieldEnum = (typeof IntegrationSettingScalarFieldEnum)[keyof typeof IntegrationSettingScalarFieldEnum]
+
+
 export const SiteConfigurationScalarFieldEnum = {
   id: 'id',
   siteTitle: 'siteTitle',
@@ -2519,6 +2604,13 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -2533,6 +2625,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -2601,6 +2702,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 /**
@@ -2775,6 +2890,7 @@ export type GlobalOmitConfig = {
   storeSettings?: Prisma.StoreSettingsOmit
   coupon?: Prisma.CouponOmit
   catalogEntry?: Prisma.CatalogEntryOmit
+  integrationSetting?: Prisma.IntegrationSettingOmit
   siteConfiguration?: Prisma.SiteConfigurationOmit
 }
 

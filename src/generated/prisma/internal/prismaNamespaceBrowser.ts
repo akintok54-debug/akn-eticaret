@@ -72,6 +72,7 @@ export const ModelName = {
   StoreSettings: 'StoreSettings',
   Coupon: 'Coupon',
   CatalogEntry: 'CatalogEntry',
+  IntegrationSetting: 'IntegrationSetting',
   SiteConfiguration: 'SiteConfiguration'
 } as const
 
@@ -478,6 +479,16 @@ export const CatalogEntryScalarFieldEnum = {
 export type CatalogEntryScalarFieldEnum = (typeof CatalogEntryScalarFieldEnum)[keyof typeof CatalogEntryScalarFieldEnum]
 
 
+export const IntegrationSettingScalarFieldEnum = {
+  slug: 'slug',
+  enabled: 'enabled',
+  values: 'values',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IntegrationSettingScalarFieldEnum = (typeof IntegrationSettingScalarFieldEnum)[keyof typeof IntegrationSettingScalarFieldEnum]
+
+
 export const SiteConfigurationScalarFieldEnum = {
   id: 'id',
   siteTitle: 'siteTitle',
@@ -505,6 +516,13 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -519,4 +537,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
