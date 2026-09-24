@@ -122,3 +122,8 @@ export type Coupon = Prisma.CouponModel
  * 
  */
 export type CatalogEntry = Prisma.CatalogEntryModel
+/**
+ * Model SiteConfiguration
+ * 
+ */
+export type SiteConfiguration = Prisma.SiteConfigurationModel

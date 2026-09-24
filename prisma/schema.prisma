@@ -459,16 +459,21 @@ model CartReminder {
 }
 
 model CustomerAccount {
-  id           String            @id @default(cuid())
-  customerId   String            @unique
-  customer     Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
-  email        String            @unique
-  passwordHash String
-  failedLogins Int               @default(0)
-  lockedUntil  DateTime?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-  sessions     CustomerSession[]
+  id               String            @id @default(cuid())
+  customerId       String            @unique
+  customer         Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  email            String            @unique
+  resetTokenHash   String?           @unique
+  resetExpiresAt   DateTime?
+  resetRequestedAt DateTime?
+  resetWindowAt    DateTime?
+  resetRequests    Int               @default(0)
+  passwordHash     String
+  failedLogins     Int               @default(0)
+  lockedUntil      DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  sessions         CustomerSession[]
 }
 
 model CustomerSession {
@@ -524,4 +529,20 @@ model CatalogEntry {
   updatedAt DateTime @updatedAt
 
   @@unique([kind, name])
+}
+
+model SiteConfiguration {
+  id              String   @id @default("main")
+  siteTitle       String   @default("AKN Motosiklet | Yedek Parça ve Aksesuar")
+  siteDescription String   @default("Motosiklet yedek parça ve aksesuar mağazası")
+  keywords        String   @default("")
+  geoContent      String   @default("")
+  smtpHost        String   @default("")
+  smtpPort        Int      @default(587)
+  smtpUser        String   @default("")
+  smtpPassword    String   @default("")
+  smtpFrom        String   @default("")
+  smtpEnabled     Boolean  @default(false)
+  publicUrl       String   @default("")
+  updatedAt       DateTime @updatedAt
 }

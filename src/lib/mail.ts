@@ -1,0 +1,5 @@
+import nodemailer from "nodemailer";
+import {decryptSecret,type defaults} from "@/lib/site-configuration";
+export function mailReady(s:typeof defaults){return !!(s.smtpEnabled&&s.smtpHost&&s.smtpUser&&s.smtpPassword&&s.smtpFrom&&s.publicUrl);}
+export function mailTransport(s:typeof defaults){return nodemailer.createTransport({host:s.smtpHost,port:s.smtpPort,secure:s.smtpPort===465,requireTLS:true,auth:{user:s.smtpUser,pass:decryptSecret(s.smtpPassword)},connectionTimeout:10000,greetingTimeout:10000,socketTimeout:15000,disableFileAccess:true,disableUrlAccess:true});}
+export async function sendResetMail(s:typeof defaults,email:string,token:string){const url=new URL("/sifre-sifirla/"+token,s.publicUrl).toString();const transport=mailTransport(s);try{await transport.sendMail({from:{name:"AKN Motosiklet",address:s.smtpFrom},to:email,subject:"AKN Motosiklet — Şifre sıfırlama",text:"Şifrenizi yenilemek için aşağıdaki bağlantıyı açın. Bağlantı 15 dakika geçerlidir ve yalnızca bir kez kullanılabilir.\n\n"+url+"\n\nBu isteği siz yapmadıysanız e-postayı dikkate almayın. Şifreniz değişmemiştir."});}finally{transport.close();}}

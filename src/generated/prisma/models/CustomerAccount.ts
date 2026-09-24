@@ -27,10 +27,12 @@ export type AggregateCustomerAccount = {
 }
 
 export type CustomerAccountAvgAggregateOutputType = {
+  resetRequests: number | null
   failedLogins: number | null
 }
 
 export type CustomerAccountSumAggregateOutputType = {
+  resetRequests: number | null
   failedLogins: number | null
 }
 
@@ -38,6 +40,11 @@ export type CustomerAccountMinAggregateOutputType = {
   id: string | null
   customerId: string | null
   email: string | null
+  resetTokenHash: string | null
+  resetExpiresAt: Date | null
+  resetRequestedAt: Date | null
+  resetWindowAt: Date | null
+  resetRequests: number | null
   passwordHash: string | null
   failedLogins: number | null
   lockedUntil: Date | null
@@ -49,6 +56,11 @@ export type CustomerAccountMaxAggregateOutputType = {
   id: string | null
   customerId: string | null
   email: string | null
+  resetTokenHash: string | null
+  resetExpiresAt: Date | null
+  resetRequestedAt: Date | null
+  resetWindowAt: Date | null
+  resetRequests: number | null
   passwordHash: string | null
   failedLogins: number | null
   lockedUntil: Date | null
@@ -60,6 +72,11 @@ export type CustomerAccountCountAggregateOutputType = {
   id: number
   customerId: number
   email: number
+  resetTokenHash: number
+  resetExpiresAt: number
+  resetRequestedAt: number
+  resetWindowAt: number
+  resetRequests: number
   passwordHash: number
   failedLogins: number
   lockedUntil: number
@@ -70,10 +87,12 @@ export type CustomerAccountCountAggregateOutputType = {
 
 
 export type CustomerAccountAvgAggregateInputType = {
+  resetRequests?: true
   failedLogins?: true
 }
 
 export type CustomerAccountSumAggregateInputType = {
+  resetRequests?: true
   failedLogins?: true
 }
 
@@ -81,6 +100,11 @@ export type CustomerAccountMinAggregateInputType = {
   id?: true
   customerId?: true
   email?: true
+  resetTokenHash?: true
+  resetExpiresAt?: true
+  resetRequestedAt?: true
+  resetWindowAt?: true
+  resetRequests?: true
   passwordHash?: true
   failedLogins?: true
   lockedUntil?: true
@@ -92,6 +116,11 @@ export type CustomerAccountMaxAggregateInputType = {
   id?: true
   customerId?: true
   email?: true
+  resetTokenHash?: true
+  resetExpiresAt?: true
+  resetRequestedAt?: true
+  resetWindowAt?: true
+  resetRequests?: true
   passwordHash?: true
   failedLogins?: true
   lockedUntil?: true
@@ -103,6 +132,11 @@ export type CustomerAccountCountAggregateInputType = {
   id?: true
   customerId?: true
   email?: true
+  resetTokenHash?: true
+  resetExpiresAt?: true
+  resetRequestedAt?: true
+  resetWindowAt?: true
+  resetRequests?: true
   passwordHash?: true
   failedLogins?: true
   lockedUntil?: true
@@ -201,6 +235,11 @@ export type CustomerAccountGroupByOutputType = {
   id: string
   customerId: string
   email: string
+  resetTokenHash: string | null
+  resetExpiresAt: Date | null
+  resetRequestedAt: Date | null
+  resetWindowAt: Date | null
+  resetRequests: number
   passwordHash: string
   failedLogins: number
   lockedUntil: Date | null
@@ -235,6 +274,11 @@ export type CustomerAccountWhereInput = {
   id?: Prisma.StringFilter<"CustomerAccount"> | string
   customerId?: Prisma.StringFilter<"CustomerAccount"> | string
   email?: Prisma.StringFilter<"CustomerAccount"> | string
+  resetTokenHash?: Prisma.StringNullableFilter<"CustomerAccount"> | string | null
+  resetExpiresAt?: Prisma.DateTimeNullableFilter<"CustomerAccount"> | Date | string | null
+  resetRequestedAt?: Prisma.DateTimeNullableFilter<"CustomerAccount"> | Date | string | null
+  resetWindowAt?: Prisma.DateTimeNullableFilter<"CustomerAccount"> | Date | string | null
+  resetRequests?: Prisma.IntFilter<"CustomerAccount"> | number
   passwordHash?: Prisma.StringFilter<"CustomerAccount"> | string
   failedLogins?: Prisma.IntFilter<"CustomerAccount"> | number
   lockedUntil?: Prisma.DateTimeNullableFilter<"CustomerAccount"> | Date | string | null
@@ -248,6 +292,11 @@ export type CustomerAccountOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  resetTokenHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetRequestedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetWindowAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetRequests?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   failedLogins?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -261,9 +310,14 @@ export type CustomerAccountWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   customerId?: string
   email?: string
+  resetTokenHash?: string
   AND?: Prisma.CustomerAccountWhereInput | Prisma.CustomerAccountWhereInput[]
   OR?: Prisma.CustomerAccountWhereInput[]
   NOT?: Prisma.CustomerAccountWhereInput | Prisma.CustomerAccountWhereInput[]
+  resetExpiresAt?: Prisma.DateTimeNullableFilter<"CustomerAccount"> | Date | string | null
+  resetRequestedAt?: Prisma.DateTimeNullableFilter<"CustomerAccount"> | Date | string | null
+  resetWindowAt?: Prisma.DateTimeNullableFilter<"CustomerAccount"> | Date | string | null
+  resetRequests?: Prisma.IntFilter<"CustomerAccount"> | number
   passwordHash?: Prisma.StringFilter<"CustomerAccount"> | string
   failedLogins?: Prisma.IntFilter<"CustomerAccount"> | number
   lockedUntil?: Prisma.DateTimeNullableFilter<"CustomerAccount"> | Date | string | null
@@ -271,12 +325,17 @@ export type CustomerAccountWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"CustomerAccount"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
   sessions?: Prisma.CustomerSessionListRelationFilter
-}, "id" | "customerId" | "email">
+}, "id" | "customerId" | "email" | "resetTokenHash">
 
 export type CustomerAccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  resetTokenHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetRequestedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetWindowAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetRequests?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   failedLogins?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -296,6 +355,11 @@ export type CustomerAccountScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"CustomerAccount"> | string
   customerId?: Prisma.StringWithAggregatesFilter<"CustomerAccount"> | string
   email?: Prisma.StringWithAggregatesFilter<"CustomerAccount"> | string
+  resetTokenHash?: Prisma.StringNullableWithAggregatesFilter<"CustomerAccount"> | string | null
+  resetExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"CustomerAccount"> | Date | string | null
+  resetRequestedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"CustomerAccount"> | Date | string | null
+  resetWindowAt?: Prisma.DateTimeNullableWithAggregatesFilter<"CustomerAccount"> | Date | string | null
+  resetRequests?: Prisma.IntWithAggregatesFilter<"CustomerAccount"> | number
   passwordHash?: Prisma.StringWithAggregatesFilter<"CustomerAccount"> | string
   failedLogins?: Prisma.IntWithAggregatesFilter<"CustomerAccount"> | number
   lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"CustomerAccount"> | Date | string | null
@@ -306,6 +370,11 @@ export type CustomerAccountScalarWhereWithAggregatesInput = {
 export type CustomerAccountCreateInput = {
   id?: string
   email: string
+  resetTokenHash?: string | null
+  resetExpiresAt?: Date | string | null
+  resetRequestedAt?: Date | string | null
+  resetWindowAt?: Date | string | null
+  resetRequests?: number
   passwordHash: string
   failedLogins?: number
   lockedUntil?: Date | string | null
@@ -319,6 +388,11 @@ export type CustomerAccountUncheckedCreateInput = {
   id?: string
   customerId: string
   email: string
+  resetTokenHash?: string | null
+  resetExpiresAt?: Date | string | null
+  resetRequestedAt?: Date | string | null
+  resetWindowAt?: Date | string | null
+  resetRequests?: number
   passwordHash: string
   failedLogins?: number
   lockedUntil?: Date | string | null
@@ -330,6 +404,11 @@ export type CustomerAccountUncheckedCreateInput = {
 export type CustomerAccountUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  resetTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetWindowAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequests?: Prisma.IntFieldUpdateOperationsInput | number
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   failedLogins?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -343,6 +422,11 @@ export type CustomerAccountUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  resetTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetWindowAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequests?: Prisma.IntFieldUpdateOperationsInput | number
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   failedLogins?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -355,6 +439,11 @@ export type CustomerAccountCreateManyInput = {
   id?: string
   customerId: string
   email: string
+  resetTokenHash?: string | null
+  resetExpiresAt?: Date | string | null
+  resetRequestedAt?: Date | string | null
+  resetWindowAt?: Date | string | null
+  resetRequests?: number
   passwordHash: string
   failedLogins?: number
   lockedUntil?: Date | string | null
@@ -365,6 +454,11 @@ export type CustomerAccountCreateManyInput = {
 export type CustomerAccountUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  resetTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetWindowAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequests?: Prisma.IntFieldUpdateOperationsInput | number
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   failedLogins?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -376,6 +470,11 @@ export type CustomerAccountUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  resetTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetWindowAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequests?: Prisma.IntFieldUpdateOperationsInput | number
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   failedLogins?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -392,6 +491,11 @@ export type CustomerAccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  resetTokenHash?: Prisma.SortOrder
+  resetExpiresAt?: Prisma.SortOrder
+  resetRequestedAt?: Prisma.SortOrder
+  resetWindowAt?: Prisma.SortOrder
+  resetRequests?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   failedLogins?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrder
@@ -400,6 +504,7 @@ export type CustomerAccountCountOrderByAggregateInput = {
 }
 
 export type CustomerAccountAvgOrderByAggregateInput = {
+  resetRequests?: Prisma.SortOrder
   failedLogins?: Prisma.SortOrder
 }
 
@@ -407,6 +512,11 @@ export type CustomerAccountMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  resetTokenHash?: Prisma.SortOrder
+  resetExpiresAt?: Prisma.SortOrder
+  resetRequestedAt?: Prisma.SortOrder
+  resetWindowAt?: Prisma.SortOrder
+  resetRequests?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   failedLogins?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrder
@@ -418,6 +528,11 @@ export type CustomerAccountMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  resetTokenHash?: Prisma.SortOrder
+  resetExpiresAt?: Prisma.SortOrder
+  resetRequestedAt?: Prisma.SortOrder
+  resetWindowAt?: Prisma.SortOrder
+  resetRequests?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   failedLogins?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrder
@@ -426,6 +541,7 @@ export type CustomerAccountMinOrderByAggregateInput = {
 }
 
 export type CustomerAccountSumOrderByAggregateInput = {
+  resetRequests?: Prisma.SortOrder
   failedLogins?: Prisma.SortOrder
 }
 
@@ -483,6 +599,11 @@ export type CustomerAccountUpdateOneRequiredWithoutSessionsNestedInput = {
 export type CustomerAccountCreateWithoutCustomerInput = {
   id?: string
   email: string
+  resetTokenHash?: string | null
+  resetExpiresAt?: Date | string | null
+  resetRequestedAt?: Date | string | null
+  resetWindowAt?: Date | string | null
+  resetRequests?: number
   passwordHash: string
   failedLogins?: number
   lockedUntil?: Date | string | null
@@ -494,6 +615,11 @@ export type CustomerAccountCreateWithoutCustomerInput = {
 export type CustomerAccountUncheckedCreateWithoutCustomerInput = {
   id?: string
   email: string
+  resetTokenHash?: string | null
+  resetExpiresAt?: Date | string | null
+  resetRequestedAt?: Date | string | null
+  resetWindowAt?: Date | string | null
+  resetRequests?: number
   passwordHash: string
   failedLogins?: number
   lockedUntil?: Date | string | null
@@ -521,6 +647,11 @@ export type CustomerAccountUpdateToOneWithWhereWithoutCustomerInput = {
 export type CustomerAccountUpdateWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  resetTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetWindowAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequests?: Prisma.IntFieldUpdateOperationsInput | number
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   failedLogins?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -532,6 +663,11 @@ export type CustomerAccountUpdateWithoutCustomerInput = {
 export type CustomerAccountUncheckedUpdateWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  resetTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetWindowAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequests?: Prisma.IntFieldUpdateOperationsInput | number
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   failedLogins?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -543,6 +679,11 @@ export type CustomerAccountUncheckedUpdateWithoutCustomerInput = {
 export type CustomerAccountCreateWithoutSessionsInput = {
   id?: string
   email: string
+  resetTokenHash?: string | null
+  resetExpiresAt?: Date | string | null
+  resetRequestedAt?: Date | string | null
+  resetWindowAt?: Date | string | null
+  resetRequests?: number
   passwordHash: string
   failedLogins?: number
   lockedUntil?: Date | string | null
@@ -555,6 +696,11 @@ export type CustomerAccountUncheckedCreateWithoutSessionsInput = {
   id?: string
   customerId: string
   email: string
+  resetTokenHash?: string | null
+  resetExpiresAt?: Date | string | null
+  resetRequestedAt?: Date | string | null
+  resetWindowAt?: Date | string | null
+  resetRequests?: number
   passwordHash: string
   failedLogins?: number
   lockedUntil?: Date | string | null
@@ -581,6 +727,11 @@ export type CustomerAccountUpdateToOneWithWhereWithoutSessionsInput = {
 export type CustomerAccountUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  resetTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetWindowAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequests?: Prisma.IntFieldUpdateOperationsInput | number
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   failedLogins?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -593,6 +744,11 @@ export type CustomerAccountUncheckedUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  resetTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetWindowAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetRequests?: Prisma.IntFieldUpdateOperationsInput | number
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   failedLogins?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -635,6 +791,11 @@ export type CustomerAccountSelect<ExtArgs extends runtime.Types.Extensions.Inter
   id?: boolean
   customerId?: boolean
   email?: boolean
+  resetTokenHash?: boolean
+  resetExpiresAt?: boolean
+  resetRequestedAt?: boolean
+  resetWindowAt?: boolean
+  resetRequests?: boolean
   passwordHash?: boolean
   failedLogins?: boolean
   lockedUntil?: boolean
@@ -649,6 +810,11 @@ export type CustomerAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   customerId?: boolean
   email?: boolean
+  resetTokenHash?: boolean
+  resetExpiresAt?: boolean
+  resetRequestedAt?: boolean
+  resetWindowAt?: boolean
+  resetRequests?: boolean
   passwordHash?: boolean
   failedLogins?: boolean
   lockedUntil?: boolean
@@ -661,6 +827,11 @@ export type CustomerAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   customerId?: boolean
   email?: boolean
+  resetTokenHash?: boolean
+  resetExpiresAt?: boolean
+  resetRequestedAt?: boolean
+  resetWindowAt?: boolean
+  resetRequests?: boolean
   passwordHash?: boolean
   failedLogins?: boolean
   lockedUntil?: boolean
@@ -673,6 +844,11 @@ export type CustomerAccountSelectScalar = {
   id?: boolean
   customerId?: boolean
   email?: boolean
+  resetTokenHash?: boolean
+  resetExpiresAt?: boolean
+  resetRequestedAt?: boolean
+  resetWindowAt?: boolean
+  resetRequests?: boolean
   passwordHash?: boolean
   failedLogins?: boolean
   lockedUntil?: boolean
@@ -680,7 +856,7 @@ export type CustomerAccountSelectScalar = {
   updatedAt?: boolean
 }
 
-export type CustomerAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "email" | "passwordHash" | "failedLogins" | "lockedUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["customerAccount"]>
+export type CustomerAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "email" | "resetTokenHash" | "resetExpiresAt" | "resetRequestedAt" | "resetWindowAt" | "resetRequests" | "passwordHash" | "failedLogins" | "lockedUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["customerAccount"]>
 export type CustomerAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
   sessions?: boolean | Prisma.CustomerAccount$sessionsArgs<ExtArgs>
@@ -703,6 +879,11 @@ export type $CustomerAccountPayload<ExtArgs extends runtime.Types.Extensions.Int
     id: string
     customerId: string
     email: string
+    resetTokenHash: string | null
+    resetExpiresAt: Date | null
+    resetRequestedAt: Date | null
+    resetWindowAt: Date | null
+    resetRequests: number
     passwordHash: string
     failedLogins: number
     lockedUntil: Date | null
@@ -1136,6 +1317,11 @@ export interface CustomerAccountFieldRefs {
   readonly id: Prisma.FieldRef<"CustomerAccount", 'String'>
   readonly customerId: Prisma.FieldRef<"CustomerAccount", 'String'>
   readonly email: Prisma.FieldRef<"CustomerAccount", 'String'>
+  readonly resetTokenHash: Prisma.FieldRef<"CustomerAccount", 'String'>
+  readonly resetExpiresAt: Prisma.FieldRef<"CustomerAccount", 'DateTime'>
+  readonly resetRequestedAt: Prisma.FieldRef<"CustomerAccount", 'DateTime'>
+  readonly resetWindowAt: Prisma.FieldRef<"CustomerAccount", 'DateTime'>
+  readonly resetRequests: Prisma.FieldRef<"CustomerAccount", 'Int'>
   readonly passwordHash: Prisma.FieldRef<"CustomerAccount", 'String'>
   readonly failedLogins: Prisma.FieldRef<"CustomerAccount", 'Int'>
   readonly lockedUntil: Prisma.FieldRef<"CustomerAccount", 'DateTime'>

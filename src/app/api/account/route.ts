@@ -30,7 +30,7 @@ export async function POST(request:Request) {
       if(!parsedEmail.success)return Response.json({message:"Müşteriye önce geçerli bir e-posta kaydedin."},{status:400});
       const hash=await passwordHash(data.password);
       await prisma.$transaction(async tx=>{
-        const account=await tx.customerAccount.upsert({where:{customerId:customer.id},create:{customerId:customer.id,email:parsedEmail.data,passwordHash:hash},update:{email:parsedEmail.data,passwordHash:hash,failedLogins:0,lockedUntil:null}});
+        const account=await tx.customerAccount.upsert({where:{customerId:customer.id},create:{customerId:customer.id,email:parsedEmail.data,passwordHash:hash},update:{email:parsedEmail.data,passwordHash:hash,resetTokenHash:null,resetExpiresAt:null,failedLogins:0,lockedUntil:null}});
         await tx.customerSession.deleteMany({where:{accountId:account.id}});
       });
       return Response.json({success:true});
@@ -50,7 +50,7 @@ export async function POST(request:Request) {
       const account=await prisma.customerAccount.findUnique({where:{customerId:customer.id}});
       if(!account || !await passwordMatches(data.currentPassword,account.passwordHash))return denied();
       const hash=await passwordHash(data.password);
-      await prisma.$transaction([prisma.customerAccount.update({where:{id:account.id},data:{passwordHash:hash}}),prisma.customerSession.deleteMany({where:{accountId:account.id}})]);
+      await prisma.$transaction([prisma.customerAccount.update({where:{id:account.id},data:{passwordHash:hash,resetTokenHash:null,resetExpiresAt:null}}),prisma.customerSession.deleteMany({where:{accountId:account.id}})]);
       await createCustomerSession(account.id);
       return Response.json({success:true});
     }

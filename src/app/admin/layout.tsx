@@ -99,7 +99,7 @@ const menu = [
       { title: "Tasarım Ayarları", href: "/admin/tasarim-ayarlari" },
       { title: "Kargo Ayarları", href: "/admin/kargo-ayarlari" },
       { title: "Ödeme Ayarları", href: "/admin/odeme-ayarlari" },
-      { title: "Mail / SMS", href: "/admin/mail-sms" },
+      { title: "E-posta Ayarları", href: "/admin/mail-sms" },
       { title: "Döviz Kurları", href: "/admin/doviz-kurlari" },
       { title: "Güvenlik", href: "/admin/guvenlik" },
       { title: "İşlem Kayıtları", href: "/admin/audit-log" },
@@ -116,7 +116,7 @@ const menu = [
   },
 ];
 
-const available = new Set(["/admin/urunler","/admin/kategoriler","/admin/markalar","/admin/varyantlar","/admin/ek-bilgiler","/admin/ek-ozellikler","/admin/urunler/aktarim","/admin/urunler/toplu","/admin/siparisler","/admin/taslak-siparisler","/admin/iptal-iade","/admin/aktif-sepetler","/admin/terk-edilen-sepetler","/admin/terk-edilen-siparisler","/admin/sepet-hatirlatma","/admin/risk-kriterleri","/admin/musteriler","/admin/bayiler","/admin/uye-gruplari","/admin/destek-talepleri","/admin/hediye-cekleri","/admin/entegrasyonlar","/admin/istatistikler","/admin/istatistikler/siparis","/admin/istatistikler/urun","/admin/raporlar","/admin/ayarlar","/admin/kargo-ayarlari","/admin/odeme-ayarlari"]);
+const available = new Set(["/admin/ayarlar/seo","/admin/mail-sms","/admin/guvenlik","/admin/urunler","/admin/kategoriler","/admin/markalar","/admin/varyantlar","/admin/ek-bilgiler","/admin/ek-ozellikler","/admin/urunler/aktarim","/admin/urunler/toplu","/admin/siparisler","/admin/taslak-siparisler","/admin/iptal-iade","/admin/aktif-sepetler","/admin/terk-edilen-sepetler","/admin/terk-edilen-siparisler","/admin/sepet-hatirlatma","/admin/risk-kriterleri","/admin/musteriler","/admin/bayiler","/admin/uye-gruplari","/admin/destek-talepleri","/admin/hediye-cekleri","/admin/entegrasyonlar","/admin/istatistikler","/admin/istatistikler/siparis","/admin/istatistikler/urun","/admin/raporlar","/admin/ayarlar","/admin/kargo-ayarlari","/admin/odeme-ayarlari"]);
 
 
 const navigation = menu.filter(group => group.href || group.items?.some(item => available.has(item.href)));

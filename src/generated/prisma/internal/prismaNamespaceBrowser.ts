@@ -71,7 +71,8 @@ export const ModelName = {
   GuestSession: 'GuestSession',
   StoreSettings: 'StoreSettings',
   Coupon: 'Coupon',
-  CatalogEntry: 'CatalogEntry'
+  CatalogEntry: 'CatalogEntry',
+  SiteConfiguration: 'SiteConfiguration'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,6 +401,11 @@ export const CustomerAccountScalarFieldEnum = {
   id: 'id',
   customerId: 'customerId',
   email: 'email',
+  resetTokenHash: 'resetTokenHash',
+  resetExpiresAt: 'resetExpiresAt',
+  resetRequestedAt: 'resetRequestedAt',
+  resetWindowAt: 'resetWindowAt',
+  resetRequests: 'resetRequests',
   passwordHash: 'passwordHash',
   failedLogins: 'failedLogins',
   lockedUntil: 'lockedUntil',
@@ -470,6 +476,25 @@ export const CatalogEntryScalarFieldEnum = {
 } as const
 
 export type CatalogEntryScalarFieldEnum = (typeof CatalogEntryScalarFieldEnum)[keyof typeof CatalogEntryScalarFieldEnum]
+
+
+export const SiteConfigurationScalarFieldEnum = {
+  id: 'id',
+  siteTitle: 'siteTitle',
+  siteDescription: 'siteDescription',
+  keywords: 'keywords',
+  geoContent: 'geoContent',
+  smtpHost: 'smtpHost',
+  smtpPort: 'smtpPort',
+  smtpUser: 'smtpUser',
+  smtpPassword: 'smtpPassword',
+  smtpFrom: 'smtpFrom',
+  smtpEnabled: 'smtpEnabled',
+  publicUrl: 'publicUrl',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SiteConfigurationScalarFieldEnum = (typeof SiteConfigurationScalarFieldEnum)[keyof typeof SiteConfigurationScalarFieldEnum]
 
 
 export const SortOrder = {

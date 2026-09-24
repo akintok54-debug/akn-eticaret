@@ -22,6 +22,13 @@ export async function PATCH(request:Request){
  const denied=adminGuard(request);if(denied)return denied;
  try{
   const body=await request.json();
+  if(body.action==="shipping"||body.action==="payment"){
+   const current=await storeSettings();
+   const parsed=body.action==="shipping"?z.object({shipping:z.number().finite().min(0).max(100000),threshold:z.number().finite().min(0).max(10000000)}).safeParse(body):z.object({enabled:z.boolean(),bankName:z.string().trim().max(200),iban:z.string().trim().max(50)}).safeParse(body);
+   if(!parsed.success||!settingsSchema.safeParse({...current,...parsed.data}).success)return Response.json({message:"Kargo veya ödeme bilgilerini kontrol edin. Satış için geçerli alıcı adı ve Türk IBAN gerekli."},{status:400});
+   const settings=await prisma.storeSettings.upsert({where:{id:"main"},create:{id:"main",enabled:current.enabled,bankName:current.bankName,iban:current.iban,shipping:current.shipping,threshold:current.threshold,...parsed.data},update:parsed.data});
+   return Response.json({settings});
+  }
   if(body.action==="settings"){
    const parsed=settingsSchema.safeParse(body);
    if(!parsed.success)return Response.json({message:"Kargo tutarını, hesap adını ve IBAN bilgisini kontrol edin."},{status:400});

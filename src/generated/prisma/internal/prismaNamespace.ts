@@ -417,7 +417,8 @@ export const ModelName = {
   GuestSession: 'GuestSession',
   StoreSettings: 'StoreSettings',
   Coupon: 'Coupon',
-  CatalogEntry: 'CatalogEntry'
+  CatalogEntry: 'CatalogEntry',
+  SiteConfiguration: 'SiteConfiguration'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -433,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "productVariant" | "productCompatibility" | "customer" | "address" | "order" | "orderItem" | "productAttribute" | "shoppingCart" | "shoppingCartItem" | "customerGroup" | "dealerApplication" | "supportTicket" | "supportMessage" | "cartReminder" | "customerAccount" | "customerSession" | "guestSession" | "storeSettings" | "coupon" | "catalogEntry"
+    modelProps: "product" | "productVariant" | "productCompatibility" | "customer" | "address" | "order" | "orderItem" | "productAttribute" | "shoppingCart" | "shoppingCartItem" | "customerGroup" | "dealerApplication" | "supportTicket" | "supportMessage" | "cartReminder" | "customerAccount" | "customerSession" | "guestSession" | "storeSettings" | "coupon" | "catalogEntry" | "siteConfiguration"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1991,6 +1992,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SiteConfiguration: {
+      payload: Prisma.$SiteConfigurationPayload<ExtArgs>
+      fields: Prisma.SiteConfigurationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SiteConfigurationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SiteConfigurationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        findFirst: {
+          args: Prisma.SiteConfigurationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SiteConfigurationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        findMany: {
+          args: Prisma.SiteConfigurationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>[]
+        }
+        create: {
+          args: Prisma.SiteConfigurationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        createMany: {
+          args: Prisma.SiteConfigurationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SiteConfigurationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>[]
+        }
+        delete: {
+          args: Prisma.SiteConfigurationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        update: {
+          args: Prisma.SiteConfigurationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        deleteMany: {
+          args: Prisma.SiteConfigurationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SiteConfigurationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SiteConfigurationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>[]
+        }
+        upsert: {
+          args: Prisma.SiteConfigurationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        aggregate: {
+          args: Prisma.SiteConfigurationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSiteConfiguration>
+        }
+        groupBy: {
+          args: Prisma.SiteConfigurationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SiteConfigurationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SiteConfigurationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SiteConfigurationCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2340,6 +2415,11 @@ export const CustomerAccountScalarFieldEnum = {
   id: 'id',
   customerId: 'customerId',
   email: 'email',
+  resetTokenHash: 'resetTokenHash',
+  resetExpiresAt: 'resetExpiresAt',
+  resetRequestedAt: 'resetRequestedAt',
+  resetWindowAt: 'resetWindowAt',
+  resetRequests: 'resetRequests',
   passwordHash: 'passwordHash',
   failedLogins: 'failedLogins',
   lockedUntil: 'lockedUntil',
@@ -2410,6 +2490,25 @@ export const CatalogEntryScalarFieldEnum = {
 } as const
 
 export type CatalogEntryScalarFieldEnum = (typeof CatalogEntryScalarFieldEnum)[keyof typeof CatalogEntryScalarFieldEnum]
+
+
+export const SiteConfigurationScalarFieldEnum = {
+  id: 'id',
+  siteTitle: 'siteTitle',
+  siteDescription: 'siteDescription',
+  keywords: 'keywords',
+  geoContent: 'geoContent',
+  smtpHost: 'smtpHost',
+  smtpPort: 'smtpPort',
+  smtpUser: 'smtpUser',
+  smtpPassword: 'smtpPassword',
+  smtpFrom: 'smtpFrom',
+  smtpEnabled: 'smtpEnabled',
+  publicUrl: 'publicUrl',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SiteConfigurationScalarFieldEnum = (typeof SiteConfigurationScalarFieldEnum)[keyof typeof SiteConfigurationScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2676,6 +2775,7 @@ export type GlobalOmitConfig = {
   storeSettings?: Prisma.StoreSettingsOmit
   coupon?: Prisma.CouponOmit
   catalogEntry?: Prisma.CatalogEntryOmit
+  siteConfiguration?: Prisma.SiteConfigurationOmit
 }
 
 /* Types for Logging */
