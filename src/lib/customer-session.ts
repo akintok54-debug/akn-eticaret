@@ -31,7 +31,9 @@ export async function currentCustomer() {
 export async function createCustomerSession(accountId: string) {
   const token = randomBytes(32).toString("hex");
   await prisma.customerSession.create({data:{id:digest(token),accountId,expiresAt:new Date(Date.now()+7*86400000)}});
-  (await cookies()).set(cookieName,token,{httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax",path:"/",maxAge:7*86400});
+  const jar=await cookies();
+  jar.delete("akn-admin");
+  jar.set(cookieName,token,{httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax",path:"/",maxAge:7*86400});
 }
 export async function endCustomerSession() {
   const jar=await cookies(), raw=jar.get(cookieName)?.value;

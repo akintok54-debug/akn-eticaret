@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminGuard, adminToken } from "@/lib/admin";
-
+import { isAdmin } from "@/lib/admin";
 export function proxy(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    const denied = adminGuard(request); if (denied) return denied;
-    const response = NextResponse.next();
-    response.cookies.set("akn-admin", adminToken(), { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", path: "/", maxAge: 8 * 60 * 60 });
+  if (!isAdmin(request)) {
+    const response = NextResponse.redirect(new URL("/yonetici-giris", request.url));
     response.headers.set("Cache-Control", "no-store");
     return response;
   }
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set("Cache-Control", "no-store");
+  return response;
 }
 export const config = { matcher: ["/admin/:path*"] };

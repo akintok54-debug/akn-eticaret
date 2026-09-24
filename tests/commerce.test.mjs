@@ -9,10 +9,10 @@ test("management routes deny missing, forged and weak credentials",()=>{
  assert.equal(isAdmin(new Request("https://example.com")),false);
  assert.equal(isAdmin(new Request("https://example.com",{headers:{authorization:"Basic forged"}})),false);
  const auth=`Basic ${Buffer.from("test-admin:unit-test-password-long").toString("base64")}`;
- assert.equal(isAdmin(new Request("https://example.com",{headers:{authorization:auth}})),true);
+ assert.equal(isAdmin(new Request("https://example.com",{headers:{authorization:auth}})),false);
  assert.equal(isAdmin(new Request("https://example.com",{headers:{cookie:`akn-admin=${adminToken()}`}})),true);
  assert.equal(isAdmin(new Request("https://example.com",{headers:{cookie:"akn-admin=9999999999999."+"0".repeat(64)}})),false);
- assert.equal(adminGuard(new Request("https://example.com/api/products",{method:"POST",headers:{authorization:auth,origin:"https://evil.example"}}))?.status,403);
+ assert.equal(adminGuard(new Request("https://example.com/api/products",{method:"POST",headers:{cookie:`akn-admin=${adminToken()}`,origin:"https://evil.example"}}))?.status,403);
  process.env.ADMIN_PASSWORD="short";
  assert.equal(isAdmin(new Request("https://example.com",{headers:{authorization:auth}})),false);
 });
@@ -39,4 +39,13 @@ test("IBAN requires a Turkish account with valid check digits",()=>{
  assert.equal(isValidTurkishIban("TR33 0006 1005 1978 6457 8413 27"),false);
  assert.equal(isValidTurkishIban("TR000000000000000000000000"),false);
  assert.equal(isValidTurkishIban(""),false);
+});
+
+test("customer context cannot inherit an admin session or cached Basic credentials",()=>{
+ process.env.ADMIN_USER="test-admin";process.env.ADMIN_PASSWORD="unit-test-password-long";
+ const token=adminToken();
+ for(const cookie of ["akn-customer="+"a".repeat(64),"akn-admin="+token+"; akn-customer="+"b".repeat(64)]){
+  const r=new Request("https://example.com/admin",{headers:{cookie,authorization:"Basic "+Buffer.from("test-admin:unit-test-password-long").toString("base64")}});
+  assert.equal(isAdmin(r),false);assert.equal(adminGuard(r).status,401);
+ }
 });

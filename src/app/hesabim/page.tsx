@@ -14,7 +14,7 @@ export default function AccountPage() {
     async function send(event: FormEvent<HTMLFormElement>, method: string, action?: string) {
         event.preventDefault(); if (busy) return; const form = event.currentTarget;
         setBusy(true); setMessage("");
-        try { const r = await fetch("/api/account", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...Object.fromEntries(new FormData(form)), ...(action ? { action } : {}) }) }); const d = await r.json(); if (!r.ok) throw new Error(d.message); form.reset(); await Promise.all([refreshCustomer(), refreshOrders(), refreshProducts()]); setMessage("Bilgileriniz kaydedildi."); }
+        try { const r = await fetch("/api/account", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...Object.fromEntries(new FormData(form)), ...(action ? { action } : {}) }) }); const d = await r.json(); if (!r.ok) throw new Error(d.message); if(action==="login"||action==="register"){window.location.replace("/hesabim");return;} form.reset(); await Promise.all([refreshCustomer(), refreshOrders(), refreshProducts()]); setMessage("Bilgileriniz kaydedildi."); }
         catch (e) { setMessage(e instanceof Error ? e.message : "İşlem tamamlanamadı."); } finally { setBusy(false); }
     }
     async function logout() { setBusy(true); try { const r = await fetch("/api/account", { method: "DELETE" }); if (!r.ok) throw new Error(); await Promise.all([refreshCustomer(), refreshOrders(), refreshProducts()]); setMessage("Çıkış yapıldı."); } catch { setMessage("Çıkış yapılamadı. Tekrar deneyin."); } finally { setBusy(false); } }

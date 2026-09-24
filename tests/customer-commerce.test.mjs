@@ -4,6 +4,7 @@ import {readFileSync} from "node:fs";
 import {createRequire} from "node:module";
 import ts from "typescript";
 import {unitPrice} from "../src/lib/pricing.ts";
+import {orderTransitions} from "../src/lib/order-view.ts";
 import * as membership from "../src/lib/membership.ts";
 import {isValidTurkishIban} from "../src/lib/bank.ts";
 const require=createRequire(import.meta.url);
@@ -43,7 +44,7 @@ test("customer session uses a hashed token, HttpOnly cookie and rejects disabled
  let record,cookie;
  const customer={id:"c",active:true};
  const db={customerSession:{create:async v=>{record=v.data;},findUnique:async()=>({...record,account:{customer}})}};
- const h=load("lib/customer-session.ts",{"next/headers":{cookies:async()=>({get:()=>cookie?{value:cookie.value}:undefined,set:(name,value,options)=>{cookie={name,value,options};}})},"@/lib/prisma":{prisma:db}});
+ const h=load("lib/customer-session.ts",{"next/headers":{cookies:async()=>({delete:()=>{},get:()=>cookie?{value:cookie.value}:undefined,set:(name,value,options)=>{cookie={name,value,options};}})},"@/lib/prisma":{prisma:db}});
  await h.createCustomerSession("account");assert.notEqual(record.id,cookie.value);assert.equal(cookie.options.httpOnly,true);assert.equal(cookie.options.sameSite,"lax");
  assert.equal((await h.currentCustomer()).id,"c");customer.active=false;assert.equal(await h.currentCustomer(),null);
  customer.active=true;record.expiresAt=new Date(0);assert.equal(await h.currentCustomer(),null);
@@ -70,7 +71,7 @@ test("five failed logins lock the account and provisioning requires admin",async
  assert.equal((await h.POST(request({action:"provision",customerId:"c",password:"long-enough-password"}))).status,401);
 });
 function orderRoute(db,admin=true,buyer=null,guest=null){return load("app/api/orders/[id]/route.ts",{
- "@/lib/prisma":{prisma:db},"@/lib/admin":{isAdmin:()=>admin,adminGuard:()=>null},"@/lib/order-view":{orderView:o=>o},"@/lib/membership":membership,
+ "@/lib/prisma":{prisma:db},"@/lib/admin":{isAdmin:()=>admin,adminGuard:()=>null},"@/lib/order-view":{orderView:o=>o,orderTransitions},"@/lib/membership":membership,
  "@/lib/customer-session":{currentCustomer:async()=>buyer,sameOrigin:r=>r.headers.get("origin")==="https://shop.test"},"@/lib/guest-session":{guestSession:async()=>guest}
 });}
 const context={params:Promise.resolve({id:"o"})};
@@ -136,4 +137,48 @@ test("order pagination keeps customer ownership and returns a bounded continuati
  const response=await h.GET(new Request("https://shop.test/api/orders?cursor=older"));
  const data=await response.json();assert.equal(response.status,200);assert.equal(data.orders.length,100);assert.equal(data.nextCursor,"order-99");
  assert.deepEqual(query.where,{OR:[{customerId:"mine"}]});assert.equal(query.take,101);assert.deepEqual(query.cursor,{id:"older"});assert.equal(query.skip,1);
+});
+
+test("customer cancellation checks ownership, restores stock once and preserves paid status",async()=>{
+ let stock=0,query;
+ let order={id:"o",status:"Yeni",paymentStatus:"paid",items:[{productId:"p",quantity:2}]};
+ const h=orderRoute(transaction({order:{findFirst:async q=>{query=q;return order;},update:async({data})=>{order={...order,...data};return order;}},product:{update:async({data})=>{stock+=data.stock.increment;}}}),false,{id:"mine"});
+ for(let i=0;i<2;i++)assert.equal((await h.PATCH(request({action:"cancel",paymentStatus:"refunded"},"PATCH"),context)).status,200);
+ assert.deepEqual(query.where.OR,[{customerId:"mine"}]);assert.equal(stock,2);assert.equal(order.paymentStatus,"paid");
+ const missing=orderRoute(transaction({order:{findFirst:async()=>null}}),false,{id:"other"});
+ assert.equal((await missing.PATCH(request({action:"cancel"},"PATCH"),context)).status,404);
+ order.status="Kargoda";
+ assert.equal((await h.PATCH(request({action:"cancel"},"PATCH"),context)).status,409);assert.equal(stock,2);
+});
+test("guest cancellation remains scoped to the opaque guest session",async()=>{
+ let query;
+ const h=orderRoute(transaction({order:{findFirst:async q=>{query=q;return null;}}}),false,null,"guest");
+ assert.equal((await h.PATCH(request({action:"cancel"},"PATCH"),context)).status,404);
+ assert.deepEqual(query.where.OR,[{guestSessionId:"guest"}]);
+ assert.equal((await h.PATCH(request({action:"cancel"},"PATCH","https://evil.test"),context)).status,403);
+});
+test("return completion restores stock once, preserves payment and requires a reason",async()=>{
+ let stock=0,order={id:"o",status:"Tamamlandı",paymentStatus:"paid",returnReason:"Uyumsuz ürün",items:[{productId:"p",quantity:3}]};
+ const h=orderRoute(transaction({order:{findUniqueOrThrow:async()=>order,update:async({data})=>(order={...order,...data})},product:{update:async({data})=>{stock+=data.stock.increment;}}}));
+ assert.equal((await h.PATCH(request({status:"İade",returnReason:""},"PATCH"),context)).status,409);
+ for(let i=0;i<2;i++)assert.equal((await h.PATCH(request({status:"İade"},"PATCH"),context)).status,200);
+ assert.equal(stock,3);assert.equal(order.paymentStatus,"paid");assert(order.returnedAt instanceof Date);
+});
+test("customer sign-in clears the previous administrator cookie",async()=>{
+ const removed=[];
+ const h=load("lib/customer-session.ts",{"next/headers":{cookies:async()=>({delete:n=>removed.push(n),set:()=>{}})},"@/lib/prisma":{prisma:{customerSession:{create:async()=>{}}}}});
+ await h.createCustomerSession("account");
+ assert.deepEqual(removed,["akn-admin"]);
+});
+test("explicit admin login validates credentials, clears customer context and rejects cross-origin",async()=>{
+ const admin=load("lib/admin.ts");
+ process.env.ADMIN_USER="test-admin";process.env.ADMIN_PASSWORD="unit-test-password-long";
+ const removed=[],written=[];
+ const h=load("app/api/admin-session/route.ts",{"next/headers":{cookies:async()=>({delete:n=>removed.push(n),set:(...args)=>written.push(args)})},"@/lib/admin":admin,"@/lib/customer-session":{sameOrigin:r=>r.headers.get("origin")==="https://shop.test"}});
+ assert.equal((await h.POST(request({user:"customer",password:"unit-test-password-long"}))).status,401);
+ assert.equal((await h.POST(request({user:"test-admin",password:"unit-test-password-long"},"POST","https://evil.test"))).status,403);
+ assert.equal((await h.POST(request({user:"test-admin",password:"unit-test-password-long"}))).status,200);
+ assert.deepEqual(removed,["akn-customer"]);assert.equal(written[0][0],"akn-admin");assert.equal(written[0][2].httpOnly,true);
+ assert.equal(admin.isAdmin(new Request("https://shop.test",{headers:{cookie:"akn-admin="+written[0][1]}})),true);
+ assert.equal((await h.DELETE(request({},"DELETE"))).status,200);assert.equal(removed[1],"akn-admin");
 });

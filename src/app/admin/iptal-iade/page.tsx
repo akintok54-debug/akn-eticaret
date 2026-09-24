@@ -1,5 +1,6 @@
 "use client";
 
+import {orderTransitions} from "@/lib/order-view";
 import { useEffect, useMemo, useState } from "react";
 
 type OrderItem = {
@@ -106,7 +107,7 @@ export default function CancelReturnPage() {
     }, [orders, search]);
 
     async function cancelOrder(order: Order) {
-        if (order.status === "İptal" || order.status === "İade") return;
+        if (!orderTransitions[order.status]?.includes("İptal")) return;
 
         const approved = window.confirm(
             `${order.orderNumber} numaralı sipariş iptal edilsin mi?\n\nÜrün stokları geri eklenecek.`
@@ -210,7 +211,7 @@ export default function CancelReturnPage() {
                     <div>
                         <div className="font-semibold">Siparişler</div>
                         <div className="text-sm text-slate-500">
-                            İptal ve iade işlemleri
+                            Kargoya verilmemiş siparişler iptal edilir; kargodaki veya tamamlanmış siparişlerde iade alınır.
                         </div>
                     </div>
 
@@ -321,7 +322,8 @@ export default function CancelReturnPage() {
                                                         <>
                                                             <button
                                                                 type="button"
-                                                                disabled={processingId === order.id}
+                                                                disabled={processingId === order.id || !orderTransitions[order.status]?.includes("İptal")}
+                                                                title={orderTransitions[order.status]?.includes("İptal") ? "Siparişi iptal et" : "Kargoya verilen siparişte iade işlemini kullanın"}
                                                                 onClick={() =>
                                                                     void cancelOrder(order)
                                                                 }
@@ -332,11 +334,12 @@ export default function CancelReturnPage() {
 
                                                             <button
                                                                 type="button"
-                                                                disabled={processingId === order.id}
+                                                                disabled={processingId === order.id || !orderTransitions[order.status]?.includes("İade")}
+                                                                title={orderTransitions[order.status]?.includes("İade") ? "Ürün teslim alındıktan sonra iadeyi tamamla" : "Kargoya verilmemiş siparişte iptal işlemini kullanın"}
                                                                 onClick={() => {
                                                                     setReturnOrder(order);
-                                                                    setReturnReason("");
-                                                                    setReturnNote("");
+                                                                    setReturnReason(order.returnReason ? "Diğer" : "");
+                                                                    setReturnNote(order.returnReason ?? "");
                                                                     setMessage("");
                                                                 }}
                                                                 className="rounded-lg bg-slate-900 px-3 py-2 font-medium text-white disabled:opacity-50"
