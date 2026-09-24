@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import StoreHeader from "@/components/layout/StoreHeader";
@@ -22,13 +22,6 @@ function Catalog() {
     const [brand, setBrand] = useState(urlBrand);
     const [sort, setSort] = useState("default");
     const [inStock, setInStock] = useState(false);
-
-    // Üst menüden URL değiştiğinde filtreyi de güncelle.
-    useEffect(() => {
-        setQuery(urlQuery);
-        setCategory(urlCategory);
-        setBrand(urlBrand);
-    }, [urlQuery, urlCategory, urlBrand]);
 
     const active = products.filter((p) => p.active);
 
@@ -247,6 +240,11 @@ function Catalog() {
     );
 }
 
+function CatalogRoute() {
+    const params = useSearchParams();
+    return <Catalog key={params.toString()} />;
+}
+
 export default function ProductsPage() {
     return (
         <Suspense
@@ -256,7 +254,7 @@ export default function ProductsPage() {
                 </div>
             }
         >
-            <Catalog />
+            <CatalogRoute />
         </Suspense>
     );
 }

@@ -8,6 +8,7 @@ import { useProducts } from "@/context/ProductContext";
 export default function CategoriesAdminPage() {
   const {
     categories,
+    error,
     addCategory,
     renameCategory,
     deleteCategory,
@@ -16,8 +17,8 @@ export default function CategoriesAdminPage() {
   const { products } = useProducts();
   const [name, setName] = useState("");
 
-  function add() {
-    if (!addCategory(name)) {
+  async function add() {
+    if (!await addCategory(name)) {
       alert("Kategori adı boş veya bu kategori zaten mevcut.");
       return;
     }
@@ -39,6 +40,7 @@ export default function CategoriesAdminPage() {
       <div className="mx-auto max-w-5xl px-4 py-8">
         <h1 className="text-3xl font-black">Kategori Yönetimi</h1>
 
+        {error&&<p role="alert" className="notice error-notice mt-4">{error}</p>}
         <div className="mt-6 flex gap-2 rounded-2xl border bg-white p-4">
           <input
             value={name}
@@ -80,7 +82,7 @@ export default function CategoriesAdminPage() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       const value = window.prompt(
                         "Yeni kategori adı:",
                         category
@@ -88,7 +90,7 @@ export default function CategoriesAdminPage() {
 
                       if (!value) return;
 
-                      if (!renameCategory(category, value)) {
+                      if (!await renameCategory(category, value)) {
                         alert("Kategori adı geçersiz veya zaten mevcut.");
                       }
                     }}
@@ -99,16 +101,16 @@ export default function CategoriesAdminPage() {
 
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       if (
                         !window.confirm(
-                          `${category} kategorisi silinsin mi?`
+                          `${category} kategorisi pasife alınsın mı?`
                         )
                       ) {
                         return;
                       }
 
-                      if (!deleteCategory(category)) {
+                      if (!await deleteCategory(category)) {
                         alert(
                           "Bu kategori ürünlerde kullanılıyor. Önce ürünlerin kategorisini değiştirin."
                         );
@@ -116,7 +118,7 @@ export default function CategoriesAdminPage() {
                     }}
                     className="rounded-lg border border-red-200 px-4 py-2 font-bold text-red-600"
                   >
-                    Sil
+                    Pasife al
                   </button>
                 </div>
               </div>

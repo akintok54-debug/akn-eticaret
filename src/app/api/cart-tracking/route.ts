@@ -1,483 +1,110 @@
-import { Prisma } from "@/generated/prisma/client";
+import { currentCustomer } from "@/lib/customer-session";
+import { unitPrice } from "@/lib/pricing";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { adminGuard } from "@/lib/admin";
+import { membershipError, normalizePhone } from "@/lib/membership";
+import { guestSession } from "@/lib/guest-session";
 
-type CartInput = {
-  sessionId?: string;
-
-  customerId?: string | null;
-  customerName?: string | null;
-  customerPhone?: string | null;
-  customerEmail?: string | null;
-
-  checkoutStarted?: boolean;
-  completed?: boolean;
-
-  orderId?: string | null;
-  orderNumber?: string | null;
-
-  reminderSent?: boolean;
-
-  items?: Array<{
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    image?: string | null;
-  }>;
-};
-
-const cleanText = (value: unknown) => {
-  if (typeof value !== "string") return undefined;
-
-  const cleaned = value.trim();
-  return cleaned || undefined;
-};
-
-/*
- * YÖNETİM PANELİ SEPET LİSTESİ
- *
- * Liste alınmadan önce 30 dakikadan uzun süredir
- * hareket görmeyen sepetlerin durumunu otomatik günceller.
- */
+const schema = z.object({
+  sessionId: z.uuid(),
+  customerName: z.string().trim().max(200).optional(),
+  customerPhone: z.string().trim().max(30).optional(),
+  customerEmail: z.string().trim().max(200).optional(),
+  checkoutStarted: z.boolean().optional(), completed: z.boolean().optional(),
+  orderId: z.string().max(100).optional(), orderNumber: z.string().max(100).optional(),
+  items: z.array(z.object({
+    id: z.string().min(1).max(100), name: z.string().min(1).max(500), price: z.number().finite().nonnegative(),
+    quantity: z.number().int().min(1).max(999), image: z.string().max(2000).nullable().optional(),
+  })).max(200).optional(),
+});
 export async function GET(request: Request) {
-  const denied = adminGuard(request);
-  if (denied) return denied;
-
+  const denied = adminGuard(request); if (denied) return denied;
   try {
     const now = new Date();
-
-    const abandonedLimit = new Date(
-      now.getTime() - 30 * 60 * 1000
-    );
-
-    /*
-     * Ödeme ekranına geçmeden terk edilen sepetler.
-     */
-    await prisma.shoppingCart.updateMany({
-      where: {
-        completedAt: null,
-        checkoutStarted: false,
-        itemCount: {
-          gt: 0,
-        },
-        lastActivityAt: {
-          lte: abandonedLimit,
-        },
+    const stale = { completedAt: null, itemCount: { gt: 0 }, lastActivityAt: { lte: new Date(now.getTime() - 30 * 60 * 1000) }, abandonedAt: null };
+    await prisma.$transaction([
+      prisma.shoppingCart.updateMany({ where: { ...stale, checkoutStarted: false }, data: { status: "Terk Edildi", abandonedAt: now } }),
+      prisma.shoppingCart.updateMany({ where: { ...stale, checkoutStarted: true }, data: { status: "Ödeme Terk", abandonedAt: now } }),
+    ]);
+    const carts = await prisma.shoppingCart.findMany({ include: { items: true, customer: { select: { fullName: true, phone: true, email: true } }, reminders: { orderBy: { createdAt: "desc" } } }, orderBy: { lastActivityAt: "desc" }, take: 500 });
+    return Response.json({ carts }, { headers: { "Cache-Control": "no-store" } });
+  } catch (e) { return membershipError(e); }
+}
+export async function POST(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin || (origin !== new URL(request.url).origin && origin !== process.env.SITE_URL))
+    return Response.json({ message: "Geçersiz istek kaynağı." }, { status: 403 });
+  try {
+    const parsed = schema.safeParse(await request.json());
+    if (!parsed.success) return Response.json({ message: "Geçersiz sepet bilgisi." }, { status: 400 });
+    const data = parsed.data;
+    const buyer = await currentCustomer();
+    // Never trust a browser-supplied customerId or a claimed completed order.
+    const guest = data.completed ? await guestSession() : null;
+    const order = data.completed && (guest || buyer) && data.orderId
+      ? await prisma.order.findFirst({ where: { id: data.orderId, OR: [...(guest ? [{guestSessionId:guest}] : []), ...(buyer ? [{customerId:buyer.id}] : [])] } }) : null;
+    if (data.completed && !order) return Response.json({ message: "Sipariş doğrulanamadı." }, { status: 403 });
+    await prisma.$transaction(async tx => {
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${data.sessionId}))::text`;
+      const existing = await tx.shoppingCart.findUnique({ where: { sessionId: data.sessionId } });
+      if (existing?.completedAt) return;
+      if (!existing && !data.items?.length) return;
+      const now = new Date();
+      const contactPhone = data.customerPhone ? normalizePhone(data.customerPhone) : undefined;
+      const customer = contactPhone ? await tx.customer.findUnique({ where: { phone: contactPhone }, select: { id: true } }) : null;
+      const quantities = new Map<string, number>();
+      for (const item of data.items ?? []) quantities.set(item.id, (quantities.get(item.id) ?? 0) + item.quantity);
+      if ([...quantities.values()].some(quantity => quantity > 999)) throw new Error("INVALID_ITEMS");
+      const products = data.items ? await tx.product.findMany({ where: { id: { in: [...quantities.keys()] } }, select: { id: true, name: true, retailPrice: true, dealerPrice: true, image: true } }) : [];
+      if (data.items && products.length !== quantities.size) throw new Error("INVALID_ITEMS");
+      const items = products.map(product => ({ productId: product.id, productName: product.name, price: unitPrice(product,buyer), image: product.image, quantity: quantities.get(product.id)! }));
+      const count = data.items ? items.reduce((sum, item) => sum + item.quantity, 0) : existing?.itemCount ?? 0;
+      const total = data.items ? items.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0) / 100 : existing?.total ?? 0;
+      const values = {
+        customerId: order?.customerId ?? buyer?.id ?? customer?.id ?? (contactPhone ? null : undefined),
+        customerName: order?.customerName ?? (data.customerName || buyer?.fullName || undefined),
+        customerPhone: order?.customerPhone ?? contactPhone ?? buyer?.phone,
+        customerEmail: order?.customerEmail ?? (data.customerEmail || buyer?.email || undefined),
+        checkoutStarted: !!(order || data.checkoutStarted || existing?.checkoutStarted),
+        checkoutStartedAt: existing?.checkoutStartedAt ?? (data.checkoutStarted || order ? now : null),
+        status: order ? "Tamamlandı" : count ? "Aktif" : "Boş",
+        itemCount: count, total,
+        lastActivityAt: now,
         abandonedAt: null,
-      },
-      data: {
-        status: "Terk Edildi",
-        abandonedAt: now,
-      },
-    });
-
-    /*
-     * Ödeme ekranına ulaşmış fakat sipariş vermeden
-     * 30 dakika boyunca hareket görmemiş sepetler.
-     */
-    await prisma.shoppingCart.updateMany({
-      where: {
-        completedAt: null,
-        checkoutStarted: true,
-        itemCount: {
-          gt: 0,
-        },
-        lastActivityAt: {
-          lte: abandonedLimit,
-        },
-        abandonedAt: null,
-      },
-      data: {
-        status: "Ödeme Terk",
-        abandonedAt: now,
-      },
-    });
-
-    const carts = await prisma.shoppingCart.findMany({
-      include: {
-        items: true,
-        customer: true,
-        reminders: true,
-      },
-      orderBy: {
-        lastActivityAt: "desc",
-      },
-      take: 500,
-    });
-
-    return Response.json(
-      { carts },
-      {
-        headers: {
-          "Cache-Control": "no-store",
-        },
+        recoveredAt: existing?.abandonedAt ? now : existing?.recoveredAt,
+        ...(order ? { completedAt: now, orderId: order.id, orderNumber: order.orderNumber } : {}),
+      };
+      if (existing) {
+        await tx.shoppingCart.update({ where: { id: existing.id }, data: { ...values, ...(data.items ? { items: { deleteMany: {}, create: items } } : {}) } });
+      } else {
+        await tx.shoppingCart.create({ data: { sessionId: data.sessionId, ...values, items: { create: items } } });
       }
-    );
-  } catch (error) {
-    console.error("GET /api/cart-tracking", error);
-
-    return Response.json(
-      { message: "Sepetler alınamadı." },
-      { status: 500 }
-    );
+    },{maxWait:10000,timeout:20000});
+    // Tracking is write-only publicly; never return customer or reminder records.
+    return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
+  } catch (e) {
+    if (e instanceof Error && e.message === "INVALID_ITEMS") return Response.json({ message: "Sepet ürünlerini kontrol edin." }, { status: 400 });
+    return membershipError(e);
   }
 }
 
-/*
- * SEPET HAREKETLERİ
- *
- * Sepete ürün ekleme,
- * ödeme ekranına geçme,
- * müşteri bilgileri,
- * geri kazanılma,
- * siparişe dönüşme
- * işlemlerini kaydeder.
- */
-export async function POST(request: Request) {
+export async function PATCH(request: Request) {
+  const denied = adminGuard(request); if (denied) return denied;
   try {
-    const data = (await request.json()) as CartInput;
-
-    if (!data.sessionId?.trim()) {
-      return Response.json(
-        { message: "sessionId zorunlu." },
-        { status: 400 }
-      );
-    }
-
-    const sessionId = data.sessionId.trim();
-    const now = new Date();
-
-    /*
-     * items gönderilmemişse mevcut ürünlere dokunmuyoruz.
-     *
-     * Böylece ödeme ve sipariş durumları güncellenirken
-     * eski sepet ürünleri silinmez.
-     */
-    const hasItems = Array.isArray(data.items);
-
-    const items = hasItems
-      ? data.items!.filter(
-        (item) =>
-          item &&
-          typeof item.id === "string" &&
-          item.id.trim().length > 0 &&
-          typeof item.name === "string" &&
-          item.name.trim().length > 0 &&
-          Number.isFinite(item.price) &&
-          item.price >= 0 &&
-          Number.isInteger(item.quantity) &&
-          item.quantity > 0 &&
-          item.quantity <= 999
-      )
-      : [];
-
-    const itemCount = items.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    );
-
-    const total = items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
-
-    /*
-     * Mevcut sepet durumunu öğreniyoruz.
-     */
-    const existing = await prisma.shoppingCart.findUnique({
-      where: {
-        sessionId,
-      },
-      select: {
-        id: true,
-        status: true,
-        checkoutStarted: true,
-        checkoutStartedAt: true,
-        abandonedAt: true,
-        recoveredAt: true,
-        completedAt: true,
-        orderId: true,
-        orderNumber: true,
-        reminderCount: true,
-      },
+    const parsed = z.object({
+      id: z.string().min(1), channel: z.enum(["email", "sms", "phone", "whatsapp"]),
+      status: z.enum(["pending", "sent", "failed"]), recipient: z.string().trim().min(3).max(200),
+      message: z.string().trim().min(1).max(2000), error: z.string().trim().max(1000).optional(),
+    }).safeParse(await request.json());
+    if (!parsed.success) return Response.json({ message: "Hatırlatma bilgilerini kontrol edin." }, { status: 400 });
+    const { id, ...data } = parsed.data;
+    const cart = await prisma.shoppingCart.update({
+      where: { id }, data: {
+        reminders: { create: { ...data, sentAt: data.status === "sent" ? new Date() : null } },
+        ...(data.status === "sent" ? { reminderSentAt: new Date(), reminderCount: { increment: 1 } } : {}),
+      }, include: { items: true, reminders: { orderBy: { createdAt: "desc" } }, customer: { select: { fullName: true, phone: true, email: true } } },
     });
-
-    const customerId = cleanText(data.customerId);
-    const customerName = cleanText(data.customerName);
-    const customerPhone = cleanText(data.customerPhone);
-    const customerEmail = cleanText(data.customerEmail);
-
-    const orderId = cleanText(data.orderId);
-    const orderNumber = cleanText(data.orderNumber);
-
-    const completed = data.completed === true;
-
-    /*
-     * Daha önce terk edilmiş bir sepet tekrar hareket görürse
-     * geri kazanılmış kabul edilir.
-     */
-    const recovered =
-      Boolean(existing?.abandonedAt) &&
-      !existing?.completedAt &&
-      !completed;
-
-    let status: string | undefined;
-
-    if (completed) {
-      status = "Tamamlandı";
-    } else if (recovered) {
-      status = "Aktif";
-    } else if (hasItems) {
-      status = itemCount > 0 ? "Aktif" : "Boş";
-    }
-
-    const updateData: Prisma.ShoppingCartUpdateInput = {
-      lastActivityAt: now,
-    };
-
-    /*
-     * Müşteri bağlantısı
-     */
-    if (customerId !== undefined) {
-      updateData.customer = customerId
-        ? {
-          connect: {
-            id: customerId,
-          },
-        }
-        : {
-          disconnect: true,
-        };
-    }
-
-    /*
-     * Müşteri iletişim bilgileri
-     */
-    if (customerName !== undefined) {
-      updateData.customerName = customerName;
-    }
-
-    if (customerPhone !== undefined) {
-      updateData.customerPhone = customerPhone;
-    }
-
-    if (customerEmail !== undefined) {
-      updateData.customerEmail = customerEmail;
-    }
-
-    /*
-     * Genel durum
-     */
-    if (status !== undefined) {
-      updateData.status = status;
-    }
-
-    /*
-     * Ödeme ekranına geçiş
-     */
-    if (data.checkoutStarted !== undefined) {
-      updateData.checkoutStarted =
-        Boolean(data.checkoutStarted);
-
-      if (
-        data.checkoutStarted === true &&
-        !existing?.checkoutStartedAt
-      ) {
-        updateData.checkoutStartedAt = now;
-      }
-    }
-
-    /*
-     * Terk edilmiş sepet geri döndü.
-     */
-    if (recovered) {
-      updateData.recoveredAt = now;
-      updateData.abandonedAt = null;
-    }
-
-    /*
-     * Sepet gerçek siparişe dönüştü.
-     */
-    if (completed) {
-      updateData.status = "Tamamlandı";
-      updateData.completedAt = now;
-      updateData.abandonedAt = null;
-    }
-
-    /*
-     * Oluşan sipariş bağlantısı
-     */
-    if (orderId !== undefined) {
-      updateData.orderId = orderId;
-    }
-
-    if (orderNumber !== undefined) {
-      updateData.orderNumber = orderNumber;
-    }
-
-    /*
-     * Sepet hatırlatma kaydı
-     */
-    if (data.reminderSent === true) {
-      updateData.reminderSentAt = now;
-
-      updateData.reminderCount = {
-        increment: 1,
-      };
-    }
-
-    /*
-     * Yeni ürün listesi gönderilmişse
-     * sepet içeriğini yenile.
-     */
-    if (hasItems) {
-      updateData.itemCount = itemCount;
-      updateData.total = total;
-
-      updateData.items = {
-        deleteMany: {},
-
-        create: items.map((item) => ({
-          productId: item.id.trim(),
-          productName: item.name.trim(),
-          image: item.image || null,
-          price: item.price,
-          quantity: item.quantity,
-        })),
-      };
-    }
-
-    /*
-     * Sepet ilk defa oluşturuluyorsa kullanılacak kayıt.
-     */
-    const createData: Prisma.ShoppingCartCreateInput = {
-      sessionId,
-
-      customer: customerId
-        ? {
-          connect: {
-            id: customerId,
-          },
-        }
-        : undefined,
-
-      customerName: customerName ?? null,
-      customerPhone: customerPhone ?? null,
-      customerEmail: customerEmail ?? null,
-
-      status:
-        completed
-          ? "Tamamlandı"
-          : itemCount > 0
-            ? "Aktif"
-            : "Boş",
-
-      checkoutStarted:
-        Boolean(data.checkoutStarted),
-
-      checkoutStartedAt:
-        data.checkoutStarted === true
-          ? now
-          : null,
-
-      itemCount,
-      total,
-
-      completedAt:
-        completed
-          ? now
-          : null,
-
-      orderId:
-        orderId ?? null,
-
-      orderNumber:
-        orderNumber ?? null,
-
-      reminderSentAt:
-        data.reminderSent === true
-          ? now
-          : null,
-
-      reminderCount:
-        data.reminderSent === true
-          ? 1
-          : 0,
-
-      lastActivityAt: now,
-
-      items: {
-        create: items.map((item) => ({
-          productId: item.id.trim(),
-          productName: item.name.trim(),
-          image: item.image || null,
-          price: item.price,
-          quantity: item.quantity,
-        })),
-      },
-    };
-
-    let cart;
-
-    try {
-      cart = await prisma.shoppingCart.upsert({
-        where: {
-          sessionId,
-        },
-
-        create: createData,
-
-        update: updateData,
-
-        include: {
-          items: true,
-          customer: true,
-          reminders: true,
-        },
-      });
-    } catch (error) {
-      /*
-       * Aynı tarayıcıdan aynı anda iki ilk kayıt gelirse
-       * unique sessionId yarışını güvenli biçimde çözer.
-       */
-      if (
-        error instanceof
-        Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2002"
-      ) {
-        cart = await prisma.shoppingCart.update({
-          where: {
-            sessionId,
-          },
-
-          data: updateData,
-
-          include: {
-            items: true,
-            customer: true,
-            reminders: true,
-          },
-        });
-      } else {
-        throw error;
-      }
-    }
-
-    return Response.json({ cart });
-  } catch (error) {
-    console.error(
-      "POST /api/cart-tracking",
-      error
-    );
-
-    return Response.json(
-      {
-        message: "Sepet kaydedilemedi.",
-      },
-      {
-        status: 500,
-      }
-    );
-  }
+    return Response.json({ success: true, cart });
+  } catch (e) { return membershipError(e); }
 }

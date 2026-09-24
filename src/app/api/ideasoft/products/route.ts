@@ -1,3 +1,4 @@
+import { adminGuard } from "@/lib/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 async function fetchIdeaSoftPage(
@@ -32,8 +33,7 @@ async function fetchIdeaSoftPage(
 
     if (!response.ok) {
         throw new Error(
-            `IdeaSoft ürün API hatası (${response.status}): ${typeof data === "string" ? data : JSON.stringify(data)
-            }`
+            `IdeaSoft ürün API hatası (${response.status}).`
         );
     }
 
@@ -45,6 +45,7 @@ async function fetchIdeaSoftPage(
 }
 
 export async function GET(request: NextRequest) {
+    const denied = adminGuard(request); if (denied) return denied;
     try {
         const baseUrl = process.env.IDEASOFT_BASE_URL;
 

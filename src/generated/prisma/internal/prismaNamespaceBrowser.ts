@@ -65,7 +65,13 @@ export const ModelName = {
   DealerApplication: 'DealerApplication',
   SupportTicket: 'SupportTicket',
   SupportMessage: 'SupportMessage',
-  CartReminder: 'CartReminder'
+  CartReminder: 'CartReminder',
+  CustomerAccount: 'CustomerAccount',
+  CustomerSession: 'CustomerSession',
+  GuestSession: 'GuestSession',
+  StoreSettings: 'StoreSettings',
+  Coupon: 'Coupon',
+  CatalogEntry: 'CatalogEntry'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -155,6 +161,7 @@ export const CustomerScalarFieldEnum = {
   email: 'email',
   type: 'type',
   dealerStatus: 'dealerStatus',
+  discountRate: 'discountRate',
   companyName: 'companyName',
   taxOffice: 'taxOffice',
   taxNumber: 'taxNumber',
@@ -206,6 +213,13 @@ export const OrderScalarFieldEnum = {
   companyName: 'companyName',
   taxOffice: 'taxOffice',
   taxNumber: 'taxNumber',
+  couponCode: 'couponCode',
+  shippingCompany: 'shippingCompany',
+  trackingNumber: 'trackingNumber',
+  trackingUrl: 'trackingUrl',
+  paymentStatus: 'paymentStatus',
+  paidAt: 'paidAt',
+  returnRequestedAt: 'returnRequestedAt',
   shippingMethod: 'shippingMethod',
   paymentMethod: 'paymentMethod',
   status: 'status',
@@ -380,6 +394,82 @@ export const CartReminderScalarFieldEnum = {
 } as const
 
 export type CartReminderScalarFieldEnum = (typeof CartReminderScalarFieldEnum)[keyof typeof CartReminderScalarFieldEnum]
+
+
+export const CustomerAccountScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  email: 'email',
+  passwordHash: 'passwordHash',
+  failedLogins: 'failedLogins',
+  lockedUntil: 'lockedUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomerAccountScalarFieldEnum = (typeof CustomerAccountScalarFieldEnum)[keyof typeof CustomerAccountScalarFieldEnum]
+
+
+export const CustomerSessionScalarFieldEnum = {
+  id: 'id',
+  accountId: 'accountId',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type CustomerSessionScalarFieldEnum = (typeof CustomerSessionScalarFieldEnum)[keyof typeof CustomerSessionScalarFieldEnum]
+
+
+export const GuestSessionScalarFieldEnum = {
+  id: 'id',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt'
+} as const
+
+export type GuestSessionScalarFieldEnum = (typeof GuestSessionScalarFieldEnum)[keyof typeof GuestSessionScalarFieldEnum]
+
+
+export const StoreSettingsScalarFieldEnum = {
+  id: 'id',
+  enabled: 'enabled',
+  bankName: 'bankName',
+  iban: 'iban',
+  shipping: 'shipping',
+  threshold: 'threshold',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreSettingsScalarFieldEnum = (typeof StoreSettingsScalarFieldEnum)[keyof typeof StoreSettingsScalarFieldEnum]
+
+
+export const CouponScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  description: 'description',
+  discountPercent: 'discountPercent',
+  minSubtotal: 'minSubtotal',
+  maxUses: 'maxUses',
+  usedCount: 'usedCount',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CouponScalarFieldEnum = (typeof CouponScalarFieldEnum)[keyof typeof CouponScalarFieldEnum]
+
+
+export const CatalogEntryScalarFieldEnum = {
+  id: 'id',
+  kind: 'kind',
+  name: 'name',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CatalogEntryScalarFieldEnum = (typeof CatalogEntryScalarFieldEnum)[keyof typeof CatalogEntryScalarFieldEnum]
 
 
 export const SortOrder = {

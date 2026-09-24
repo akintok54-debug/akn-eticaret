@@ -18,6 +18,9 @@ type Cart = {
   customerPhone: string | null;
   customerEmail: string | null;
   status: string;
+  completedAt: string | null;
+  customer: { fullName: string; phone: string; email: string | null } | null;
+  reminders: Array<{ id: string; channel: string; status: string; recipient: string | null; message: string | null; createdAt: string; sentAt: string | null; error: string | null }>;
   checkoutStarted: boolean;
   itemCount: number;
   total: number;
@@ -47,12 +50,16 @@ export default function CartAdmin({
   title: string;
 }) {
   const [carts, setCarts] = useState<Cart[]>([]);
+  const [now, setNow] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCart, setSelectedCart] = useState<Cart | null>(null);
 
   async function load() {
     setLoading(true);
+    setError("");
 
     try {
       const response = await fetch("/api/cart-tracking", {
@@ -60,20 +67,30 @@ export default function CartAdmin({
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Sepetler alınamadı.");
       setCarts(data.carts || []);
+      setNow(Date.now());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Sepetler alınamadı.");
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    void load();
+    const controller = new AbortController();
+    fetch("/api/cart-tracking", { cache: "no-store", signal: controller.signal })
+      .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.message || "Kayıtlar alınamadı."); return data; })
+      .then(data => { if (!controller.signal.aborted) { setCarts(data.carts || []); setNow(Date.now()); } })
+      .catch(error => { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Kayıtlar alınamadı."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
   }, []);
 
   const rows = useMemo(() => {
-    const now = Date.now();
 
-    let result = carts.filter((cart) => cart.itemCount > 0);
+
+    let result = carts.filter((cart) => cart.itemCount > 0 && !cart.completedAt && cart.status !== "Tamamlandı");
 
     if (mode === "active") {
       result = result.filter(
@@ -126,6 +143,9 @@ export default function CartAdmin({
     return result.filter((cart) =>
       [
         cart.customerName,
+        cart.customer?.fullName,
+        cart.customer?.phone,
+        cart.customer?.email,
         cart.customerPhone,
         cart.customerEmail,
         cart.sessionId,
@@ -133,7 +153,7 @@ export default function CartAdmin({
         (value || "").toLocaleLowerCase("tr-TR").includes(q)
       )
     );
-  }, [carts, mode, search]);
+  }, [carts, mode, search, now]);
 
   return (
     <>
@@ -146,6 +166,7 @@ export default function CartAdmin({
           </p>
         </div>
 
+        {error && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-4 text-red-700">{error}</p>}
         <section className="rounded-xl border bg-white">
           <div className="flex flex-col gap-3 border-b p-4 md:flex-row md:items-center md:justify-between">
             <div className="font-semibold">
@@ -203,13 +224,13 @@ export default function CartAdmin({
                     >
                       <td className="p-3">
                         <div className="font-medium">
-                          {cart.customerName || "Misafir müşteri"}
+                          {cart.customerName || cart.customer?.fullName || "Misafir sepeti"}
                         </div>
 
                         <div className="text-xs text-slate-500">
                           {cart.customerPhone ||
                             cart.customerEmail ||
-                            cart.sessionId.slice(0, 12)}
+                            cart.customer?.phone || cart.customer?.email || "Misafir sepeti – iletişim bilgisi henüz alınmadı"}
                         </div>
                       </td>
 
@@ -256,7 +277,7 @@ export default function CartAdmin({
           onClick={() => setSelectedCart(null)}
         >
           <div
-            className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+            role="dialog" aria-modal="true" aria-label="Sepet Detayı" className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 flex items-center justify-between border-b bg-white p-5">
@@ -279,14 +300,14 @@ export default function CartAdmin({
               <div className="rounded-xl bg-slate-50 p-3">
                 <div className="text-xs text-slate-500">Müşteri</div>
                 <div className="mt-1 font-semibold">
-                  {selectedCart.customerName || "Misafir müşteri"}
+                  {selectedCart.customerName || selectedCart.customer?.fullName || "Misafir sepeti – iletişim bilgisi henüz alınmadı"}
                 </div>
               </div>
 
               <div className="rounded-xl bg-slate-50 p-3">
                 <div className="text-xs text-slate-500">Telefon</div>
                 <div className="mt-1 font-semibold">
-                  {selectedCart.customerPhone || "-"}
+                  {selectedCart.customerPhone || selectedCart.customer?.phone || "-"}
                 </div>
               </div>
 
@@ -308,6 +329,7 @@ export default function CartAdmin({
             </div>
 
             <div className="p-5">
+              <p className="mb-4 break-words text-sm">E-posta: {selectedCart.customerEmail || selectedCart.customer?.email || "—"} · Durum: {selectedCart.status}</p>
               <h3 className="mb-4 font-bold">
                 Sepetteki Ürünler ({selectedCart.itemCount})
               </h3>
@@ -370,7 +392,34 @@ export default function CartAdmin({
                 ))}
               </div>
 
-              <div className="mt-5 grid gap-3 text-sm md:grid-cols-2">
+              <section className="mt-6 rounded-xl border p-4">
+  <h3 className="font-bold">Hatırlatma Geçmişi</h3>
+  <p className="mt-2 text-xs text-slate-500">Bu alan hatırlatma kaydı tutar; otomatik SMS veya e-posta göndermez. Haricen gönderdiğiniz hatırlatmaları burada işaretleyin.</p>
+  <div className="mt-3 space-y-2">{selectedCart.reminders?.length ? selectedCart.reminders.map(reminder => <article key={reminder.id} className="rounded-lg bg-slate-50 p-3 text-sm">
+    <p>{new Date(reminder.createdAt).toLocaleString("tr-TR")} · {({ email: "E-posta", sms: "SMS", phone: "Telefon", whatsapp: "WhatsApp" } as Record<string,string>)[reminder.channel] || reminder.channel} · {({ pending: "Bekliyor", sent: "Gönderildi", failed: "Başarısız" } as Record<string,string>)[reminder.status] || reminder.status}</p>
+    <p className="break-words">{reminder.recipient}</p><p className="whitespace-pre-wrap break-words">{reminder.message}</p>{reminder.error && <p className="text-red-700">{reminder.error}</p>}
+  </article>) : <p className="text-sm text-slate-500">Henüz hatırlatma kaydı yok.</p>}</div>
+  <form key={selectedCart.id} onSubmit={async event => {
+    event.preventDefault(); if (saving) return;
+    const form = event.currentTarget; const values = new FormData(form);
+    setSaving(true); setError("");
+    try {
+      const response = await fetch("/api/cart-tracking", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: selectedCart.id, ...Object.fromEntries(values) }) });
+      const data = await response.json(); if (!response.ok) throw new Error(data.message);
+      setSelectedCart(data.cart); setCarts(current => current.map(cart => cart.id === data.cart.id ? data.cart : cart)); form.reset();
+    } catch (e) { setError(e instanceof Error ? e.message : "Hatırlatma kaydedilemedi."); }
+    finally { setSaving(false); }
+  }} className="mt-4 grid gap-3 sm:grid-cols-2">
+    <label className="text-sm">Kanal<select name="channel" className="mt-1 w-full rounded-lg border p-3"><option value="email">E-posta</option><option value="sms">SMS</option><option value="phone">Telefon</option><option value="whatsapp">WhatsApp</option></select></label>
+    <label className="text-sm">Durum<select name="status" className="mt-1 w-full rounded-lg border p-3"><option value="pending">Bekliyor</option><option value="sent">Haricen Gönderildi</option><option value="failed">Başarısız</option></select></label>
+    <label className="text-sm sm:col-span-2">Alıcı<input required name="recipient" maxLength={200} defaultValue={selectedCart.customerEmail || selectedCart.customerPhone || selectedCart.customer?.email || selectedCart.customer?.phone || ""} className="mt-1 w-full rounded-lg border p-3" /></label>
+    <label className="text-sm sm:col-span-2">Mesaj / Görüşme Notu<textarea required name="message" maxLength={2000} className="mt-1 w-full rounded-lg border p-3" /></label>
+    <label className="text-sm sm:col-span-2">Hata Açıklaması (varsa)<input name="error" maxLength={1000} className="mt-1 w-full rounded-lg border p-3" /></label>
+    <button disabled={saving} className="rounded-xl bg-slate-950 px-4 py-3 font-bold text-white">{saving ? "Kaydediliyor…" : "Hatırlatma Kaydı Ekle"}</button>
+    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+  </form>
+</section>
+<div className="mt-5 grid gap-3 text-sm md:grid-cols-2">
                 <div className="rounded-xl border p-3">
                   <span className="text-slate-500">
                     Sepet oluşturuldu:

@@ -132,8 +132,14 @@ export default function IdeaSoftIntegrationPage() {
     }
 
     useEffect(() => {
-        void loadProducts();
-    }, []);
+    const controller = new AbortController();
+    fetch("/api/ideasoft/products?all=1", { cache: "no-store", signal: controller.signal })
+      .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.message || "Kayıtlar alınamadı."); return data; })
+      .then(data => { if (!controller.signal.aborted) { setProducts(Array.isArray(data.data) ? data.data : []); } })
+      .catch(error => { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Kayıtlar alınamadı."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, []);
 
     return (
         <main className="px-5 py-8 lg:px-8 lg:py-10">

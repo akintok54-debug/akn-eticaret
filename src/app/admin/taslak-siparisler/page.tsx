@@ -77,8 +77,14 @@ export default function DraftOrdersPage() {
     }
 
     useEffect(() => {
-        void loadOrders();
-    }, []);
+    const controller = new AbortController();
+    fetch("/api/orders", { cache: "no-store", signal: controller.signal })
+      .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.message || "Kayıtlar alınamadı."); return data; })
+      .then(data => { if (!controller.signal.aborted) { setOrders((data.orders || []).filter((order: Order) => order.status === "Taslak")); } })
+      .catch(error => { if (!controller.signal.aborted) setMessage(error instanceof Error ? error.message : "Kayıtlar alınamadı."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, []);
 
     const filteredOrders = useMemo(() => {
         const q = search.trim().toLocaleLowerCase("tr-TR");

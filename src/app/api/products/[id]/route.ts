@@ -1,3 +1,5 @@
+import { currentCustomer } from "@/lib/customer-session";
+import { unitPrice } from "@/lib/pricing";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -48,9 +50,10 @@ export async function GET(
       );
     }
 
+    const buyer = await currentCustomer();
     return NextResponse.json({
       success: true,
-      product: isAdmin(_request) ? product : { id: product.id, sku: product.sku, barcode: product.barcode, name: product.name, brand: product.brand, category: product.category, description: product.description, retailPrice: product.retailPrice, vatRate: product.vatRate, stock: product.stock, image: product.image, active: product.active },
+      product: isAdmin(_request) ? product : { id: product.id, sku: product.sku, barcode: product.barcode, name: product.name, brand: product.brand, category: product.category, description: product.description, retailPrice: unitPrice(product,buyer), vatRate: product.vatRate, stock: product.stock, image: product.image, active: product.active },
     });
   } catch (error) {
     console.error("GET /api/products/[id]:", error);
@@ -147,13 +150,11 @@ export async function DELETE(
       );
     }
 
-    await prisma.product.delete({
-      where: { id },
-    });
+    await prisma.product.update({ where: { id }, data: { active: false } });
 
     return NextResponse.json({
       success: true,
-      message: "Ürün silindi.",
+      message: "Ürün pasife alındı. İlişkili kayıtlar korundu.",
     });
   } catch (error) {
     console.error("DELETE /api/products/[id]:", error);

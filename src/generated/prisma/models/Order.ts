@@ -57,6 +57,13 @@ export type OrderMinAggregateOutputType = {
   companyName: string | null
   taxOffice: string | null
   taxNumber: string | null
+  couponCode: string | null
+  shippingCompany: string | null
+  trackingNumber: string | null
+  trackingUrl: string | null
+  paymentStatus: string | null
+  paidAt: Date | null
+  returnRequestedAt: Date | null
   shippingMethod: string | null
   paymentMethod: string | null
   status: string | null
@@ -89,6 +96,13 @@ export type OrderMaxAggregateOutputType = {
   companyName: string | null
   taxOffice: string | null
   taxNumber: string | null
+  couponCode: string | null
+  shippingCompany: string | null
+  trackingNumber: string | null
+  trackingUrl: string | null
+  paymentStatus: string | null
+  paidAt: Date | null
+  returnRequestedAt: Date | null
   shippingMethod: string | null
   paymentMethod: string | null
   status: string | null
@@ -121,6 +135,13 @@ export type OrderCountAggregateOutputType = {
   companyName: number
   taxOffice: number
   taxNumber: number
+  couponCode: number
+  shippingCompany: number
+  trackingNumber: number
+  trackingUrl: number
+  paymentStatus: number
+  paidAt: number
+  returnRequestedAt: number
   shippingMethod: number
   paymentMethod: number
   status: number
@@ -169,6 +190,13 @@ export type OrderMinAggregateInputType = {
   companyName?: true
   taxOffice?: true
   taxNumber?: true
+  couponCode?: true
+  shippingCompany?: true
+  trackingNumber?: true
+  trackingUrl?: true
+  paymentStatus?: true
+  paidAt?: true
+  returnRequestedAt?: true
   shippingMethod?: true
   paymentMethod?: true
   status?: true
@@ -201,6 +229,13 @@ export type OrderMaxAggregateInputType = {
   companyName?: true
   taxOffice?: true
   taxNumber?: true
+  couponCode?: true
+  shippingCompany?: true
+  trackingNumber?: true
+  trackingUrl?: true
+  paymentStatus?: true
+  paidAt?: true
+  returnRequestedAt?: true
   shippingMethod?: true
   paymentMethod?: true
   status?: true
@@ -233,6 +268,13 @@ export type OrderCountAggregateInputType = {
   companyName?: true
   taxOffice?: true
   taxNumber?: true
+  couponCode?: true
+  shippingCompany?: true
+  trackingNumber?: true
+  trackingUrl?: true
+  paymentStatus?: true
+  paidAt?: true
+  returnRequestedAt?: true
   shippingMethod?: true
   paymentMethod?: true
   status?: true
@@ -352,6 +394,13 @@ export type OrderGroupByOutputType = {
   companyName: string | null
   taxOffice: string | null
   taxNumber: string | null
+  couponCode: string | null
+  shippingCompany: string | null
+  trackingNumber: string | null
+  trackingUrl: string | null
+  paymentStatus: string
+  paidAt: Date | null
+  returnRequestedAt: Date | null
   shippingMethod: string
   paymentMethod: string
   status: string
@@ -407,6 +456,13 @@ export type OrderWhereInput = {
   companyName?: Prisma.StringNullableFilter<"Order"> | string | null
   taxOffice?: Prisma.StringNullableFilter<"Order"> | string | null
   taxNumber?: Prisma.StringNullableFilter<"Order"> | string | null
+  couponCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingCompany?: Prisma.StringNullableFilter<"Order"> | string | null
+  trackingNumber?: Prisma.StringNullableFilter<"Order"> | string | null
+  trackingUrl?: Prisma.StringNullableFilter<"Order"> | string | null
+  paymentStatus?: Prisma.StringFilter<"Order"> | string
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  returnRequestedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   shippingMethod?: Prisma.StringFilter<"Order"> | string
   paymentMethod?: Prisma.StringFilter<"Order"> | string
   status?: Prisma.StringFilter<"Order"> | string
@@ -441,6 +497,13 @@ export type OrderOrderByWithRelationInput = {
   companyName?: Prisma.SortOrderInput | Prisma.SortOrder
   taxOffice?: Prisma.SortOrderInput | Prisma.SortOrder
   taxNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  couponCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingCompany?: Prisma.SortOrderInput | Prisma.SortOrder
+  trackingNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  trackingUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentStatus?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  returnRequestedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingMethod?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -478,6 +541,13 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   companyName?: Prisma.StringNullableFilter<"Order"> | string | null
   taxOffice?: Prisma.StringNullableFilter<"Order"> | string | null
   taxNumber?: Prisma.StringNullableFilter<"Order"> | string | null
+  couponCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingCompany?: Prisma.StringNullableFilter<"Order"> | string | null
+  trackingNumber?: Prisma.StringNullableFilter<"Order"> | string | null
+  trackingUrl?: Prisma.StringNullableFilter<"Order"> | string | null
+  paymentStatus?: Prisma.StringFilter<"Order"> | string
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  returnRequestedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   shippingMethod?: Prisma.StringFilter<"Order"> | string
   paymentMethod?: Prisma.StringFilter<"Order"> | string
   status?: Prisma.StringFilter<"Order"> | string
@@ -512,6 +582,13 @@ export type OrderOrderByWithAggregationInput = {
   companyName?: Prisma.SortOrderInput | Prisma.SortOrder
   taxOffice?: Prisma.SortOrderInput | Prisma.SortOrder
   taxNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  couponCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  shippingCompany?: Prisma.SortOrderInput | Prisma.SortOrder
+  trackingNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  trackingUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentStatus?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  returnRequestedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   shippingMethod?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -552,6 +629,13 @@ export type OrderScalarWhereWithAggregatesInput = {
   companyName?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   taxOffice?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   taxNumber?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  couponCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  shippingCompany?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  trackingNumber?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  trackingUrl?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  paymentStatus?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  paidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  returnRequestedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   shippingMethod?: Prisma.StringWithAggregatesFilter<"Order"> | string
   paymentMethod?: Prisma.StringWithAggregatesFilter<"Order"> | string
   status?: Prisma.StringWithAggregatesFilter<"Order"> | string
@@ -583,6 +667,13 @@ export type OrderCreateInput = {
   companyName?: string | null
   taxOffice?: string | null
   taxNumber?: string | null
+  couponCode?: string | null
+  shippingCompany?: string | null
+  trackingNumber?: string | null
+  trackingUrl?: string | null
+  paymentStatus?: string
+  paidAt?: Date | string | null
+  returnRequestedAt?: Date | string | null
   shippingMethod: string
   paymentMethod: string
   status?: string
@@ -617,6 +708,13 @@ export type OrderUncheckedCreateInput = {
   companyName?: string | null
   taxOffice?: string | null
   taxNumber?: string | null
+  couponCode?: string | null
+  shippingCompany?: string | null
+  trackingNumber?: string | null
+  trackingUrl?: string | null
+  paymentStatus?: string
+  paidAt?: Date | string | null
+  returnRequestedAt?: Date | string | null
   shippingMethod: string
   paymentMethod: string
   status?: string
@@ -649,6 +747,13 @@ export type OrderUpdateInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -683,6 +788,13 @@ export type OrderUncheckedUpdateInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -716,6 +828,13 @@ export type OrderCreateManyInput = {
   companyName?: string | null
   taxOffice?: string | null
   taxNumber?: string | null
+  couponCode?: string | null
+  shippingCompany?: string | null
+  trackingNumber?: string | null
+  trackingUrl?: string | null
+  paymentStatus?: string
+  paidAt?: Date | string | null
+  returnRequestedAt?: Date | string | null
   shippingMethod: string
   paymentMethod: string
   status?: string
@@ -747,6 +866,13 @@ export type OrderUpdateManyMutationInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -779,6 +905,13 @@ export type OrderUncheckedUpdateManyInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -821,6 +954,13 @@ export type OrderCountOrderByAggregateInput = {
   companyName?: Prisma.SortOrder
   taxOffice?: Prisma.SortOrder
   taxNumber?: Prisma.SortOrder
+  couponCode?: Prisma.SortOrder
+  shippingCompany?: Prisma.SortOrder
+  trackingNumber?: Prisma.SortOrder
+  trackingUrl?: Prisma.SortOrder
+  paymentStatus?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  returnRequestedAt?: Prisma.SortOrder
   shippingMethod?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -860,6 +1000,13 @@ export type OrderMaxOrderByAggregateInput = {
   companyName?: Prisma.SortOrder
   taxOffice?: Prisma.SortOrder
   taxNumber?: Prisma.SortOrder
+  couponCode?: Prisma.SortOrder
+  shippingCompany?: Prisma.SortOrder
+  trackingNumber?: Prisma.SortOrder
+  trackingUrl?: Prisma.SortOrder
+  paymentStatus?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  returnRequestedAt?: Prisma.SortOrder
   shippingMethod?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -892,6 +1039,13 @@ export type OrderMinOrderByAggregateInput = {
   companyName?: Prisma.SortOrder
   taxOffice?: Prisma.SortOrder
   taxNumber?: Prisma.SortOrder
+  couponCode?: Prisma.SortOrder
+  shippingCompany?: Prisma.SortOrder
+  trackingNumber?: Prisma.SortOrder
+  trackingUrl?: Prisma.SortOrder
+  paymentStatus?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  returnRequestedAt?: Prisma.SortOrder
   shippingMethod?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -991,6 +1145,13 @@ export type OrderCreateWithoutCustomerInput = {
   companyName?: string | null
   taxOffice?: string | null
   taxNumber?: string | null
+  couponCode?: string | null
+  shippingCompany?: string | null
+  trackingNumber?: string | null
+  trackingUrl?: string | null
+  paymentStatus?: string
+  paidAt?: Date | string | null
+  returnRequestedAt?: Date | string | null
   shippingMethod: string
   paymentMethod: string
   status?: string
@@ -1023,6 +1184,13 @@ export type OrderUncheckedCreateWithoutCustomerInput = {
   companyName?: string | null
   taxOffice?: string | null
   taxNumber?: string | null
+  couponCode?: string | null
+  shippingCompany?: string | null
+  trackingNumber?: string | null
+  trackingUrl?: string | null
+  paymentStatus?: string
+  paidAt?: Date | string | null
+  returnRequestedAt?: Date | string | null
   shippingMethod: string
   paymentMethod: string
   status?: string
@@ -1085,6 +1253,13 @@ export type OrderScalarWhereInput = {
   companyName?: Prisma.StringNullableFilter<"Order"> | string | null
   taxOffice?: Prisma.StringNullableFilter<"Order"> | string | null
   taxNumber?: Prisma.StringNullableFilter<"Order"> | string | null
+  couponCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  shippingCompany?: Prisma.StringNullableFilter<"Order"> | string | null
+  trackingNumber?: Prisma.StringNullableFilter<"Order"> | string | null
+  trackingUrl?: Prisma.StringNullableFilter<"Order"> | string | null
+  paymentStatus?: Prisma.StringFilter<"Order"> | string
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  returnRequestedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   shippingMethod?: Prisma.StringFilter<"Order"> | string
   paymentMethod?: Prisma.StringFilter<"Order"> | string
   status?: Prisma.StringFilter<"Order"> | string
@@ -1116,6 +1291,13 @@ export type OrderCreateWithoutItemsInput = {
   companyName?: string | null
   taxOffice?: string | null
   taxNumber?: string | null
+  couponCode?: string | null
+  shippingCompany?: string | null
+  trackingNumber?: string | null
+  trackingUrl?: string | null
+  paymentStatus?: string
+  paidAt?: Date | string | null
+  returnRequestedAt?: Date | string | null
   shippingMethod: string
   paymentMethod: string
   status?: string
@@ -1149,6 +1331,13 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   companyName?: string | null
   taxOffice?: string | null
   taxNumber?: string | null
+  couponCode?: string | null
+  shippingCompany?: string | null
+  trackingNumber?: string | null
+  trackingUrl?: string | null
+  paymentStatus?: string
+  paidAt?: Date | string | null
+  returnRequestedAt?: Date | string | null
   shippingMethod: string
   paymentMethod: string
   status?: string
@@ -1196,6 +1385,13 @@ export type OrderUpdateWithoutItemsInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1229,6 +1425,13 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1260,6 +1463,13 @@ export type OrderCreateManyCustomerInput = {
   companyName?: string | null
   taxOffice?: string | null
   taxNumber?: string | null
+  couponCode?: string | null
+  shippingCompany?: string | null
+  trackingNumber?: string | null
+  trackingUrl?: string | null
+  paymentStatus?: string
+  paidAt?: Date | string | null
+  returnRequestedAt?: Date | string | null
   shippingMethod: string
   paymentMethod: string
   status?: string
@@ -1291,6 +1501,13 @@ export type OrderUpdateWithoutCustomerInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1323,6 +1540,13 @@ export type OrderUncheckedUpdateWithoutCustomerInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1355,6 +1579,13 @@ export type OrderUncheckedUpdateManyWithoutCustomerInput = {
   companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxOffice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shippingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  returnRequestedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shippingMethod?: Prisma.StringFieldUpdateOperationsInput | string
   paymentMethod?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1418,6 +1649,13 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   companyName?: boolean
   taxOffice?: boolean
   taxNumber?: boolean
+  couponCode?: boolean
+  shippingCompany?: boolean
+  trackingNumber?: boolean
+  trackingUrl?: boolean
+  paymentStatus?: boolean
+  paidAt?: boolean
+  returnRequestedAt?: boolean
   shippingMethod?: boolean
   paymentMethod?: boolean
   status?: boolean
@@ -1453,6 +1691,13 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   companyName?: boolean
   taxOffice?: boolean
   taxNumber?: boolean
+  couponCode?: boolean
+  shippingCompany?: boolean
+  trackingNumber?: boolean
+  trackingUrl?: boolean
+  paymentStatus?: boolean
+  paidAt?: boolean
+  returnRequestedAt?: boolean
   shippingMethod?: boolean
   paymentMethod?: boolean
   status?: boolean
@@ -1486,6 +1731,13 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   companyName?: boolean
   taxOffice?: boolean
   taxNumber?: boolean
+  couponCode?: boolean
+  shippingCompany?: boolean
+  trackingNumber?: boolean
+  trackingUrl?: boolean
+  paymentStatus?: boolean
+  paidAt?: boolean
+  returnRequestedAt?: boolean
   shippingMethod?: boolean
   paymentMethod?: boolean
   status?: boolean
@@ -1519,6 +1771,13 @@ export type OrderSelectScalar = {
   companyName?: boolean
   taxOffice?: boolean
   taxNumber?: boolean
+  couponCode?: boolean
+  shippingCompany?: boolean
+  trackingNumber?: boolean
+  trackingUrl?: boolean
+  paymentStatus?: boolean
+  paidAt?: boolean
+  returnRequestedAt?: boolean
   shippingMethod?: boolean
   paymentMethod?: boolean
   status?: boolean
@@ -1534,7 +1793,7 @@ export type OrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "guestSessionId" | "checkoutKey" | "erpOrderId" | "orderNumber" | "customerId" | "customerName" | "customerPhone" | "customerEmail" | "city" | "district" | "deliveryAddress" | "invoiceType" | "companyName" | "taxOffice" | "taxNumber" | "shippingMethod" | "paymentMethod" | "status" | "returnReason" | "returnedAt" | "returnNote" | "subtotal" | "shippingTotal" | "discountTotal" | "total" | "lastErpSyncAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "guestSessionId" | "checkoutKey" | "erpOrderId" | "orderNumber" | "customerId" | "customerName" | "customerPhone" | "customerEmail" | "city" | "district" | "deliveryAddress" | "invoiceType" | "companyName" | "taxOffice" | "taxNumber" | "couponCode" | "shippingCompany" | "trackingNumber" | "trackingUrl" | "paymentStatus" | "paidAt" | "returnRequestedAt" | "shippingMethod" | "paymentMethod" | "status" | "returnReason" | "returnedAt" | "returnNote" | "subtotal" | "shippingTotal" | "discountTotal" | "total" | "lastErpSyncAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.Order$customerArgs<ExtArgs>
   items?: boolean | Prisma.Order$itemsArgs<ExtArgs>
@@ -1570,6 +1829,13 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     companyName: string | null
     taxOffice: string | null
     taxNumber: string | null
+    couponCode: string | null
+    shippingCompany: string | null
+    trackingNumber: string | null
+    trackingUrl: string | null
+    paymentStatus: string
+    paidAt: Date | null
+    returnRequestedAt: Date | null
     shippingMethod: string
     paymentMethod: string
     status: string
@@ -2024,6 +2290,13 @@ export interface OrderFieldRefs {
   readonly companyName: Prisma.FieldRef<"Order", 'String'>
   readonly taxOffice: Prisma.FieldRef<"Order", 'String'>
   readonly taxNumber: Prisma.FieldRef<"Order", 'String'>
+  readonly couponCode: Prisma.FieldRef<"Order", 'String'>
+  readonly shippingCompany: Prisma.FieldRef<"Order", 'String'>
+  readonly trackingNumber: Prisma.FieldRef<"Order", 'String'>
+  readonly trackingUrl: Prisma.FieldRef<"Order", 'String'>
+  readonly paymentStatus: Prisma.FieldRef<"Order", 'String'>
+  readonly paidAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly returnRequestedAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly shippingMethod: Prisma.FieldRef<"Order", 'String'>
   readonly paymentMethod: Prisma.FieldRef<"Order", 'String'>
   readonly status: Prisma.FieldRef<"Order", 'String'>

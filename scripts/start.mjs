@@ -1,6 +1,9 @@
+import nextEnv from "@next/env";
 import { cpSync, existsSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { resolve } from "node:path";
+// Load the project environment before the standalone server changes its working directory.
+nextEnv.loadEnvConfig(process.cwd());
 const output = resolve(".next/standalone");
 if (!existsSync(`${output}/server.js`)) throw new Error("Önce npm run build çalıştırın.");
 cpSync("public", `${output}/public`, { recursive: true });

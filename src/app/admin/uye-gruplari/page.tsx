@@ -30,6 +30,7 @@ export default function UyeGruplariPage() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [name, setName] = useState("");
     const [code, setCode] = useState("");
     const [description, setDescription] = useState("");
@@ -69,8 +70,14 @@ export default function UyeGruplariPage() {
     }, []);
 
     useEffect(() => {
-        void loadGroups();
-    }, [loadGroups]);
+    const controller = new AbortController();
+    fetch("/api/customer-groups", { cache: "no-store", signal: controller.signal })
+      .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.message || "Kayıtlar alınamadı."); return data; })
+      .then(data => { if (!controller.signal.aborted) { setGroups(data.groups || []); } })
+      .catch(error => { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Kayıtlar alınamadı."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [loadGroups]);
 
     async function createGroup(
         event: FormEvent<HTMLFormElement>
@@ -98,11 +105,12 @@ export default function UyeGruplariPage() {
             const response = await fetch(
                 "/api/customer-groups",
                 {
-                    method: "POST",
+                    method: editingId ? "PATCH" : "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
+                        id: editingId ?? undefined,
                         name: name.trim(),
                         code: code.trim(),
                         description: description.trim(),
@@ -126,7 +134,8 @@ export default function UyeGruplariPage() {
             setGroupType("retail");
             setDiscountRate("0");
 
-            setSuccess("Grup başarıyla oluşturuldu.");
+            setSuccess(editingId ? "Grup güncellendi." : "Grup başarıyla oluşturuldu.");
+            setEditingId(null);
 
             await loadGroups();
         } catch (err) {
@@ -240,7 +249,7 @@ export default function UyeGruplariPage() {
                     className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5"
                 >
                     <h2 className="text-lg font-black">
-                        Yeni Grup Oluştur
+                        {editingId ? "Grubu Düzenle" : "Yeni Grup Oluştur"}
                     </h2>
 
                     <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -335,7 +344,7 @@ export default function UyeGruplariPage() {
                         />
                     </label>
 
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-4 flex flex-wrap justify-end gap-3">{editingId && <button type="button" disabled={saving} onClick={() => { setEditingId(null); setName(""); setCode(""); setDescription(""); setGroupType("retail"); setDiscountRate("0"); }} className="rounded-xl border px-5 py-3">Vazgeç</button>}
                         <button
                             type="submit"
                             disabled={saving}
@@ -343,7 +352,7 @@ export default function UyeGruplariPage() {
                         >
                             {saving
                                 ? "Kaydediliyor..."
-                                : "Grup Oluştur"}
+                                : editingId ? "Değişiklikleri Kaydet" : "Grup Oluştur"}
                         </button>
                     </div>
                 </form>
@@ -422,6 +431,7 @@ export default function UyeGruplariPage() {
                                         </div>
                                     </div>
 
+                                    <button type="button" disabled={saving} onClick={() => { setEditingId(group.id); setName(group.name); setCode(group.code); setDescription(group.description ?? ""); setGroupType(group.type); setDiscountRate(String(group.discountRate)); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="mt-4 w-full rounded-xl border px-4 py-3 font-bold">Düzenle</button>
                                     {group.description ? (
                                         <p className="mt-4 text-sm text-slate-500">
                                             {group.description}

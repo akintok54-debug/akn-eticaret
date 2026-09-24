@@ -1,6 +1,8 @@
+import { adminGuard } from "@/lib/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+    const denied = adminGuard(request); if (denied) return denied;
     const baseUrl = process.env.IDEASOFT_BASE_URL;
     const clientId = process.env.IDEASOFT_CLIENT_ID;
     const clientSecret = process.env.IDEASOFT_CLIENT_SECRET;
@@ -65,7 +67,7 @@ export async function GET(request: NextRequest) {
     const tokenData = await tokenResponse.json();
 
     if (!tokenResponse.ok || !tokenData.access_token) {
-        console.error("IdeaSoft token hatası:", tokenData);
+        console.error("IdeaSoft token isteği başarısız:", tokenResponse.status);
 
         return NextResponse.json(
             {
@@ -89,7 +91,7 @@ export async function GET(request: NextRequest) {
         {
             httpOnly: true,
             sameSite: "lax",
-            secure: false,
+            secure: process.env.NODE_ENV === "production",
             path: "/",
             maxAge: Number(tokenData.expires_in || 3600),
         }
@@ -102,7 +104,7 @@ export async function GET(request: NextRequest) {
             {
                 httpOnly: true,
                 sameSite: "lax",
-                secure: false,
+                secure: process.env.NODE_ENV === "production",
                 path: "/",
                 maxAge: 60 * 60 * 24 * 30,
             }

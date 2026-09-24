@@ -112,8 +112,14 @@ export default function VariantsAdminPage() {
     }
 
     useEffect(() => {
-        void loadVariants();
-    }, []);
+    const controller = new AbortController();
+    fetch("/api/variants", { cache: "no-store", signal: controller.signal })
+      .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.message || "Kayıtlar alınamadı."); return data; })
+      .then(data => { if (!controller.signal.aborted) { setVariants(data.variants || []); } })
+      .catch(error => { if (!controller.signal.aborted) alert(error instanceof Error ? error.message : "Kayıtlar alınamadı."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, []);
 
     function selectProduct(productId: string) {
         const product = products.find((item) => item.id === productId);

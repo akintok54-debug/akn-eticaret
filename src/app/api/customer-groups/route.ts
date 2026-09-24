@@ -1,243 +1,43 @@
 import { z } from "zod";
 import { adminGuard } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { membershipError } from "@/lib/membership";
 
-const createSchema = z.object({
-    name: z.string().trim().min(2).max(100),
-    code: z.string().trim().min(2).max(50),
-    description: z.string().trim().max(500).optional().nullable(),
-    type: z.enum(["retail", "dealer"]),
-    discountRate: z.number().min(0).max(100),
+const schema = z.object({
+  name: z.string().trim().min(2).max(100), code: z.string().trim().min(2).max(50).transform(v => v.toLocaleUpperCase("tr-TR").replace(/\s+/g, "-")),
+  description: z.string().trim().max(500).optional().nullable(), type: z.enum(["retail", "dealer"]),
+  discountRate: z.number().min(0).max(100), active: z.boolean().optional(),
 });
-
-const updateSchema = createSchema.partial().extend({
-    id: z.string().min(1),
-    active: z.boolean().optional(),
-});
-
-/*
- * ÜYE / BAYİ GRUPLARINI LİSTELE
- */
 export async function GET(request: Request) {
-    const denied = adminGuard(request);
-    if (denied) return denied;
-
-    try {
-        const groups = await prisma.customerGroup.findMany({
-            include: {
-                _count: {
-                    select: {
-                        customers: true,
-                    },
-                },
-            },
-            orderBy: [
-                {
-                    active: "desc",
-                },
-                {
-                    name: "asc",
-                },
-            ],
-        });
-
-        return Response.json(
-            { groups },
-            {
-                headers: {
-                    "Cache-Control": "no-store",
-                },
-            }
-        );
-    } catch (error) {
-        console.error("GET /api/customer-groups", error);
-
-        return Response.json(
-            {
-                message: "Üye grupları alınamadı.",
-            },
-            {
-                status: 500,
-            }
-        );
-    }
+  const denied = adminGuard(request); if (denied) return denied;
+  try {
+    const groups = await prisma.customerGroup.findMany({ include: { _count: { select: { customers: true } } }, orderBy: [{ active: "desc" }, { name: "asc" }] });
+    return Response.json({ groups }, { headers: { "Cache-Control": "no-store" } });
+  } catch (e) { return membershipError(e); }
 }
-
-/*
- * YENİ GRUP OLUŞTUR
- */
 export async function POST(request: Request) {
-    const denied = adminGuard(request);
-    if (denied) return denied;
-
-    try {
-        const parsed = createSchema.safeParse(
-            await request.json()
-        );
-
-        if (!parsed.success) {
-            return Response.json(
-                {
-                    message: "Grup bilgilerini kontrol edin.",
-                },
-                {
-                    status: 400,
-                }
-            );
-        }
-
-        const code = parsed.data.code
-            .trim()
-            .toUpperCase()
-            .replace(/\s+/g, "-");
-
-        const existing = await prisma.customerGroup.findFirst({
-            where: {
-                OR: [
-                    {
-                        name: parsed.data.name,
-                    },
-                    {
-                        code,
-                    },
-                ],
-            },
-            select: {
-                id: true,
-            },
-        });
-
-        if (existing) {
-            return Response.json(
-                {
-                    message:
-                        "Aynı isim veya kod ile bir grup zaten bulunuyor.",
-                },
-                {
-                    status: 409,
-                }
-            );
-        }
-
-        const group = await prisma.customerGroup.create({
-            data: {
-                name: parsed.data.name,
-                code,
-                description:
-                    parsed.data.description || null,
-                type: parsed.data.type,
-                discountRate:
-                    parsed.data.discountRate,
-            },
-        });
-
-        return Response.json({
-            success: true,
-            group,
-        });
-    } catch (error) {
-        console.error("POST /api/customer-groups", error);
-
-        return Response.json(
-            {
-                message: "Üye grubu oluşturulamadı.",
-            },
-            {
-                status: 500,
-            }
-        );
-    }
+  const denied = adminGuard(request); if (denied) return denied;
+  try {
+    const parsed = schema.safeParse(await request.json());
+    if (!parsed.success) return Response.json({ message: "Grup bilgilerini kontrol edin." }, { status: 400 });
+    const group = await prisma.customerGroup.create({ data: parsed.data });
+    return Response.json({ success: true, group }, { status: 201 });
+  } catch (e) { return membershipError(e); }
 }
-
-/*
- * GRUBU GÜNCELLE
- */
 export async function PATCH(request: Request) {
-    const denied = adminGuard(request);
-    if (denied) return denied;
-
-    try {
-        const parsed = updateSchema.safeParse(
-            await request.json()
-        );
-
-        if (!parsed.success) {
-            return Response.json(
-                {
-                    message: "Geçersiz grup bilgisi.",
-                },
-                {
-                    status: 400,
-                }
-            );
-        }
-
-        const { id, ...values } = parsed.data;
-
-        const data = {
-            ...(values.name !== undefined
-                ? {
-                    name: values.name,
-                }
-                : {}),
-
-            ...(values.code !== undefined
-                ? {
-                    code: values.code
-                        .trim()
-                        .toUpperCase()
-                        .replace(/\s+/g, "-"),
-                }
-                : {}),
-
-            ...(values.description !== undefined
-                ? {
-                    description:
-                        values.description || null,
-                }
-                : {}),
-
-            ...(values.type !== undefined
-                ? {
-                    type: values.type,
-                }
-                : {}),
-
-            ...(values.discountRate !== undefined
-                ? {
-                    discountRate:
-                        values.discountRate,
-                }
-                : {}),
-
-            ...(values.active !== undefined
-                ? {
-                    active: values.active,
-                }
-                : {}),
-        };
-
-        const group = await prisma.customerGroup.update({
-            where: {
-                id,
-            },
-            data,
-        });
-
-        return Response.json({
-            success: true,
-            group,
-        });
-    } catch (error) {
-        console.error("PATCH /api/customer-groups", error);
-
-        return Response.json(
-            {
-                message: "Üye grubu güncellenemedi.",
-            },
-            {
-                status: 500,
-            }
-        );
-    }
+  const denied = adminGuard(request); if (denied) return denied;
+  try {
+    const parsed = schema.partial().extend({ id: z.string().min(1) }).safeParse(await request.json());
+    if (!parsed.success) return Response.json({ message: "Grup bilgilerini kontrol edin." }, { status: 400 });
+    const { id, ...data } = parsed.data;
+    const group = await prisma.$transaction(async tx => {
+      const existing = await tx.customerGroup.findUniqueOrThrow({ where: { id } });
+      if (data.type && data.type !== existing.type && await tx.customer.count({ where: { groupId: id } })) throw new Error("GROUP_IN_USE");
+      return tx.customerGroup.update({ where: { id }, data });
+    }, { isolationLevel: "Serializable",maxWait:10000,timeout:20000 });
+    return Response.json({ success: true, group });
+  } catch (e) {
+    if (e instanceof Error && e.message === "GROUP_IN_USE") return Response.json({ message: "Üyesi olan grubun tipi değiştirilemez. Önce müşterileri uygun gruba taşıyın." }, { status: 409 });
+    return membershipError(e);
+  }
 }

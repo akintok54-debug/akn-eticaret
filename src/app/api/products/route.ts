@@ -1,3 +1,5 @@
+import { currentCustomer } from "@/lib/customer-session";
+import { unitPrice } from "@/lib/pricing";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -36,10 +38,11 @@ export async function GET(request: Request) {
       },
     });
 
+    const buyer = await currentCustomer();
     return NextResponse.json({
       success: true,
       count: products.length,
-      products: isAdmin(request) ? products : products.map(p => ({ id:p.id,sku:p.sku,barcode:p.barcode,name:p.name,brand:p.brand,category:p.category,description:p.description,retailPrice:p.retailPrice,vatRate:p.vatRate,stock:p.stock,image:p.image,active:p.active })),
+      products: isAdmin(request) ? products : products.map(p => ({ id:p.id,sku:p.sku,barcode:p.barcode,name:p.name,brand:p.brand,category:p.category,description:p.description,retailPrice:unitPrice(p,buyer),vatRate:p.vatRate,stock:p.stock,image:p.image,active:p.active })),
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("GET /api/products:", error);

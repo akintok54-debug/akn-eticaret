@@ -107,6 +107,7 @@ model Customer {
 
   type         String @default("retail")
   dealerStatus String @default("none")
+  discountRate Float  @default(0)
 
   companyName String?
   taxOffice   String?
@@ -118,10 +119,11 @@ model Customer {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  account   CustomerAccount?
   addresses Address[]
   orders    Order[]
   groupId   String?
-  group     CustomerGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  group     CustomerGroup?   @relation(fields: [groupId], references: [id], onDelete: SetNull)
 
   shoppingCarts      ShoppingCart[]
   dealerApplications DealerApplication[]
@@ -182,6 +184,14 @@ model Order {
   companyName String?
   taxOffice   String?
   taxNumber   String?
+
+  couponCode        String?
+  shippingCompany   String?
+  trackingNumber    String?
+  trackingUrl       String?
+  paymentStatus     String    @default("pending")
+  paidAt            DateTime?
+  returnRequestedAt DateTime?
 
   shippingMethod String
   paymentMethod  String
@@ -446,4 +456,72 @@ model CartReminder {
   @@index([cartId])
   @@index([status])
   @@index([createdAt])
+}
+
+model CustomerAccount {
+  id           String            @id @default(cuid())
+  customerId   String            @unique
+  customer     Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  email        String            @unique
+  passwordHash String
+  failedLogins Int               @default(0)
+  lockedUntil  DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  sessions     CustomerSession[]
+}
+
+model CustomerSession {
+  id        String          @id
+  accountId String
+  account   CustomerAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime        @default(now())
+
+  @@index([accountId])
+  @@index([expiresAt])
+}
+
+model GuestSession {
+  id        String   @id
+  tokenHash String   @unique
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+model StoreSettings {
+  id        String   @id @default("main")
+  enabled   Boolean  @default(false)
+  bankName  String   @default("")
+  iban      String   @default("")
+  shipping  Float    @default(99)
+  threshold Float    @default(2000)
+  updatedAt DateTime @updatedAt
+}
+
+model Coupon {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  description     String    @default("")
+  discountPercent Float
+  minSubtotal     Float     @default(0)
+  maxUses         Int?
+  usedCount       Int       @default(0)
+  startsAt        DateTime?
+  endsAt          DateTime?
+  active          Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model CatalogEntry {
+  id        String   @id @default(cuid())
+  kind      String
+  name      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([kind, name])
 }

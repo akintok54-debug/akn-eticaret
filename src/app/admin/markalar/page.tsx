@@ -8,6 +8,7 @@ import { useProducts } from "@/context/ProductContext";
 export default function BrandsAdminPage() {
   const {
     brands,
+    error,
     addBrand,
     renameBrand,
     deleteBrand,
@@ -16,8 +17,8 @@ export default function BrandsAdminPage() {
   const { products } = useProducts();
   const [name, setName] = useState("");
 
-  function add() {
-    if (!addBrand(name)) {
+  async function add() {
+    if (!await addBrand(name)) {
       alert("Marka adı boş veya bu marka zaten mevcut.");
       return;
     }
@@ -39,6 +40,7 @@ export default function BrandsAdminPage() {
       <div className="mx-auto max-w-5xl px-4 py-8">
         <h1 className="text-3xl font-black">Marka Yönetimi</h1>
 
+        {error&&<p role="alert" className="notice error-notice mt-4">{error}</p>}
         <div className="mt-6 flex gap-2 rounded-2xl border bg-white p-4">
           <input
             value={name}
@@ -80,7 +82,7 @@ export default function BrandsAdminPage() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       const value = window.prompt(
                         "Yeni marka adı:",
                         brand
@@ -88,7 +90,7 @@ export default function BrandsAdminPage() {
 
                       if (!value) return;
 
-                      if (!renameBrand(brand, value)) {
+                      if (!await renameBrand(brand, value)) {
                         alert("Marka adı geçersiz veya zaten mevcut.");
                       }
                     }}
@@ -99,16 +101,16 @@ export default function BrandsAdminPage() {
 
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       if (
                         !window.confirm(
-                          `${brand} markası silinsin mi?`
+                          `${brand} markası pasife alınsın mı?`
                         )
                       ) {
                         return;
                       }
 
-                      if (!deleteBrand(brand)) {
+                      if (!await deleteBrand(brand)) {
                         alert(
                           "Bu marka ürünlerde kullanılıyor. Önce ürünlerin markasını değiştirin."
                         );
@@ -116,7 +118,7 @@ export default function BrandsAdminPage() {
                     }}
                     className="rounded-lg border border-red-200 px-4 py-2 font-bold text-red-600"
                   >
-                    Sil
+                    Pasife al
                   </button>
                 </div>
               </div>

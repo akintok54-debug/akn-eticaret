@@ -1,7 +1,9 @@
+import { adminGuard } from "@/lib/admin";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 
-export async function GET() {
+export async function GET(request: Request) {
+    const denied = adminGuard(request); if (denied) return denied;
     const baseUrl = process.env.IDEASOFT_BASE_URL;
     const clientId = process.env.IDEASOFT_CLIENT_ID;
     const redirectUri = process.env.IDEASOFT_REDIRECT_URI;
@@ -30,7 +32,7 @@ export async function GET() {
     response.cookies.set("ideasoft_oauth_state", state, {
         httpOnly: true,
         sameSite: "lax",
-        secure: false,
+        secure: process.env.NODE_ENV === "production",
         path: "/",
         maxAge: 60 * 10,
     });

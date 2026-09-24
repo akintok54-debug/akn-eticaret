@@ -40,7 +40,7 @@ const menu = [
     items: [
       { title: "Müşteriler", href: "/admin/musteriler" },
       { title: "Bayi Başvuruları", href: "/admin/bayiler" },
-      { title: "Üye / Bayi Grupları", href: "/admin/uye-bayi-gruplari" },
+      { title: "Üye / Bayi Grupları", href: "/admin/uye-gruplari" },
       { title: "Destek Talepleri", href: "/admin/destek-talepleri" },
     ],
   },
@@ -57,7 +57,7 @@ const menu = [
   {
     title: "Kampanyalar",
     items: [
-      { title: "Hediye Çekleri", href: "/admin/hediye-cekleri" },
+      { title: "Kuponlar", href: "/admin/hediye-cekleri" },
       { title: "Puan Sistemi", href: "/admin/puan-sistemi" },
       { title: "Puan Geçmişi", href: "/admin/puan-gecmisi" },
       { title: "POS Kampanyaları", href: "/admin/pos-kampanyalari" },
@@ -116,132 +116,46 @@ const menu = [
   },
 ];
 
-export default function AdminLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+const available = new Set(["/admin/urunler","/admin/kategoriler","/admin/markalar","/admin/varyantlar","/admin/ek-bilgiler","/admin/ek-ozellikler","/admin/urunler/aktarim","/admin/urunler/toplu","/admin/siparisler","/admin/taslak-siparisler","/admin/iptal-iade","/admin/aktif-sepetler","/admin/terk-edilen-sepetler","/admin/terk-edilen-siparisler","/admin/sepet-hatirlatma","/admin/risk-kriterleri","/admin/musteriler","/admin/bayiler","/admin/uye-gruplari","/admin/destek-talepleri","/admin/hediye-cekleri","/admin/entegrasyonlar","/admin/istatistikler","/admin/istatistikler/siparis","/admin/istatistikler/urun","/admin/raporlar","/admin/ayarlar","/admin/kargo-ayarlari","/admin/odeme-ayarlari"]);
+
+
+const navigation = menu.filter(group => group.href || group.items?.some(item => available.has(item.href)));
+const links = navigation.flatMap(group => group.href ? [{title:group.title,href:group.href}] : group.items!.filter(item => available.has(item.href)));
+export default function AdminLayout({children}: {children: ReactNode}) {
   const pathname = usePathname();
-
-  const [openMenus, setOpenMenus] = useState<string[]>([
-    "Katalog",
-    "Siparişler",
-    "Üye & Bayiler",
-  ]);
-
-  function toggleMenu(title: string) {
-    setOpenMenus((current) =>
-      current.includes(title)
-        ? current.filter((item) => item !== title)
-        : [...current, title]
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-slate-50 lg:flex">
-      <aside className="w-full border-b bg-slate-950 text-white lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:flex-shrink-0 lg:overflow-y-auto lg:border-b-0 lg:border-r lg:border-slate-800">
-        <div className="border-b border-slate-800 px-6 py-6">
-          <div className="text-xs font-semibold tracking-[0.2em] text-slate-400">
-            AKN MOTOSİKLET
-          </div>
-
-          <div className="mt-2 text-xl font-bold">
-            Yönetim Paneli
-          </div>
-        </div>
-
-        <nav className="space-y-2 p-4">
-          {menu.map((group) => {
-            if (group.href) {
-              const active = pathname === group.href;
-
-              return (
-                <Link
-                  key={group.title}
-                  href={group.href}
-                  className={`block rounded-lg px-4 py-3 text-sm font-medium transition ${active
-                    ? "bg-white text-slate-950"
-                    : "text-slate-300 hover:bg-slate-900 hover:text-white"
-                    }`}
-                >
-                  {group.title}
-                </Link>
-              );
-            }
-
-            const opened = openMenus.includes(group.title);
-
-            return (
-              <div key={group.title}>
-                <button
-                  type="button"
-                  onClick={() => toggleMenu(group.title)}
-                  className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-left text-sm font-semibold text-slate-200 hover:bg-slate-900"
-                >
-                  <span>{group.title}</span>
-                  <span className="text-xs">
-                    {opened ? "−" : "+"}
-                  </span>
-                </button>
-
-                {opened && (
-                  <div className="mt-1 space-y-1 pl-3">
-                    {group.items?.map((item) => {
-                      const active =
-                        pathname === item.href ||
-                        pathname.startsWith(item.href + "/");
-
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={`block rounded-lg px-4 py-2.5 text-sm transition ${active
-                            ? "bg-red-600 text-white"
-                            : "text-slate-400 hover:bg-slate-900 hover:text-white"
-                            }`}
-                        >
-                          {item.title}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-      </aside>
-
-      <section className="min-w-0 flex-1">
-        <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between border-b bg-white/95 px-5 backdrop-blur lg:px-8">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              AKN E-Ticaret
-            </div>
-
-            <div className="text-sm font-semibold text-slate-700">
-              Yönetim
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="text-sm font-medium text-slate-600 hover:text-slate-950"
-            >
-              Mağazayı görüntüle ↗
-            </Link>
-
-            <div className="rounded-full bg-slate-950 px-3 py-2 text-xs font-semibold text-white">
-              AKN
-            </div>
-          </div>
-        </header>
-
-        <div className="min-w-0">
-          {children}
-        </div>
-      </section>
-    </div>
-  );
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [query, setQuery] = useState("");
+  const [closedMenus, setClosedMenus] = useState<string[]>([]);
+  const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const active = links.filter(item => pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"))).sort((a,b) => b.href.length-a.href.length)[0];
+  const results = query.trim() ? links.filter(item => item.title.toLocaleLowerCase("tr-TR").includes(query.trim().toLocaleLowerCase("tr-TR"))) : [];
+  function navigate() {setMobileMenu(false);setQuery("");}
+  return <div className="akn-admin">
+    <a className="akn-skip" href="#admin-content">İçeriğe geç</a>
+    <aside className="akn-sidebar">
+      <Link href="/admin" onClick={navigate} className="akn-brand"><span>AKN<span className="akn-brand-dot">.</span></span><small>MOTOSİKLET · YÖNETİM</small></Link>
+      <button className="akn-menu-toggle" type="button" aria-expanded={mobileMenu} aria-controls="admin-navigation" onClick={()=>setMobileMenu(!mobileMenu)}>{mobileMenu ? "Menüyü kapat ×" : "Yönetim menüsü ☰"}</button>
+      <nav id="admin-navigation" aria-label="Yönetim" className={mobileMenu ? "akn-navigation is-open" : "akn-navigation"}>
+        {navigation.map((group,index) => {
+          const selected = group.href ? pathname === group.href : group.items?.some(item=>item.href===active?.href);
+          const opened = openMenus.includes(group.title) || (!!selected && !closedMenus.includes(group.title));
+          const icon = ["M3 11 12 3l9 8v10h-6v-7H9v7H3Z","M3 7 12 3l9 4v10l-9 4-9-4Zm0 0 9 4 9-4M12 11v10","M3 3h2l3 13h10l3-9H6M9 21h.01M18 21h.01","M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M20 8v6m-3-3h6","M3 3h8l10 10-8 8L3 11ZM7 7h.01","M8 3v5H3m13 13v-5h5M3 8a9 9 0 0 1 17-2M21 16a9 9 0 0 1-17 2","M4 21V11h4v10m4 0V3h4v18m4 0v-7h3v7","M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"][index];
+          const symbol = <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={icon}/></svg>;
+          return <div key={group.title} className="akn-nav-group">{group.href ? <Link href={group.href} onClick={navigate} aria-current={selected ? "page" : undefined} className={selected ? "akn-nav-heading selected" : "akn-nav-heading"}>{symbol}<span>{group.title}</span></Link> : <>
+            <button type="button" className={selected ? "akn-nav-heading selected" : "akn-nav-heading"} aria-expanded={opened} onClick={()=>{setOpenMenus(old=>opened ? old.filter(x=>x!==group.title) : [...old,group.title]);setClosedMenus(old=>opened ? [...old,group.title] : old.filter(x=>x!==group.title));}}>{symbol}<span>{group.title}</span><span aria-hidden="true">{opened ? "⌄" : "›"}</span></button>
+            {opened && <div className="akn-nav-items">{group.items?.filter(item=>available.has(item.href)).map(item=><Link key={item.href} href={item.href} onClick={navigate} aria-current={active?.href===item.href ? "page" : undefined}>{item.title}</Link>)}</div>}
+          </>}</div>;
+        })}
+        <Link className="akn-store-link" href="/">Mağazayı görüntüle ↗</Link>
+      </nav>
+    </aside>
+    <section className="akn-workspace">
+      <header className="akn-topbar">
+        <div className="akn-breadcrumb">Yönetim <span>/</span> <strong>{active?.title || "Mağaza"}</strong></div>
+        <div className="akn-search"><label htmlFor="admin-search" className="sr-only">Yönetim alanlarında ara</label><input id="admin-search" type="search" autoComplete="off" placeholder="Menüde ara: ürün, müşteri, ayarlar…" value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==="Escape")setQuery("");}}/>{query.trim() && <div className="akn-search-results" aria-label="Arama sonuçları">{results.length ? results.map(item=><Link key={item.href} href={item.href} onClick={navigate}>{item.title}<span>↗</span></Link>) : <p>Eşleşen yönetim alanı bulunamadı.</p>}</div>}</div>
+        <div className="akn-user"><span>AK</span><div>Yönetici<small>AKN E-Ticaret</small></div></div>
+      </header>
+      <div id="admin-content" className="akn-admin-content" tabIndex={-1}>{children}</div>
+    </section>
+  </div>;
 }

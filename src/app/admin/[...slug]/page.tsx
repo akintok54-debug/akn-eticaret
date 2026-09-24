@@ -1,122 +1,31 @@
 "use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const names: Record<string, string> = {
-    varyantlar: "Varyant Sistemi",
-    "ek-bilgiler": "Ek Bilgiler",
-    "ek-ozellikler": "Ek Özellikler",
-    "taslak-siparisler": "Taslak Siparişler",
-    "iptal-iade": "İptal ve İade",
-    "aktif-sepetler": "Aktif Sepetler",
-    "terk-edilen-sepetler": "Terk Edilen Sepetler",
-    "terk-edilen-siparisler": "Terk Edilen Siparişler",
-    "sepet-hatirlatma": "Sepet Hatırlatma",
-    "risk-kriterleri": "Risk Kriterleri",
-    "uye-bayi-gruplari": "Üye / Bayi Grupları",
-    "destek-talepleri": "Destek Talepleri",
-    sayfalar: "Sayfalar",
-    bloglar: "Bloglar",
-    anketler: "Anketler",
-    formlar: "Formlar",
-    "icerik-ayarlari": "İçerik Ayarları",
-    "hediye-cekleri": "Hediye Çekleri",
-    "puan-sistemi": "Puan Sistemi",
-    "puan-gecmisi": "Puan Geçmişi",
-    "pos-kampanyalari": "POS Kampanyaları",
-    "paket-olusturucu": "Paket Oluşturucu",
-    "satin-alma-limiti": "Satın Alma Limiti",
-    "hizli-satin-al": "Hızlı Satın Al",
-    entegrasyonlar: "Entegrasyonlar",
-    excel: "Excel / CSV",
-    feed: "Feed / XML",
-    "google-merchant": "Google Merchant",
-    facebook: "Facebook Katalog",
-    api: "API Yönetimi",
-    istatistikler: "İstatistikler",
-    siparis: "Sipariş İstatistikleri",
-    ziyaret: "Ziyaret İstatistikleri",
-    urun: "Ürün İstatistikleri",
-    uyeler: "Üye İstatistikleri",
-    raporlar: "Raporlar",
-    ayarlar: "Genel Ayarlar",
-    seo: "SEO / GEO",
-    firma: "Firma Tanımları",
-    kullanicilar: "Kullanıcılar",
-    "roller-yetkiler": "Roller & Yetkiler",
-    "tasarim-ayarlari": "Tasarım Ayarları",
-    "kargo-ayarlari": "Kargo Ayarları",
-    "odeme-ayarlari": "Ödeme Ayarları",
-    "mail-sms": "Mail / SMS",
-    "doviz-kurlari": "Döviz Kurları",
-    guvenlik: "Güvenlik",
-    "audit-log": "İşlem Kayıtları",
-    ai: "Yapay Zekâ Araçları",
-    "urun-aciklamasi": "Ürün Açıklaması Oluştur",
-    "urun-gorseli": "Ürün Görseli Oluştur",
-    "arka-plan": "Arka Plan Temizleme",
-};
-
-function getTitle(pathname: string) {
-    const parts = pathname.split("/").filter(Boolean);
-    const last = parts[parts.length - 1];
-
-    return names[last] || "Yönetim Modülü";
+import {usePathname} from "next/navigation";
+import {useEffect,useState,type FormEvent} from "react";
+import {useOrders} from "@/context/OrderContext";
+import {useProducts} from "@/context/ProductContext";
+import {money} from "@/lib/store";
+type Settings={enabled:boolean;bankName:string;iban:string;shipping:number;threshold:number};
+type Coupon={id?:string;code:string;description:string;discountPercent:number;minSubtotal:number;maxUses:number|null;usedCount?:number;active:boolean;startsAt:string|null;endsAt:string|null};
+const blank:Coupon={code:"",description:"",discountPercent:10,minSubtotal:0,maxUses:null,active:true,startsAt:null,endsAt:null};
+export default function AdminModule(){
+ const path=usePathname();
+ if(path==="/admin/hediye-cekleri")return <CommerceSettings couponsOnly/>;
+ if(["/admin/ayarlar","/admin/kargo-ayarlari","/admin/odeme-ayarlari"].includes(path))return <CommerceSettings/>;
+ if(path.startsWith("/admin/istatistikler")||path==="/admin/raporlar")return <Reports/>;
+ return <main className="p-6"><h1 className="text-2xl font-bold">Modül kullanıma açık değil</h1><p className="my-4">Bu özellik henüz etkinleştirilmedi.</p><Link className="button-dark" href="/admin">Yönetim paneline dön</Link></main>;
 }
-
-export default function AdminModulePlaceholder() {
-    const pathname = usePathname();
-    const title = getTitle(pathname);
-
-    return (
-        <main className="px-5 py-8 lg:px-8 lg:py-10">
-            <div className="mx-auto max-w-5xl">
-                <div className="mb-8">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                        AKN Yönetim Paneli V2
-                    </p>
-
-                    <h1 className="mt-2 text-3xl font-bold text-slate-950">
-                        {title}
-                    </h1>
-
-                    <p className="mt-2 text-sm text-slate-500">
-                        Bu yönetim modülü yeni AKN E-Ticaret altyapısı için hazırlanıyor.
-                    </p>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-xl font-bold text-white">
-                        AKN
-                    </div>
-
-                    <h2 className="mt-6 text-xl font-bold text-slate-950">
-                        {title} hazırlanıyor
-                    </h2>
-
-                    <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-500">
-                        Bu bölüm yönetim paneline bağlandı. Gerçek işlevleri, veritabanı
-                        yapısı ve yönetim ekranları sonraki geliştirme aşamalarında eklenecek.
-                    </p>
-
-                    <div className="mt-7 flex flex-wrap gap-3">
-                        <Link
-                            href="/admin"
-                            className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-                        >
-                            Genel Bakışa Dön
-                        </Link>
-
-                        <Link
-                            href="/"
-                            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                        >
-                            Mağazayı Görüntüle
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </main>
-    );
+function CommerceSettings({couponsOnly=false}:{couponsOnly?:boolean}){
+ const [settings,setSettings]=useState<Settings|null>(null),[coupons,setCoupons]=useState<Coupon[]>([]),[form,setForm]=useState<Coupon>(blank);
+ const [busy,setBusy]=useState(false),[message,setMessage]=useState(""),[loaded,setLoaded]=useState(false);
+ useEffect(()=>{const controller=new AbortController();fetch("/api/checkout?manage=1",{signal:controller.signal,cache:"no-store"}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.message);return d;}).then(d=>{setSettings(d.settings);setCoupons(d.coupons);setLoaded(true);}).catch(e=>{if(!controller.signal.aborted){setMessage(e.message);setLoaded(true);}});return()=>controller.abort();},[]);
+ async function save(e:FormEvent,action:"settings"|"coupon"){e.preventDefault();if(busy)return;setBusy(true);setMessage("");try{const r=await fetch("/api/checkout",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,...(action==="settings"?settings:form)})});const d=await r.json();if(!r.ok)throw new Error(d.message);if(d.settings)setSettings(d.settings);if(d.coupon){setCoupons(old=>[d.coupon,...old.filter(c=>c.id!==d.coupon.id)]);setForm(blank);}setMessage("Değişiklikler kaydedildi.");}catch(e){setMessage(e instanceof Error?e.message:"Kaydedilemedi.");}finally{setBusy(false);}}
+ return <main className="max-w-5xl mx-auto p-4 sm:p-6"><h1 className="text-3xl font-black mb-6">{couponsOnly?"Kupon ve kampanya yönetimi":"Mağaza, havale ve kargo ayarları"}</h1>{message&&<p role="status" className="notice mb-5">{message}</p>}{!loaded?<p>Yükleniyor…</p>:!couponsOnly?settings&&<form onSubmit={e=>void save(e,"settings")} className="form-panel"><fieldset disabled={busy} className="form-grid"><label>Hesap sahibi / alıcı adı<input value={settings.bankName} maxLength={200} onChange={e=>setSettings({...settings,bankName:e.target.value})}/></label><label>Türk IBAN<input value={settings.iban} maxLength={50} onChange={e=>setSettings({...settings,iban:e.target.value})}/></label><label>Kargo ücreti (₺)<input type="number" min={0} max={100000} step="0.01" value={settings.shipping} onChange={e=>setSettings({...settings,shipping:Number(e.target.value)})}/></label><label>Ücretsiz kargo alt limiti (₺)<input type="number" min={0} max={10000000} step="0.01" value={settings.threshold} onChange={e=>setSettings({...settings,threshold:Number(e.target.value)})}/></label><label className="full-width flex items-center gap-3"><input className="!w-auto" type="checkbox" checked={settings.enabled} onChange={e=>setSettings({...settings,enabled:e.target.checked})}/>Havale / EFT sipariş alımını aç</label><button className="button-dark">{busy?"Kaydediliyor…":"Ayarları kaydet"}</button></fieldset><p className="text-sm text-slate-500 mt-4">Sipariş tutarı ve ücretsiz kargo koşulu, bayi/grup iskontosu ve kupon indirimi sonrası hesaplanır.</p></form>:<><form onSubmit={e=>void save(e,"coupon")} className="form-panel"><h2>{form.id?"Kuponu düzenle":"Yeni kupon"}</h2><fieldset disabled={busy} className="form-grid mt-4"><label>Kupon kodu<input required pattern="[A-Za-z0-9_-]{3,50}" value={form.code} onChange={e=>setForm({...form,code:e.target.value.toUpperCase()})}/></label><label>Açıklama<input maxLength={300} value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label><label>İndirim (%)<input type="number" min={0.01} max={100} step="0.01" value={form.discountPercent} onChange={e=>setForm({...form,discountPercent:Number(e.target.value)})}/></label><label>Minimum sepet (₺)<input type="number" min={0} step="0.01" value={form.minSubtotal} onChange={e=>setForm({...form,minSubtotal:Number(e.target.value)})}/></label><label>Kullanım limiti (boş: sınırsız)<input type="number" min={1} value={form.maxUses??""} onChange={e=>setForm({...form,maxUses:e.target.value?Number(e.target.value):null})}/></label><label>Durum<select value={String(form.active)} onChange={e=>setForm({...form,active:e.target.value==="true"})}><option value="true">Aktif</option><option value="false">Pasif</option></select></label>{(["startsAt","endsAt"] as const).map(key=><label key={key}>{key==="startsAt"?"Başlangıç":"Bitiş"}<input type="datetime-local" value={form[key]?localDate(form[key]!):""} onChange={e=>setForm({...form,[key]:e.target.value?new Date(e.target.value).toISOString():null})}/></label>)}<button className="button-dark">{busy?"Kaydediliyor…":"Kuponu kaydet"}</button>{form.id&&<button type="button" onClick={()=>setForm(blank)} className="underline">Yeni kupona dön</button>}</fieldset></form><div className="mt-6 space-y-3">{coupons.length?coupons.map(c=><article key={c.id} className="form-panel flex flex-wrap justify-between gap-4"><div><strong>{c.code} · %{c.discountPercent}</strong><p className="text-sm mt-2">{c.description}</p><p className="text-sm mt-2">{c.active?"Aktif":"Pasif"} · Kullanım: {c.usedCount}/{c.maxUses??"Sınırsız"} · Minimum {money(c.minSubtotal)}</p></div><button className="button-dark" onClick={()=>setForm(c)}>Düzenle</button></article>):<p>Henüz kupon yok.</p>}</div></>}</main>;
+}
+function localDate(value:string){const date=new Date(value);return new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,16);}
+function Reports(){
+ const {orders,loaded,error}=useOrders();const {products,loaded:productsLoaded,error:productsError}=useProducts();
+ const paid=orders.filter(o=>o.paymentStatus==="paid"&&!["İptal","İade"].includes(o.status));
+ const stats=[["Listelenen sipariş",String(orders.length)],["Onaylı tahsilat",money(paid.reduce((s,o)=>s+o.total,0))],["Aktif ürün",String(products.filter(p=>p.active).length)],["Kritik stok",String(products.filter(p=>p.active&&p.stock<=p.criticalStock).length)]];
+ return <main className="p-4 sm:p-6"><h1 className="text-3xl font-black">Mağaza raporları</h1><p className="my-4 text-sm text-slate-500">Sipariş verileri yüklenen kayıtları kapsar; önceki kayıtlar sipariş ekranından yüklenebilir. Tahsilat, panelde onaylanan havale kayıtlarına dayanır.</p>{error||productsError?<p role="alert">{error||productsError}</p>:!loaded||!productsLoaded?<p>Yükleniyor…</p>:<><div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{stats.map(([label,value])=><div key={label} className="form-panel"><p>{label}</p><strong className="text-2xl block mt-3">{value}</strong></div>)}</div><h2 className="text-xl font-bold my-6">Stok uyarıları</h2>{products.filter(p=>p.active&&p.stock<=p.criticalStock).map(p=><p className="border-b py-3" key={p.id}><Link className="underline" href={"/admin/urunler/"+p.id+"/duzenle"}>{p.name}</Link> · {p.stock} adet</p>)}</>}</main>;
 }

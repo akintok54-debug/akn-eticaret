@@ -84,8 +84,14 @@ export default function ProductAttributesPage() {
     }
 
     useEffect(() => {
-        void loadAttributes(productId);
-    }, [productId]);
+    if (!productId) return;
+    const controller = new AbortController();
+    fetch("/api/product-attributes?productId=" + encodeURIComponent(productId), { cache: "no-store", signal: controller.signal })
+      .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.message); return data; })
+      .then(data => { if (!controller.signal.aborted) setAttributes(data.attributes || []); })
+      .catch(error => { if (!controller.signal.aborted) setMessage(error instanceof Error ? error.message : "Kayıtlar alınamadı."); });
+    return () => controller.abort();
+  }, [productId]);
 
     async function addAttribute() {
         if (!productId) {
@@ -193,7 +199,7 @@ export default function ProductAttributesPage() {
                     ) : (
                         <select
                             value={productId}
-                            onChange={(e) => setProductId(e.target.value)}
+                            onChange={(e) => { setProductId(e.target.value); setAttributes([]); setMessage(""); }}
                             className="w-full rounded-lg border px-3 py-2"
                             size={14}
                         >

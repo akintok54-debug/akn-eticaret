@@ -1,4 +1,5 @@
 "use client";
+import { useCustomers } from "@/context/CustomerContext";
 
 import Link from "next/link";
 import {
@@ -36,11 +37,27 @@ function getCartSessionId() {
 
 export default function CheckoutPage() {
     const { items, total, clearCart } = useCart();
+    const { currentCustomer } = useCustomers();
     const { addOrder } = useOrders();
     const { refreshProducts } = useProducts();
 
-    const [settings, setSettings] = useState<Settings | null>(null);
     const [error, setError] = useState("");
+    const [couponInput,setCouponInput]=useState("");
+    const [couponCode,setCouponCode]=useState("");
+    const [quote,setQuote]=useState<{key:string;subtotal:number;discountTotal:number;shippingTotal:number;total:number}|null>(null);
+    const quoteKey=JSON.stringify({items:items.map(i=>({productId:i.id,quantity:i.quantity})),prices:items.map(i=>i.price),buyer:currentCustomer?.id,couponCode});
+    useEffect(()=>{
+      if(!items.length)return;
+      const controller=new AbortController();
+      fetch("/api/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:quoteKey,signal:controller.signal})
+        .then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.message);return d;})
+        .then(d=>{if(!controller.signal.aborted){setQuote({...d,key:quoteKey});setError("");}})
+        .catch(e=>{if(!controller.signal.aborted){setQuote(null);setError(e instanceof Error?e.message:"Sepet tutarı hesaplanamadı.");}});
+      return()=>controller.abort();
+    },[quoteKey,items.length]);
+    const quoteReady=quote?.key===quoteKey;
+    const [settings, setSettings] = useState<Settings | null>(null);
+
     const [busy, setBusy] = useState(false);
     const [completed, setCompleted] = useState("");
     const [invoice, setInvoice] = useState("individual");
@@ -48,6 +65,39 @@ export default function CheckoutPage() {
     const key = useRef("");
     const submitting = useRef(false);
     const checkoutTracked = useRef(false);
+    const trackingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const pendingContact = useRef<string | null>(null);
+    useEffect(() => {
+        const flush = () => {
+            if (!pendingContact.current) return;
+            const body = pendingContact.current;
+            pendingContact.current = null;
+            void fetch("/api/cart-tracking", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {});
+        };
+        const hidden = () => { if (document.visibilityState === "hidden") flush(); };
+        window.addEventListener("pagehide", flush);
+        document.addEventListener("visibilitychange", hidden);
+        return () => { if (trackingTimer.current) clearTimeout(trackingTimer.current); flush(); window.removeEventListener("pagehide", flush); document.removeEventListener("visibilitychange", hidden); };
+    }, []);
+
+    function trackContact(event: FormEvent<HTMLFormElement>) {
+        if (submitting.current) return;
+        const form = new FormData(event.currentTarget);
+        try {
+            pendingContact.current = JSON.stringify({
+                sessionId: getCartSessionId(), checkoutStarted: true,
+                customerName: String(form.get("fullName") ?? "").trim(),
+                customerPhone: String(form.get("phone") ?? "").trim(),
+                customerEmail: String(form.get("email") ?? "").trim(),
+                items,
+            });
+            if (trackingTimer.current) clearTimeout(trackingTimer.current);
+            trackingTimer.current = setTimeout(() => {
+                const body = pendingContact.current; pendingContact.current = null;
+                if (body) void fetch("/api/cart-tracking", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {});
+            }, 400);
+        } catch { /* Tracking must not block checkout if storage is unavailable. */ }
+    }
 
     useEffect(() => {
         fetch("/api/checkout")
@@ -70,7 +120,8 @@ export default function CheckoutPage() {
 
         checkoutTracked.current = true;
 
-        const sessionId = getCartSessionId();
+        let sessionId: string;
+        try { sessionId = getCartSessionId(); } catch { return; }
 
         void fetch("/api/cart-tracking", {
             method: "POST",
@@ -87,15 +138,12 @@ export default function CheckoutPage() {
         });
     }, [items]);
 
-    const shipping =
-        settings && total < settings.threshold
-            ? settings.shipping
-            : 0;
+    const shipping = quoteReady && quote ? quote.shippingTotal : settings && total < settings.threshold ? settings.shipping : 0;
 
     async function submit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        if (submitting.current || !settings?.enabled) return;
+        if (submitting.current || !settings?.enabled || !quoteReady || !quote) return;
 
         submitting.current = true;
         setBusy(true);
@@ -110,7 +158,10 @@ export default function CheckoutPage() {
             key.current = crypto.randomUUID();
         }
 
-        const sessionId = getCartSessionId();
+        let sessionId: string | undefined;
+        try { sessionId = getCartSessionId(); } catch { /* Order flow works without local storage. */ }
+        if (trackingTimer.current) clearTimeout(trackingTimer.current);
+        pendingContact.current = null;
 
         const customer = {
             fullName: value("fullName"),
@@ -136,7 +187,7 @@ export default function CheckoutPage() {
                     checkoutStarted: true,
                     items,
                 }),
-            });
+            }).catch(() => {});
 
             const response = await fetch("/api/orders", {
                 method: "POST",
@@ -145,7 +196,9 @@ export default function CheckoutPage() {
                 },
                 body: JSON.stringify({
                     checkoutKey: key.current,
-                    expectedTotal: total + shipping,
+                    cartSessionId: sessionId,
+                    expectedTotal: quote.total,
+                    couponCode,
 
                     customer,
 
@@ -199,7 +252,7 @@ export default function CheckoutPage() {
                     orderId: data.order.id,
                     orderNumber: data.order.orderNumber,
                 }),
-            });
+            }).catch(() => {});
 
             addOrder(data.order);
 
@@ -207,7 +260,7 @@ export default function CheckoutPage() {
              * Tamamlanan sepet kaydını artık bu tarayıcının yeni
              * alışverişinden ayırıyoruz.
              */
-            localStorage.removeItem("akn-cart-session");
+            try { localStorage.removeItem("akn-cart-session"); } catch { /* Storage is optional. */ }
 
             clearCart();
 
@@ -279,7 +332,9 @@ export default function CheckoutPage() {
                     </section>
                 ) : (
                     <form
+                        key={currentCustomer?.id ?? "guest"}
                         onSubmit={submit}
+                        onInput={trackContact}
                         className="checkout-layout"
                     >
                         <div className="checkout-fields">
@@ -300,12 +355,14 @@ export default function CheckoutPage() {
                                 <div className="form-grid">
                                     <Field
                                         name="fullName"
+                                        defaultValue={currentCustomer?.fullName ?? ""}
                                         label="Ad soyad"
                                         autoComplete="name"
                                     />
 
                                     <Field
                                         name="phone"
+                                        defaultValue={currentCustomer?.phone ?? ""}
                                         label="Telefon"
                                         type="tel"
                                         autoComplete="tel"
@@ -313,6 +370,7 @@ export default function CheckoutPage() {
 
                                     <Field
                                         name="email"
+                                        defaultValue={currentCustomer?.email ?? ""}
                                         label="E-posta"
                                         type="email"
                                         autoComplete="email"
@@ -320,12 +378,14 @@ export default function CheckoutPage() {
 
                                     <Field
                                         name="city"
+                                        defaultValue={currentCustomer?.addresses?.[0]?.city ?? ""}
                                         label="İl"
                                         autoComplete="address-level1"
                                     />
 
                                     <Field
                                         name="district"
+                                        defaultValue={currentCustomer?.addresses?.[0]?.district ?? ""}
                                         label="İlçe"
                                         autoComplete="address-level2"
                                     />
@@ -337,6 +397,7 @@ export default function CheckoutPage() {
                                             minLength={10}
                                             maxLength={1000}
                                             name="address"
+                                            defaultValue={currentCustomer?.addresses?.[0]?.address ?? ""}
                                             autoComplete="street-address"
                                             rows={3}
                                         />
@@ -370,16 +431,19 @@ export default function CheckoutPage() {
                                         <>
                                             <Field
                                                 name="companyName"
+                                        defaultValue={currentCustomer?.companyName ?? ""}
                                                 label="Firma ünvanı"
                                             />
 
                                             <Field
                                                 name="taxOffice"
+                                        defaultValue={currentCustomer?.taxOffice ?? ""}
                                                 label="Vergi dairesi"
                                             />
 
                                             <Field
                                                 name="taxNumber"
+                                        defaultValue={currentCustomer?.taxNumber ?? ""}
                                                 label="Vergi numarası"
                                                 pattern="[0-9]{10,11}"
                                             />
@@ -436,7 +500,7 @@ export default function CheckoutPage() {
 
                             <div>
                                 <span>Ara toplam</span>
-                                <span>{money(total)}</span>
+                                <span>{money(quoteReady && quote ? quote.subtotal : total)}</span>
                             </div>
 
                             <div>
@@ -448,10 +512,13 @@ export default function CheckoutPage() {
                                 </span>
                             </div>
 
+                            <label className="block mt-4 text-sm">Kupon kodu<input className="w-full border rounded p-2 mt-2" value={couponInput} maxLength={50} onChange={e=>setCouponInput(e.target.value)}/></label>
+                            <button type="button" className="button-dark" onClick={()=>setCouponCode(couponInput.trim().toUpperCase())}>Kuponu uygula / kaldır</button>
+                            {quoteReady && quote && quote.discountTotal>0 && <div><span>Kupon indirimi</span><strong>−{money(quote.discountTotal)}</strong></div>}
                             <div className="summary-total">
                                 <span>Toplam</span>
                                 <strong>
-                                    {money(total + shipping)}
+                                    {quoteReady && quote ? money(quote.total) : "Hesaplanıyor…"}
                                 </strong>
                             </div>
 
@@ -470,7 +537,7 @@ export default function CheckoutPage() {
                             )}
 
                             <button
-                                disabled={busy || !settings?.enabled}
+                                disabled={busy || !settings?.enabled || !quoteReady}
                                 className="button-red"
                                 type="submit"
                             >
@@ -502,12 +569,14 @@ function Field({
     type = "text",
     autoComplete,
     pattern,
+    defaultValue,
 }: {
     name: string;
     label: string;
     type?: string;
     autoComplete?: string;
     pattern?: string;
+    defaultValue?: string;
 }) {
     return (
         <label>
@@ -515,6 +584,7 @@ function Field({
 
             <input
                 required
+                defaultValue={defaultValue}
                 name={name}
                 type={type}
                 autoComplete={autoComplete}

@@ -86,49 +86,25 @@ export default function DestekTalepleriPage() {
     const [loading, setLoading] = useState(true);
     const [savingId, setSavingId] = useState<string | null>(null);
     const [error, setError] = useState("");
-
-    async function loadTickets() {
-        try {
-            setError("");
-
-            const response = await fetch("/api/support-tickets", {
-                cache: "no-store",
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Destek talepleri alınamadı."
-                );
-            }
-
-            setTickets(
-                Array.isArray(data.tickets) ? data.tickets : []
-            );
-        } catch (err) {
-            console.error(err);
-
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError("Destek talepleri yüklenemedi.");
-            }
-        } finally {
-            setLoading(false);
-        }
-    }
+    const [replies, setReplies] = useState<Record<string, string>>({});
 
     useEffect(() => {
-        void loadTickets();
+        const controller = new AbortController();
+        fetch("/api/support-tickets", { cache: "no-store", signal: controller.signal })
+            .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.message || "Kayıtlar alınamadı."); return data; })
+            .then(data => { if (!controller.signal.aborted) { setTickets(data.tickets || []); } })
+            .catch(error => { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Kayıtlar alınamadı."); })
+            .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+        return () => controller.abort();
     }, []);
 
     async function updateTicket(
         id: string,
-        field: "status" | "priority",
+        field: "status" | "priority" | "message",
         value: string
     ) {
         try {
+            if (savingId) return;
             setSavingId(id);
             setError("");
 
@@ -151,13 +127,11 @@ export default function DestekTalepleriPage() {
                 );
             }
 
+            if (field === "message") setReplies(current => ({ ...current, [id]: "" }));
             setTickets((currentTickets) =>
                 currentTickets.map((ticket) =>
                     ticket.id === id
-                        ? {
-                            ...ticket,
-                            [field]: value,
-                        }
+                        ? data.ticket
                         : ticket
                 )
             );
@@ -357,6 +331,18 @@ export default function DestekTalepleriPage() {
                                                 </div>
                                             </div>
 
+                                            <details className="mt-4 rounded-xl border p-4">
+                                                <summary className="cursor-pointer font-bold">Detay ve Mesaj Geçmişi ({ticket.messages.length})</summary>
+                                                <div className="mt-4 space-y-3">{ticket.messages.map(message => <article key={message.id} className="rounded-xl bg-slate-50 p-3">
+                                                    <p className="text-xs font-bold text-slate-500">{message.senderType === "admin" ? "Yönetici" : message.senderName || "Müşteri"} · {formatDate(message.createdAt)}</p>
+                                                    <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.message}</p>
+                                                </article>)}</div>
+                                                <form className="mt-4" onSubmit={event => { event.preventDefault(); void updateTicket(ticket.id, "message", replies[ticket.id] ?? ""); }}>
+                                                    <label className="block text-sm font-bold">Yönetici Cevabı<textarea required maxLength={5000} rows={3} value={replies[ticket.id] ?? ""} onChange={event => setReplies(current => ({ ...current, [ticket.id]: event.target.value }))} className="mt-2 w-full rounded-xl border p-3" /></label>
+                                                    <button disabled={savingId !== null || !(replies[ticket.id] ?? "").trim()} className="mt-3 rounded-xl bg-slate-950 px-4 py-3 font-bold text-white disabled:opacity-50">Cevabı Kaydet</button>
+                                                    <p className="mt-2 text-xs text-slate-500">Cevap mesaj geçmişine kaydedilir.</p>
+                                                </form>
+                                            </details>
                                             {lastMessage !== null && (
                                                 <div className="mt-4 rounded-xl bg-slate-50 p-4">
                                                     <div className="text-xs font-bold text-slate-400">

@@ -1,3 +1,4 @@
+import { adminGuard } from "@/lib/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -63,6 +64,7 @@ async function fetchPage(
 }
 
 export async function POST(request: NextRequest) {
+    const denied = adminGuard(request); if (denied) return denied;
     try {
         const baseUrl = process.env.IDEASOFT_BASE_URL;
         const accessToken =

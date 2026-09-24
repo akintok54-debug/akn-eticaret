@@ -83,8 +83,14 @@ export default function ExtraInfoPage() {
     }
 
     useEffect(() => {
-        void loadCompatibilities(productId);
-    }, [productId]);
+    if (!productId) return;
+    const controller = new AbortController();
+    fetch("/api/product-compatibilities?productId=" + encodeURIComponent(productId), { cache: "no-store", signal: controller.signal })
+      .then(async response => { const data = await response.json(); if (!response.ok) throw new Error(data.message); return data; })
+      .then(data => { if (!controller.signal.aborted) setItems(data.compatibilities || []); })
+      .catch(error => { if (!controller.signal.aborted) setMessage(error instanceof Error ? error.message : "Kayıtlar alınamadı."); });
+    return () => controller.abort();
+  }, [productId]);
 
     async function saveCompatibility() {
         if (!productId) {
@@ -194,7 +200,7 @@ export default function ExtraInfoPage() {
                     ) : (
                         <select
                             value={productId}
-                            onChange={(e) => setProductId(e.target.value)}
+                            onChange={(e) => { setProductId(e.target.value); setItems([]); setMessage(""); }}
                             className="w-full rounded-lg border px-3 py-2"
                             size={12}
                         >

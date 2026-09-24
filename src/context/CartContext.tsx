@@ -1,9 +1,12 @@
 "use client";
+import { useProducts } from "@/context/ProductContext";
 
 import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -29,7 +32,10 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [storedItems, setItems] = useState<CartItem[]>([]);
+  const { products, loaded: catalogLoaded } = useProducts();
+  const items = useMemo(() => storedItems.map(item => { const product=products.find(p=>p.id===item.id); return catalogLoaded && product ? {...item,price:product.retailPrice,name:product.name,image:product.image} : item; }), [storedItems, products, catalogLoaded]);
+  const trackingStarted=useRef(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -45,7 +51,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       }
     } catch {
-      localStorage.removeItem("akn-cart");
+      try { localStorage.removeItem("akn-cart"); } catch { /* Browser storage is optional. */ }
     }
 
     setLoaded(true);
@@ -59,7 +65,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || (!items.length && !trackingStarted.current)) return;
+    if(items.length)trackingStarted.current=true;
 
     try {
       let sessionId = localStorage.getItem("akn-cart-session");
@@ -143,6 +150,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function clearCart() {
+    trackingStarted.current=false;
     setItems([]);
   }
 

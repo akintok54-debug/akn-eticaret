@@ -92,3 +92,33 @@ export type SupportMessage = Prisma.SupportMessageModel
  * 
  */
 export type CartReminder = Prisma.CartReminderModel
+/**
+ * Model CustomerAccount
+ * 
+ */
+export type CustomerAccount = Prisma.CustomerAccountModel
+/**
+ * Model CustomerSession
+ * 
+ */
+export type CustomerSession = Prisma.CustomerSessionModel
+/**
+ * Model GuestSession
+ * 
+ */
+export type GuestSession = Prisma.GuestSessionModel
+/**
+ * Model StoreSettings
+ * 
+ */
+export type StoreSettings = Prisma.StoreSettingsModel
+/**
+ * Model Coupon
+ * 
+ */
+export type Coupon = Prisma.CouponModel
+/**
+ * Model CatalogEntry
+ * 
+ */
+export type CatalogEntry = Prisma.CatalogEntryModel
