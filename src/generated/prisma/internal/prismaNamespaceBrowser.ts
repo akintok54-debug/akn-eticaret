@@ -108,7 +108,15 @@ export const ProductScalarFieldEnum = {
   stock: 'stock',
   criticalStock: 'criticalStock',
   image: 'image',
+  additionalImages: 'additionalImages',
   active: 'active',
+  showcases: 'showcases',
+  showcaseOrder: 'showcaseOrder',
+  shippingStatus: 'shippingStatus',
+  shippingWeight: 'shippingWeight',
+  extraDetail: 'extraDetail',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
   lastErpSyncAt: 'lastErpSyncAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -531,14 +539,6 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -546,4 +546,12 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

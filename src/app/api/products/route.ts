@@ -20,6 +20,14 @@ const productSchema = z.object({
   stock: z.number().int().min(0).default(0),
   criticalStock: z.number().int().min(0).default(0),
   image: z.string().trim().nullable().optional(),
+  additionalImages: z.array(z.string()).default([]),
+  showcases: z.array(z.string()).default([]),
+  showcaseOrder: z.record(z.string(), z.number()).default({}),
+  shippingStatus: z.string().default("Sistem"),
+  shippingWeight: z.number().min(0).default(0),
+  extraDetail: z.string().default(""),
+  seoTitle: z.string().default(""),
+  seoDescription: z.string().default(""),
   active: z.boolean().default(true),
 });
 
@@ -42,7 +50,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       count: products.length,
-      products: isAdmin(request) ? products : products.map(p => ({ id:p.id,sku:p.sku,barcode:p.barcode,name:p.name,brand:p.brand,category:p.category,description:p.description,retailPrice:unitPrice(p,buyer),vatRate:p.vatRate,stock:p.stock,image:p.image,active:p.active })),
+      products: isAdmin(request) ? products : products.map(p => ({ id:p.id,sku:p.sku,barcode:p.barcode,name:p.name,brand:p.brand,category:p.category,description:p.description,retailPrice:unitPrice(p,buyer),vatRate:p.vatRate,stock:p.stock,image:p.image,additionalImages:p.additionalImages,showcases:p.showcases,shippingStatus:p.shippingStatus,shippingWeight:p.shippingWeight,extraDetail:p.extraDetail,seoTitle:p.seoTitle,seoDescription:p.seoDescription,active:p.active })),
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("GET /api/products:", error);

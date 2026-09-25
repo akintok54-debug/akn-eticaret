@@ -33,6 +33,7 @@ export type ProductAvgAggregateOutputType = {
   vatRate: number | null
   stock: number | null
   criticalStock: number | null
+  shippingWeight: number | null
 }
 
 export type ProductSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type ProductSumAggregateOutputType = {
   vatRate: number | null
   stock: number | null
   criticalStock: number | null
+  shippingWeight: number | null
 }
 
 export type ProductMinAggregateOutputType = {
@@ -61,6 +63,11 @@ export type ProductMinAggregateOutputType = {
   criticalStock: number | null
   image: string | null
   active: boolean | null
+  shippingStatus: string | null
+  shippingWeight: number | null
+  extraDetail: string | null
+  seoTitle: string | null
+  seoDescription: string | null
   lastErpSyncAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -83,6 +90,11 @@ export type ProductMaxAggregateOutputType = {
   criticalStock: number | null
   image: string | null
   active: boolean | null
+  shippingStatus: string | null
+  shippingWeight: number | null
+  extraDetail: string | null
+  seoTitle: string | null
+  seoDescription: string | null
   lastErpSyncAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -104,7 +116,15 @@ export type ProductCountAggregateOutputType = {
   stock: number
   criticalStock: number
   image: number
+  additionalImages: number
   active: number
+  showcases: number
+  showcaseOrder: number
+  shippingStatus: number
+  shippingWeight: number
+  extraDetail: number
+  seoTitle: number
+  seoDescription: number
   lastErpSyncAt: number
   createdAt: number
   updatedAt: number
@@ -119,6 +139,7 @@ export type ProductAvgAggregateInputType = {
   vatRate?: true
   stock?: true
   criticalStock?: true
+  shippingWeight?: true
 }
 
 export type ProductSumAggregateInputType = {
@@ -128,6 +149,7 @@ export type ProductSumAggregateInputType = {
   vatRate?: true
   stock?: true
   criticalStock?: true
+  shippingWeight?: true
 }
 
 export type ProductMinAggregateInputType = {
@@ -147,6 +169,11 @@ export type ProductMinAggregateInputType = {
   criticalStock?: true
   image?: true
   active?: true
+  shippingStatus?: true
+  shippingWeight?: true
+  extraDetail?: true
+  seoTitle?: true
+  seoDescription?: true
   lastErpSyncAt?: true
   createdAt?: true
   updatedAt?: true
@@ -169,6 +196,11 @@ export type ProductMaxAggregateInputType = {
   criticalStock?: true
   image?: true
   active?: true
+  shippingStatus?: true
+  shippingWeight?: true
+  extraDetail?: true
+  seoTitle?: true
+  seoDescription?: true
   lastErpSyncAt?: true
   createdAt?: true
   updatedAt?: true
@@ -190,7 +222,15 @@ export type ProductCountAggregateInputType = {
   stock?: true
   criticalStock?: true
   image?: true
+  additionalImages?: true
   active?: true
+  showcases?: true
+  showcaseOrder?: true
+  shippingStatus?: true
+  shippingWeight?: true
+  extraDetail?: true
+  seoTitle?: true
+  seoDescription?: true
   lastErpSyncAt?: true
   createdAt?: true
   updatedAt?: true
@@ -299,7 +339,15 @@ export type ProductGroupByOutputType = {
   stock: number
   criticalStock: number
   image: string | null
+  additionalImages: string[]
   active: boolean
+  showcases: string[]
+  showcaseOrder: runtime.JsonValue
+  shippingStatus: string
+  shippingWeight: number
+  extraDetail: string
+  seoTitle: string
+  seoDescription: string
   lastErpSyncAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -344,7 +392,15 @@ export type ProductWhereInput = {
   stock?: Prisma.IntFilter<"Product"> | number
   criticalStock?: Prisma.IntFilter<"Product"> | number
   image?: Prisma.StringNullableFilter<"Product"> | string | null
+  additionalImages?: Prisma.StringNullableListFilter<"Product">
   active?: Prisma.BoolFilter<"Product"> | boolean
+  showcases?: Prisma.StringNullableListFilter<"Product">
+  showcaseOrder?: Prisma.JsonFilter<"Product">
+  shippingStatus?: Prisma.StringFilter<"Product"> | string
+  shippingWeight?: Prisma.FloatFilter<"Product"> | number
+  extraDetail?: Prisma.StringFilter<"Product"> | string
+  seoTitle?: Prisma.StringFilter<"Product"> | string
+  seoDescription?: Prisma.StringFilter<"Product"> | string
   lastErpSyncAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -370,7 +426,15 @@ export type ProductOrderByWithRelationInput = {
   stock?: Prisma.SortOrder
   criticalStock?: Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
+  additionalImages?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  showcases?: Prisma.SortOrder
+  showcaseOrder?: Prisma.SortOrder
+  shippingStatus?: Prisma.SortOrder
+  shippingWeight?: Prisma.SortOrder
+  extraDetail?: Prisma.SortOrder
+  seoTitle?: Prisma.SortOrder
+  seoDescription?: Prisma.SortOrder
   lastErpSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -399,7 +463,15 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   stock?: Prisma.IntFilter<"Product"> | number
   criticalStock?: Prisma.IntFilter<"Product"> | number
   image?: Prisma.StringNullableFilter<"Product"> | string | null
+  additionalImages?: Prisma.StringNullableListFilter<"Product">
   active?: Prisma.BoolFilter<"Product"> | boolean
+  showcases?: Prisma.StringNullableListFilter<"Product">
+  showcaseOrder?: Prisma.JsonFilter<"Product">
+  shippingStatus?: Prisma.StringFilter<"Product"> | string
+  shippingWeight?: Prisma.FloatFilter<"Product"> | number
+  extraDetail?: Prisma.StringFilter<"Product"> | string
+  seoTitle?: Prisma.StringFilter<"Product"> | string
+  seoDescription?: Prisma.StringFilter<"Product"> | string
   lastErpSyncAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -425,7 +497,15 @@ export type ProductOrderByWithAggregationInput = {
   stock?: Prisma.SortOrder
   criticalStock?: Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
+  additionalImages?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  showcases?: Prisma.SortOrder
+  showcaseOrder?: Prisma.SortOrder
+  shippingStatus?: Prisma.SortOrder
+  shippingWeight?: Prisma.SortOrder
+  extraDetail?: Prisma.SortOrder
+  seoTitle?: Prisma.SortOrder
+  seoDescription?: Prisma.SortOrder
   lastErpSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -455,7 +535,15 @@ export type ProductScalarWhereWithAggregatesInput = {
   stock?: Prisma.IntWithAggregatesFilter<"Product"> | number
   criticalStock?: Prisma.IntWithAggregatesFilter<"Product"> | number
   image?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  additionalImages?: Prisma.StringNullableListFilter<"Product">
   active?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  showcases?: Prisma.StringNullableListFilter<"Product">
+  showcaseOrder?: Prisma.JsonWithAggregatesFilter<"Product">
+  shippingStatus?: Prisma.StringWithAggregatesFilter<"Product"> | string
+  shippingWeight?: Prisma.FloatWithAggregatesFilter<"Product"> | number
+  extraDetail?: Prisma.StringWithAggregatesFilter<"Product"> | string
+  seoTitle?: Prisma.StringWithAggregatesFilter<"Product"> | string
+  seoDescription?: Prisma.StringWithAggregatesFilter<"Product"> | string
   lastErpSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -477,7 +565,15 @@ export type ProductCreateInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -503,7 +599,15 @@ export type ProductUncheckedCreateInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -529,7 +633,15 @@ export type ProductUpdateInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -555,7 +667,15 @@ export type ProductUncheckedUpdateInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -581,7 +701,15 @@ export type ProductCreateManyInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -603,7 +731,15 @@ export type ProductUpdateManyMutationInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -625,10 +761,26 @@ export type ProductUncheckedUpdateManyInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type ProductCountOrderByAggregateInput = {
@@ -647,7 +799,15 @@ export type ProductCountOrderByAggregateInput = {
   stock?: Prisma.SortOrder
   criticalStock?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  additionalImages?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  showcases?: Prisma.SortOrder
+  showcaseOrder?: Prisma.SortOrder
+  shippingStatus?: Prisma.SortOrder
+  shippingWeight?: Prisma.SortOrder
+  extraDetail?: Prisma.SortOrder
+  seoTitle?: Prisma.SortOrder
+  seoDescription?: Prisma.SortOrder
   lastErpSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -660,6 +820,7 @@ export type ProductAvgOrderByAggregateInput = {
   vatRate?: Prisma.SortOrder
   stock?: Prisma.SortOrder
   criticalStock?: Prisma.SortOrder
+  shippingWeight?: Prisma.SortOrder
 }
 
 export type ProductMaxOrderByAggregateInput = {
@@ -679,6 +840,11 @@ export type ProductMaxOrderByAggregateInput = {
   criticalStock?: Prisma.SortOrder
   image?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  shippingStatus?: Prisma.SortOrder
+  shippingWeight?: Prisma.SortOrder
+  extraDetail?: Prisma.SortOrder
+  seoTitle?: Prisma.SortOrder
+  seoDescription?: Prisma.SortOrder
   lastErpSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -701,6 +867,11 @@ export type ProductMinOrderByAggregateInput = {
   criticalStock?: Prisma.SortOrder
   image?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  shippingStatus?: Prisma.SortOrder
+  shippingWeight?: Prisma.SortOrder
+  extraDetail?: Prisma.SortOrder
+  seoTitle?: Prisma.SortOrder
+  seoDescription?: Prisma.SortOrder
   lastErpSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -713,6 +884,7 @@ export type ProductSumOrderByAggregateInput = {
   vatRate?: Prisma.SortOrder
   stock?: Prisma.SortOrder
   criticalStock?: Prisma.SortOrder
+  shippingWeight?: Prisma.SortOrder
 }
 
 export type ProductScalarRelationFilter = {
@@ -723,6 +895,14 @@ export type ProductScalarRelationFilter = {
 export type ProductNullableScalarRelationFilter = {
   is?: Prisma.ProductWhereInput | null
   isNot?: Prisma.ProductWhereInput | null
+}
+
+export type ProductCreateadditionalImagesInput = {
+  set: string[]
+}
+
+export type ProductCreateshowcasesInput = {
+  set: string[]
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -749,8 +929,18 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type ProductUpdateadditionalImagesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type ProductUpdateshowcasesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -835,7 +1025,15 @@ export type ProductCreateWithoutVariantsInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -860,7 +1058,15 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -901,7 +1107,15 @@ export type ProductUpdateWithoutVariantsInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -926,7 +1140,15 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -951,7 +1173,15 @@ export type ProductCreateWithoutCompatibilitiesInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -976,7 +1206,15 @@ export type ProductUncheckedCreateWithoutCompatibilitiesInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1017,7 +1255,15 @@ export type ProductUpdateWithoutCompatibilitiesInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1042,7 +1288,15 @@ export type ProductUncheckedUpdateWithoutCompatibilitiesInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1067,7 +1321,15 @@ export type ProductCreateWithoutOrderItemsInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1092,7 +1354,15 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1133,7 +1403,15 @@ export type ProductUpdateWithoutOrderItemsInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1158,7 +1436,15 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1183,7 +1469,15 @@ export type ProductCreateWithoutAttributesInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1208,7 +1502,15 @@ export type ProductUncheckedCreateWithoutAttributesInput = {
   stock?: number
   criticalStock?: number
   image?: string | null
+  additionalImages?: Prisma.ProductCreateadditionalImagesInput | string[]
   active?: boolean
+  showcases?: Prisma.ProductCreateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: string
+  shippingWeight?: number
+  extraDetail?: string
+  seoTitle?: string
+  seoDescription?: string
   lastErpSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1249,7 +1551,15 @@ export type ProductUpdateWithoutAttributesInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1274,7 +1584,15 @@ export type ProductUncheckedUpdateWithoutAttributesInput = {
   stock?: Prisma.IntFieldUpdateOperationsInput | number
   criticalStock?: Prisma.IntFieldUpdateOperationsInput | number
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  additionalImages?: Prisma.ProductUpdateadditionalImagesInput | string[]
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  showcases?: Prisma.ProductUpdateshowcasesInput | string[]
+  showcaseOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingStatus?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingWeight?: Prisma.FloatFieldUpdateOperationsInput | number
+  extraDetail?: Prisma.StringFieldUpdateOperationsInput | string
+  seoTitle?: Prisma.StringFieldUpdateOperationsInput | string
+  seoDescription?: Prisma.StringFieldUpdateOperationsInput | string
   lastErpSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1357,7 +1675,15 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   stock?: boolean
   criticalStock?: boolean
   image?: boolean
+  additionalImages?: boolean
   active?: boolean
+  showcases?: boolean
+  showcaseOrder?: boolean
+  shippingStatus?: boolean
+  shippingWeight?: boolean
+  extraDetail?: boolean
+  seoTitle?: boolean
+  seoDescription?: boolean
   lastErpSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1384,7 +1710,15 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   stock?: boolean
   criticalStock?: boolean
   image?: boolean
+  additionalImages?: boolean
   active?: boolean
+  showcases?: boolean
+  showcaseOrder?: boolean
+  shippingStatus?: boolean
+  shippingWeight?: boolean
+  extraDetail?: boolean
+  seoTitle?: boolean
+  seoDescription?: boolean
   lastErpSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1406,7 +1740,15 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   stock?: boolean
   criticalStock?: boolean
   image?: boolean
+  additionalImages?: boolean
   active?: boolean
+  showcases?: boolean
+  showcaseOrder?: boolean
+  shippingStatus?: boolean
+  shippingWeight?: boolean
+  extraDetail?: boolean
+  seoTitle?: boolean
+  seoDescription?: boolean
   lastErpSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1428,13 +1770,21 @@ export type ProductSelectScalar = {
   stock?: boolean
   criticalStock?: boolean
   image?: boolean
+  additionalImages?: boolean
   active?: boolean
+  showcases?: boolean
+  showcaseOrder?: boolean
+  shippingStatus?: boolean
+  shippingWeight?: boolean
+  extraDetail?: boolean
+  seoTitle?: boolean
+  seoDescription?: boolean
   lastErpSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "erpProductId" | "sku" | "barcode" | "name" | "brand" | "category" | "description" | "purchasePrice" | "retailPrice" | "dealerPrice" | "vatRate" | "stock" | "criticalStock" | "image" | "active" | "lastErpSyncAt" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "erpProductId" | "sku" | "barcode" | "name" | "brand" | "category" | "description" | "purchasePrice" | "retailPrice" | "dealerPrice" | "vatRate" | "stock" | "criticalStock" | "image" | "additionalImages" | "active" | "showcases" | "showcaseOrder" | "shippingStatus" | "shippingWeight" | "extraDetail" | "seoTitle" | "seoDescription" | "lastErpSyncAt" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   variants?: boolean | Prisma.Product$variantsArgs<ExtArgs>
@@ -1469,7 +1819,15 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     stock: number
     criticalStock: number
     image: string | null
+    additionalImages: string[]
     active: boolean
+    showcases: string[]
+    showcaseOrder: runtime.JsonValue
+    shippingStatus: string
+    shippingWeight: number
+    extraDetail: string
+    seoTitle: string
+    seoDescription: string
     lastErpSyncAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -1915,7 +2273,15 @@ export interface ProductFieldRefs {
   readonly stock: Prisma.FieldRef<"Product", 'Int'>
   readonly criticalStock: Prisma.FieldRef<"Product", 'Int'>
   readonly image: Prisma.FieldRef<"Product", 'String'>
+  readonly additionalImages: Prisma.FieldRef<"Product", 'String[]'>
   readonly active: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly showcases: Prisma.FieldRef<"Product", 'String[]'>
+  readonly showcaseOrder: Prisma.FieldRef<"Product", 'Json'>
+  readonly shippingStatus: Prisma.FieldRef<"Product", 'String'>
+  readonly shippingWeight: Prisma.FieldRef<"Product", 'Float'>
+  readonly extraDetail: Prisma.FieldRef<"Product", 'String'>
+  readonly seoTitle: Prisma.FieldRef<"Product", 'String'>
+  readonly seoDescription: Prisma.FieldRef<"Product", 'String'>
   readonly lastErpSyncAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Product", 'DateTime'>

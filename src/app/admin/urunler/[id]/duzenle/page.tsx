@@ -99,6 +99,12 @@ export default function EditProductPage() {
       image:
         String(form.get("image") || "").trim() ||
         null,
+      showcases: form.getAll("showcases").map(String),
+      shippingStatus: String(form.get("shippingStatus") || "Sistem"),
+      shippingWeight: Number(form.get("shippingWeight") || 0),
+      extraDetail: String(form.get("extraDetail") || ""),
+      seoTitle: String(form.get("seoTitle") || ""),
+      seoDescription: String(form.get("seoDescription") || ""),
       active,
     });
 
@@ -245,6 +251,26 @@ export default function EditProductPage() {
               />
             )}
           </label>
+        </Section>
+
+        <Section title="Vitrin Düzeni">
+          <div className="md:col-span-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {["Anasayfa","Popüler","Kategori","Marka","Yeni","Sponsor","İndirimli"].map((v)=><label key={v} className="flex items-center gap-2 rounded-xl border p-3"><input type="checkbox" name="showcases" value={v} defaultChecked={(currentProduct.showcases||[]).includes(v)}/>{v}</label>)}
+          </div>
+        </Section>
+
+        <Section title="Kargo">
+          <label><span className="mb-2 block text-sm font-bold">Özel Kargo Durumu</span><select name="shippingStatus" defaultValue={currentProduct.shippingStatus||"Sistem"} className="w-full rounded-xl border px-4 py-3"><option>Sistem</option><option>Ücretsiz Kargo</option><option>Sabit Kargo</option><option>Kargo Yok</option></select></label>
+          <NumberField name="shippingWeight" label="Kargo Ağırlığı / Desi" value={currentProduct.shippingWeight||0}/>
+        </Section>
+
+        <Section title="Ekstra Detay">
+          <label className="md:col-span-2"><textarea name="extraDetail" defaultValue={currentProduct.extraDetail||""} rows={5} className="w-full rounded-xl border px-4 py-3" placeholder="Ürüne ait ek bilgiler"/></label>
+        </Section>
+
+        <Section title="SEO Bilgileri">
+          <Field name="seoTitle" label="SEO Başlığı" value={currentProduct.seoTitle||""}/>
+          <label><span className="mb-2 block text-sm font-bold">SEO Açıklaması</span><textarea name="seoDescription" defaultValue={currentProduct.seoDescription||""} rows={3} className="w-full rounded-xl border px-4 py-3"/></label>
         </Section>
 
         <section className="rounded-2xl border bg-white p-6">

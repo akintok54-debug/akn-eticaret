@@ -17,6 +17,14 @@ export type Product = {
   criticalStock: number;
 
   image: string | null;
+  additionalImages?: string[];
+  showcases?: string[];
+  showcaseOrder?: Record<string, number>;
+  shippingStatus?: string;
+  shippingWeight?: number;
+  extraDetail?: string;
+  seoTitle?: string;
+  seoDescription?: string;
 
   active: boolean;
 };

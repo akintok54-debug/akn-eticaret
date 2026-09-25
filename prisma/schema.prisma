@@ -27,7 +27,16 @@ model Product {
   criticalStock Int @default(0)
 
   image  String?
+  additionalImages String[] @default([])
   active Boolean @default(true)
+
+  showcases String[] @default([])
+  showcaseOrder Json @default("{}")
+  shippingStatus String @default("Sistem")
+  shippingWeight Float @default(0)
+  extraDetail String @default("")
+  seoTitle String @default("")
+  seoDescription String @default("")
 
   lastErpSyncAt DateTime?
   createdAt     DateTime  @default(now())
