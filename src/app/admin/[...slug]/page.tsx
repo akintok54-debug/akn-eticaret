@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import SiteSettings from "@/components/admin/SiteSettings";
+import AdvancedSettings from "@/components/admin/AdvancedSettings";
 import {usePathname} from "next/navigation";
 import {useEffect,useState,type FormEvent} from "react";
 import {useOrders} from "@/context/OrderContext";
@@ -16,6 +17,11 @@ export default function AdminModule(){
  if(path==="/admin/ayarlar/seo")return <SiteSettings key={path} section="seo"/>;
  if(path==="/admin/mail-sms")return <SiteSettings key={path} section="mail"/>;
  if(path==="/admin/guvenlik")return <SiteSettings key={path} section="security"/>;
+ if(path==="/admin/ayarlar/firma")return <AdvancedSettings section="firm"/>;
+ if(path==="/admin/yasal-sozlesmeler")return <AdvancedSettings section="legal"/>;
+ if(path==="/admin/tasarim-ayarlari")return <AdvancedSettings section="design"/>;
+ if(path==="/admin/kullanicilar")return <AdvancedSettings section="users"/>;
+ if(path==="/admin/dosya-yonetimi")return <AdvancedSettings section="files"/>;
  if(path==="/admin/kargo-ayarlari"||path==="/admin/odeme-ayarlari")return <CommerceSettings key={path} shippingOnly={path==="/admin/kargo-ayarlari"}/>;
  if(path.startsWith("/admin/istatistikler")||path==="/admin/raporlar")return <Reports/>;
  return <main className="p-6"><h1 className="text-2xl font-bold">Modül kullanıma açık değil</h1><p className="my-4">Bu özellik henüz etkinleştirilmedi.</p><Link className="button-dark" href="/admin">Yönetim paneline dön</Link></main>;

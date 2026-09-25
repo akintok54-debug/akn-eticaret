@@ -3,6 +3,11 @@ import Link from "next/link";
 import {useEffect,useState,type FormEvent} from "react";
 type Settings={siteTitle:string;siteDescription:string;keywords:string;geoContent:string;smtpHost:string;smtpPort:number;smtpUser:string;smtpPassword:string;smtpFrom:string;smtpEnabled:boolean;publicUrl:string;hasSmtpPassword:boolean};
 const areas=[
+ ["Firma Tanımları","Firma, adres, iletişim ve vergi bilgileri.","/admin/ayarlar/firma","🏢"],
+ ["Kullanıcılar","Yönetim kullanıcı kayıtlarını yönetin.","/admin/kullanicilar","👤"],
+ ["Dosya Yönetimi","Logo, katalog ve dosya bağlantılarını yönetin.","/admin/dosya-yonetimi","📁"],
+ ["Tasarım Ayarları","Tema ve mağaza görünüm tercihleri.","/admin/tasarim-ayarlari","🎨"],
+ ["Yasal Sözleşmeler","Üyelik, satış ve iade metinlerini yönetin.","/admin/yasal-sozlesmeler","📄"],
  ["Ödeme Ayarları","Havale / EFT, hesap sahibi ve IBAN bilgileri.","/admin/odeme-ayarlari","₺"],
  ["Kargo Ayarları","Kargo ücreti ve ücretsiz kargo alt limiti.","/admin/kargo-ayarlari","↗"],
  ["SEO ve GEO Ayarları","Arama sonuçları ve yapay zekâ araçları için mağaza içerikleri.","/admin/ayarlar/seo","◇"],
