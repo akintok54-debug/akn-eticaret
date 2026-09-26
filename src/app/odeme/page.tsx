@@ -22,6 +22,7 @@ type Settings = {
     threshold: number;
     bankName: string;
     iban: string;
+    cardEnabled: boolean;
 };
 
 function getCartSessionId() {
@@ -61,6 +62,10 @@ export default function CheckoutPage() {
     const [busy, setBusy] = useState(false);
     const [completed, setCompleted] = useState("");
     const [invoice, setInvoice] = useState("individual");
+    const [paymentMethod, setPaymentMethod] = useState<"transfer"|"sipay">("transfer");
+    const [subscribe, setSubscribe] = useState(false);
+    const [frequency, setFrequency] = useState<"weekly"|"monthly">("monthly");
+    const [intervalCount, setIntervalCount] = useState(1);
 
     const key = useRef("");
     const submitting = useRef(false);
@@ -215,7 +220,7 @@ export default function CheckoutPage() {
                         taxNumber: value("taxNumber"),
                     },
 
-                    paymentMethod: "transfer",
+                    paymentMethod,
 
                     items: items.map((item) => ({
                         productId: item.id,
@@ -255,6 +260,57 @@ export default function CheckoutPage() {
             }).catch(() => {});
 
             addOrder(data.order);
+
+            if (subscribe && currentCustomer) {
+                const nextRun = new Date();
+                if (frequency === "weekly") nextRun.setDate(nextRun.getDate() + 7 * intervalCount);
+                else nextRun.setMonth(nextRun.getMonth() + intervalCount);
+                const subResponse = await fetch("/api/subscriptions", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        frequency,
+                        intervalCount,
+                        remainingRuns: null,
+                        paymentMethod,
+                        nextRunAt: nextRun.toISOString(),
+                        delivery: {
+                            city: value("city"),
+                            district: value("district"),
+                            address: value("address"),
+                        },
+                        invoice: {
+                            type: invoice,
+                            companyName: value("companyName"),
+                            taxOffice: value("taxOffice"),
+                            taxNumber: value("taxNumber"),
+                        },
+                        items: items.map((item) => ({
+                            productId: item.id,
+                            quantity: item.quantity,
+                        })),
+                        note: "Ödeme ekranından oluşturuldu",
+                    }),
+                });
+                const subData = await subResponse.json();
+                if (!subResponse.ok) throw new Error(subData.message || "Abonelik oluşturulamadı.");
+            }
+
+            if (paymentMethod === "sipay") {
+                const payResponse = await fetch("/api/payments/sipay/start", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ orderId: data.order.id }),
+                });
+                const payData = await payResponse.json();
+                if (!payResponse.ok || !payData.link) {
+                    throw new Error(payData.message || "Kart ödeme sayfası açılamadı.");
+                }
+                try { localStorage.removeItem("akn-cart-session"); } catch {}
+                clearCart();
+                window.location.assign(payData.link);
+                return;
+            }
 
             /*
              * Tamamlanan sepet kaydını artık bu tarayıcının yeni
@@ -469,14 +525,31 @@ export default function CheckoutPage() {
                                     </p>
                                 )}
 
-                                <div className="notice mt-5">
-                                    <strong>Havale / EFT</strong>
-                                    <br />
-                                    Sipariş kaydından sonra banka bilgileri
-                                    gösterilir. Ödemeniz kontrol edildikten
-                                    sonra siparişiniz hazırlanır.
+                                <div className="mt-5 grid gap-3">
+                                    {settings?.cardEnabled && <label className="flex items-center gap-3 rounded border p-4 cursor-pointer">
+                                        <input type="radio" name="paymentChoice" checked={paymentMethod==="sipay"} onChange={()=>setPaymentMethod("sipay")}/>
+                                        <span><strong>Kredi / Banka Kartı</strong><small className="block text-slate-500 mt-1">Sipay güvenli ödeme sayfasında 3D Secure ile ödeme.</small></span>
+                                    </label>}
+                                    <label className="flex items-center gap-3 rounded border p-4 cursor-pointer">
+                                        <input type="radio" name="paymentChoice" checked={paymentMethod==="transfer"} onChange={()=>setPaymentMethod("transfer")}/>
+                                        <span><strong>Havale / EFT</strong><small className="block text-slate-500 mt-1">Sipariş sonrası banka bilgileri gösterilir.</small></span>
+                                    </label>
                                 </div>
                             </section>
+
+                            {currentCustomer && (
+                                <section className="form-panel">
+                                    <h2>04 — Abonelik</h2>
+                                    <label className="flex items-start gap-3 rounded border p-4 cursor-pointer">
+                                        <input type="checkbox" checked={subscribe} onChange={e=>setSubscribe(e.target.checked)} />
+                                        <span><strong>Bu sepeti aboneliğe dönüştür</strong><small className="block text-slate-500 mt-1">Seçtiğiniz periyotta aynı ürünler için yeni sipariş planı oluşturulur.</small></span>
+                                    </label>
+                                    {subscribe && <div className="form-grid mt-4">
+                                        <label>Periyot<select value={frequency} onChange={e=>setFrequency(e.target.value as "weekly"|"monthly")}><option value="weekly">Haftalık</option><option value="monthly">Aylık</option></select></label>
+                                        <label>Her kaç periyotta bir<input type="number" min={1} max={12} value={intervalCount} onChange={e=>setIntervalCount(Math.max(1,Math.min(12,Number(e.target.value)||1)))}/></label>
+                                    </div>}
+                                </section>
+                            )}
                         </div>
 
                         <aside className="form-panel order-summary">
@@ -543,7 +616,7 @@ export default function CheckoutPage() {
                             >
                                 {busy
                                     ? "Sipariş kaydediliyor…"
-                                    : "Havale siparişi oluştur"}{" "}
+                                    : paymentMethod==="sipay" ? "Kartla ödemeye geç" : "Havale siparişi oluştur"}{" "}
                                 <span>→</span>
                             </button>
 

@@ -7,15 +7,17 @@ import { unitPrice } from "@/lib/pricing";
 import { shippingCost } from "@/lib/checkout";
 import { storeSettings,settingsSchema,couponSchema,couponDiscount } from "@/lib/commerce";
 import { membershipError } from "@/lib/membership";
+import { sipayReady } from "@/lib/sipay";
 
 export async function GET(request:Request){
  try{
   const manage=new URL(request.url).searchParams.get("manage")==="1";
   if(manage){const denied=adminGuard(request);if(denied)return denied;}
   const settings=await storeSettings();
+  const cardEnabled=await sipayReady().catch(()=>false);
   if(manage)return Response.json({settings,coupons:await prisma.coupon.findMany({orderBy:{createdAt:"desc"}})},{headers:{"Cache-Control":"no-store"}});
   if(settings.enabled)await guestSession(true);
-  return Response.json({...settings,bankName:settings.enabled?settings.bankName:"",iban:settings.enabled?settings.iban:""},{headers:{"Cache-Control":"no-store"}});
+  return Response.json({...settings,cardEnabled,bankName:settings.enabled?settings.bankName:"",iban:settings.enabled?settings.iban:""},{headers:{"Cache-Control":"no-store"}});
  }catch(e){return membershipError(e);}
 }
 export async function PATCH(request:Request){

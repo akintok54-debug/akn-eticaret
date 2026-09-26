@@ -1,5 +1,5 @@
 import { storeSettings, couponDiscount } from "@/lib/commerce";
-import { currentCustomer } from "@/lib/customer-session";
+import { currentCustomer, sameOrigin } from "@/lib/customer-session";
 import { unitPrice } from "@/lib/pricing";
 import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/prisma";
@@ -26,8 +26,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
 
- const origin=request.headers.get("origin");
- if (!origin || (origin!==new URL(request.url).origin && origin!==process.env.SITE_URL)) return Response.json({message:"Geçersiz istek kaynağı."},{status:403});
+ if(!sameOrigin(request)) return Response.json({message:"Geçersiz istek kaynağı."},{status:403});
  try {
   const settings=await storeSettings();
   if(!settings.enabled)return Response.json({message:"Sipariş alımı henüz açık değil."},{status:503});
@@ -70,7 +69,7 @@ export async function POST(request: Request) {
    }
    const shipping=shippingCost((subtotalCents-discountCents)/100,settings);
    if (Math.round(data.expectedTotal * 100) !== subtotalCents-discountCents + Math.round(shipping * 100)) throw new Error("PRICE_CHANGED");
-   const created = await tx.order.create({data:{checkoutKey:key,guestSessionId:buyer?null:guest,customerId:buyer?.id,orderNumber:`AKN-${randomUUID().replace(/-/g,"").slice(0,16).toUpperCase()}`,customerName:data.customer.fullName,customerPhone:data.customer.phone,customerEmail:data.customer.email,city:data.delivery.city,district:data.delivery.district,deliveryAddress:data.delivery.address,invoiceType:data.invoice.type,companyName:data.invoice.companyName,taxOffice:data.invoice.taxOffice,taxNumber:data.invoice.taxNumber,shippingMethod:"standard",paymentMethod:"transfer",subtotal,couponCode:code,discountTotal:discountCents/100,shippingTotal:shipping,total:(subtotalCents-discountCents+Math.round(shipping*100))/100,items:{create:lines}},include:{items:true}});
+   const created = await tx.order.create({data:{checkoutKey:key,guestSessionId:buyer?null:guest,customerId:buyer?.id,orderNumber:`AKN-${randomUUID().replace(/-/g,"").slice(0,16).toUpperCase()}`,customerName:data.customer.fullName,customerPhone:data.customer.phone,customerEmail:data.customer.email,city:data.delivery.city,district:data.delivery.district,deliveryAddress:data.delivery.address,invoiceType:data.invoice.type,companyName:data.invoice.companyName,taxOffice:data.invoice.taxOffice,taxNumber:data.invoice.taxNumber,shippingMethod:"standard",paymentMethod:data.paymentMethod,subtotal,couponCode:code,discountTotal:discountCents/100,shippingTotal:shipping,total:(subtotalCents-discountCents+Math.round(shipping*100))/100,items:{create:lines}},include:{items:true}});
    if (data.cartSessionId) {
     await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${data.cartSessionId}))::text`;
     await tx.shoppingCart.updateMany({where:{sessionId:data.cartSessionId,completedAt:null},data:{status:"Tamamlandı",completedAt:new Date(),abandonedAt:null,orderId:created.id,orderNumber:created.orderNumber,customerName:created.customerName,customerPhone:created.customerPhone,customerEmail:created.customerEmail,checkoutStarted:true}});

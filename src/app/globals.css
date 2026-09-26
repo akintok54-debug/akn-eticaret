@@ -34,3 +34,15 @@
 .design-upload{padding:14px;border:1px dashed #94a3b8;border-radius:8px}.design-image-preview{width:100%;height:auto;max-height:240px;object-fit:contain;background:#f1f5f9;border-radius:8px}
 .design-editor:disabled{opacity:.7}.design-editor button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:640px){.store-promotions{grid-template-columns:1fr;gap:16px;margin:24px 0}.design-promo-editor{padding:12px}.design-theme-options button{flex:1 1 150px}.catalog-pagination{gap:8px;font-size:12px}.store-promo-card>div{padding:16px}}
+
+@media print{
+  @page{size:A4;margin:10mm}
+  html,body{background:#fff!important;color:#000!important}
+  .akn-sidebar,.akn-topbar,.akn-skip,.print\:hidden,.store-header,.store-footer,.utility-bar{display:none!important}
+  .akn-admin,.akn-workspace,.akn-admin-content{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;background:#fff!important}
+  .invoice-print{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important}
+  .invoice-print table{page-break-inside:auto}
+  .invoice-print tr{page-break-inside:avoid;page-break-after:auto}
+  .invoice-print thead{display:table-header-group}
+  .invoice-print footer{page-break-inside:avoid}
+}

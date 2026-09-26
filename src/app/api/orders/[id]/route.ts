@@ -14,6 +14,15 @@ const schema=z.object({
  returnReason:z.string().trim().max(2000).optional(),returnNote:z.string().trim().max(2000).optional()
 }).refine(v=>Object.keys(v).length>0);
 
+export async function GET(request:Request,context:{params:Promise<{id:string}>}) {
+ const denied=adminGuard(request);if(denied)return denied;
+ try{
+  const {id}=await context.params;
+  const order=await prisma.order.findUnique({where:{id},include:{items:true}});
+  if(!order)return Response.json({message:"Sipariş bulunamadı."},{status:404});
+  return Response.json({order:orderView(order)},{headers:{"Cache-Control":"no-store"}});
+ }catch(e){return membershipError(e);}
+}
 export async function PATCH(request:Request,context:{params:Promise<{id:string}>}) {
  if(!isAdmin(request))return requestReturn(request,context);
  const denied=adminGuard(request);if(denied)return denied;
