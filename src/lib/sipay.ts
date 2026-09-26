@@ -69,3 +69,17 @@ export async function checkSipayPayment(invoiceId:string){
  const paid=Number(data.status_code)===100&&String(data.transaction_status||"")==="Completed"&&String(data.transaction_type||"Auth")==="Auth";
  return {paid,data};
 }
+
+export async function createSipayAccountPaymentLink(payment:{id:string;amount:number},customer:{fullName:string;email:string|null;phone:string},origin:string){
+ const c=await sipayConfig(),token=await sipayToken(c);
+ const names=customer.fullName.trim().split(/\s+/),surname=names.length>1?names.pop()!:"AKN",name=names.join(" ")||customer.fullName;
+ const invoice={invoice_id:"CARI-"+payment.id,invoice_description:"AKN Motosiklet cari hesap ödemesi",total:payment.amount.toFixed(2),discount:0,coupon:null,
+  return_url:origin+"/api/payments/sipay/account-callback?paymentId="+encodeURIComponent(payment.id),
+  cancel_url:origin+"/cari-odeme?paymentId="+encodeURIComponent(payment.id)+"&cancel=1",is_comission_from_user:0,
+  commission_for_installment:"1,2,3,4,5,6,7,8,9,10,11,12",items:[{name:"Cari hesap ödemesi",price:payment.amount.toFixed(2),quantity:1,description:"Cari hesap kart tahsilatı"}],
+  bill_address1:"AKN Motosiklet",bill_address2:"",bill_city:"Sakarya",bill_postcode:"",bill_state:"Sakarya",bill_email:customer.email||"",bill_phone:customer.phone,response_method:"POST"};
+ const r=await fetch(c.baseUrl+"/ccpayment/purchase/link",{method:"POST",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify({merchant_key:c.merchantKey,name,surname,currency_code:"TRY",invoice:JSON.stringify(invoice)})});
+ const j=await r.json().catch(()=>null) as {status?:boolean;link?:string;order_id?:string;status_description?:string;message?:string}|null;
+ if(!r.ok||!j?.status||!j.link)throw new Error(j?.message||j?.status_description||"SIPAY_LINK");
+ return {link:j.link,reference:String(j.order_id||"")};
+}

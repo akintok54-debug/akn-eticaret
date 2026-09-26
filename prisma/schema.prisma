@@ -137,6 +137,7 @@ model Customer {
   shoppingCarts      ShoppingCart[]
   dealerApplications DealerApplication[]
   supportTickets     SupportTicket[]
+  accountPayments    AccountPayment[]
 
   @@index([fullName])
   @@index([type])
@@ -606,4 +607,22 @@ model SubscriptionItem {
 
   @@index([subscriptionId])
   @@index([productId])
+}
+
+model AccountPayment {
+  id             String   @id @default(cuid())
+  customerId     String
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  amount         Float
+  status         String   @default("pending")
+  provider       String   @default("sipay")
+  providerRef    String?
+  erpMovementId  String?
+  erpSyncedAt    DateTime?
+  paidAt         DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([customerId, createdAt])
+  @@index([status])
 }
