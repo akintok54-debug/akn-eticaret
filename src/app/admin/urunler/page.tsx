@@ -102,6 +102,13 @@ export default function AdminProductsPage() {
 
           <div className="flex flex-wrap gap-2">
             <Link
+              href="/admin/urunler/vitrin"
+              className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-100"
+            >
+              Vitrin Düzeni
+            </Link>
+
+            <Link
               href="/admin/urunler/aktarim"
               className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
             >
@@ -300,7 +307,11 @@ export default function AdminProductsPage() {
                       >
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                            <Link
+                              href={`/admin/urunler/${product.id}/duzenle`}
+                              title="Ürünü düzenle"
+                              className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 transition hover:border-indigo-400 hover:shadow-sm"
+                            >
                               {product.image ? (
                                 <img
                                   src={product.image}
@@ -312,12 +323,16 @@ export default function AdminProductsPage() {
                                   AKN
                                 </span>
                               )}
-                            </div>
+                            </Link>
 
                             <div className="min-w-0">
-                              <div className="max-w-[330px] truncate font-semibold text-slate-950">
+                              <Link
+                                href={`/admin/urunler/${product.id}/duzenle`}
+                                className="block max-w-[330px] truncate font-semibold text-slate-950 underline-offset-4 transition hover:text-indigo-700 hover:underline"
+                                title="Ürünü aç ve düzenle"
+                              >
                                 {product.name}
-                              </div>
+                              </Link>
 
                               <div className="mt-1 text-xs text-slate-500">
                                 {product.brand || "Markasız"}

@@ -20,6 +20,8 @@ export default function EditProductPage() {
     products,
     loaded,
     updateProduct,
+    addProduct,
+    deleteProduct,
   } = useProducts();
 
   const { categories, brands } = useCatalog();
@@ -29,7 +31,9 @@ export default function EditProductPage() {
   );
 
   const [activeOverride, setActive] = useState<boolean | null>(null);
+  const [extraImagesOverride, setExtraImages] = useState<string[] | null>(null);
   const active = activeOverride ?? product?.active ?? true;
+  const extraImages = extraImagesOverride ?? product?.additionalImages ?? [];
 
   if (!loaded) {
     return (
@@ -99,6 +103,7 @@ export default function EditProductPage() {
       image:
         String(form.get("image") || "").trim() ||
         null,
+      additionalImages: form.getAll("additionalImages").map(String).map((value) => value.trim()).filter(Boolean),
       showcases: form.getAll("showcases").map(String),
       shippingStatus: String(form.get("shippingStatus") || "Sistem"),
       shippingWeight: Number(form.get("shippingWeight") || 0),
@@ -108,6 +113,46 @@ export default function EditProductPage() {
       active,
     });
 
+    if (saved) router.push("/admin/urunler");
+  }
+
+  async function handleCopy() {
+    const copySku = `${currentProduct.sku}-KOPYA-${Date.now().toString().slice(-6)}`;
+    const saved = await addProduct({
+      id: crypto.randomUUID(),
+      sku: copySku,
+      barcode: "",
+      name: `${currentProduct.name} - Kopya`,
+      brand: currentProduct.brand,
+      category: currentProduct.category,
+      description: currentProduct.description,
+      purchasePrice: currentProduct.purchasePrice,
+      retailPrice: currentProduct.retailPrice,
+      dealerPrice: currentProduct.dealerPrice,
+      vatRate: currentProduct.vatRate,
+      stock: 0,
+      criticalStock: currentProduct.criticalStock,
+      image: currentProduct.image,
+      additionalImages: currentProduct.additionalImages || [],
+      showcases: [],
+      showcaseOrder: {},
+      shippingStatus: currentProduct.shippingStatus || "Sistem",
+      shippingWeight: currentProduct.shippingWeight || 0,
+      extraDetail: currentProduct.extraDetail || "",
+      seoTitle: currentProduct.seoTitle || "",
+      seoDescription: currentProduct.seoDescription || "",
+      active: false,
+    });
+
+    if (saved) {
+      alert("Ürün kopyalandı. Kopya ürün güvenlik için pasif oluşturuldu.");
+      router.push("/admin/urunler");
+    }
+  }
+
+  async function handleDelete() {
+    if (!window.confirm(`${currentProduct.name} pasife alınsın mı? Sipariş geçmişi korunacak.`)) return;
+    const saved = await deleteProduct(currentProduct.id);
     if (saved) router.push("/admin/urunler");
   }
 
@@ -140,6 +185,26 @@ export default function EditProductPage() {
           <h1 className="text-3xl font-black">
             {currentProduct.name}
           </h1>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50"
+            >
+              Ürünü Kopyala
+            </button>
+            <Link
+              href={`/urun/${currentProduct.id}`}
+              target="_blank"
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50"
+            >
+              Sitede Görüntüle
+            </Link>
+            <span className={`rounded-xl px-4 py-2 text-sm font-bold ${active ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
+              {active ? "Aktif" : "Pasif"}
+            </span>
+          </div>
         </div>
 
         <Section title="Temel Bilgiler">
@@ -243,13 +308,57 @@ export default function EditProductPage() {
               className="w-full rounded-xl border px-4 py-3"
             />
 
-            {currentProduct.image && (
-              <Image width={160} height={160} unoptimized
-                src={currentProduct.image}
-                alt={currentProduct.name}
-                className="mt-4 h-40 w-40 rounded-xl border object-contain"
-              />
-            )}
+            <div className="mt-4 flex flex-wrap gap-3">
+              {currentProduct.image && (
+                <Image width={128} height={128} unoptimized
+                  src={currentProduct.image}
+                  alt={currentProduct.name}
+                  className="h-32 w-32 rounded-xl border bg-white object-contain"
+                />
+              )}
+              {extraImages.filter(Boolean).map((src, index) => (
+                <div key={`${src}-${index}`} className="relative">
+                  <Image width={128} height={128} unoptimized
+                    src={src}
+                    alt={`${currentProduct.name} ${index + 2}`}
+                    className="h-32 w-32 rounded-xl border bg-white object-contain"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setExtraImages(extraImages.filter((_, itemIndex) => itemIndex !== index))}
+                    className="absolute -right-2 -top-2 h-7 w-7 rounded-full bg-red-600 text-sm font-black text-white shadow"
+                    title="Görseli kaldır"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 space-y-2">
+              {extraImages.map((src, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="url"
+                    name="additionalImages"
+                    value={src}
+                    onChange={(event) => setExtraImages(extraImages.map((item, itemIndex) => itemIndex === index ? event.target.value : item))}
+                    placeholder="Ek görsel URL"
+                    className="min-w-0 flex-1 rounded-xl border px-4 py-3"
+                  />
+                  <button type="button" onClick={() => setExtraImages(extraImages.filter((_, itemIndex) => itemIndex !== index))} className="rounded-xl border border-red-200 px-3 font-bold text-red-600">
+                    Sil
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setExtraImages([...extraImages, ""])}
+                className="rounded-xl border border-dashed border-indigo-300 bg-indigo-50 px-4 py-3 text-sm font-bold text-indigo-700"
+              >
+                + Resim Ekle
+              </button>
+            </div>
           </label>
         </Section>
 
@@ -296,12 +405,21 @@ export default function EditProductPage() {
           </label>
         </section>
 
-        <button
-          type="submit"
-          className="w-full rounded-xl bg-red-600 py-4 text-lg font-black text-white"
-        >
-          Değişiklikleri Kaydet
-        </button>
+        <div className="sticky bottom-4 z-20 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-xl backdrop-blur sm:flex-row">
+          <button
+            type="submit"
+            className="flex-1 rounded-xl bg-red-600 py-4 text-lg font-black text-white hover:bg-red-700"
+          >
+            Değişiklikleri Kaydet
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="rounded-xl border border-red-200 bg-white px-6 py-4 font-black text-red-600 hover:bg-red-50"
+          >
+            Ürünü Pasife Al
+          </button>
+        </div>
       </form>
     </main>
   );
