@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { currentCustomer, sameOrigin } from "@/lib/customer-session";
 import { createSipayAccountPaymentLink, sipayReady } from "@/lib/sipay";
 import { fetchCustomerAccountFromErp, pushAccountPaymentToErp } from "@/lib/erp-sync";
+import { LEGAL_VERSION, legalDocuments } from "@/lib/legal";
 
 export async function GET(){
  const customer=await currentCustomer();
@@ -18,10 +19,12 @@ export async function POST(request:Request){
  const customer=await currentCustomer();
  if(!customer)return Response.json({message:"Oturum açmanız gerekiyor."},{status:401});
  if(customer.type!=="dealer"||customer.dealerStatus!=="approved")return Response.json({message:"Cari kart ödemesi onaylı bayilere açıktır."},{status:403});
- const parsed=z.object({amount:z.coerce.number().min(1).max(1000000)}).safeParse(await request.json().catch(()=>null));
+ const parsed=z.object({amount:z.coerce.number().min(1).max(1000000),legalAccepted:z.literal(true)}).safeParse(await request.json().catch(()=>null));
  if(!parsed.success)return Response.json({message:"Geçerli bir ödeme tutarı girin."},{status:400});
  if(!await sipayReady())return Response.json({message:"Kart ödeme sistemi şu anda kullanıma hazır değil."},{status:503});
- const payment=await prisma.accountPayment.create({data:{customerId:customer.id,amount:Math.round(parsed.data.amount*100)/100}});
+ const amount=Math.round(parsed.data.amount*100)/100;
+ const legal=legalDocuments["cari-kart-tahsilat"];
+ const payment=await prisma.accountPayment.create({data:{customerId:customer.id,amount,legalVersion:LEGAL_VERSION,legalTitle:legal.title,legalContent:legal.body+"\n\nİŞLEME ÖZGÜ BİLGİLER\nMüşteri: "+customer.fullName+"\nTutar: "+amount.toFixed(2)+" TL",legalAcceptedAt:new Date()}});
  try{
   const result=await createSipayAccountPaymentLink(payment,customer,new URL(request.url).origin);
   await prisma.accountPayment.update({where:{id:payment.id},data:{providerRef:result.reference}});

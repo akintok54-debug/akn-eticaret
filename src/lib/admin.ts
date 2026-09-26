@@ -1,7 +1,7 @@
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 
 export function adminCredentialsMatch(user: string, password: string): boolean {
-  if (!process.env.ADMIN_USER || !process.env.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD.length < 16) return false;
+  if (!process.env.ADMIN_USER || !process.env.ADMIN_PASSWORD || process.env.ADMIN_PASSWORD.length < 8) return false;
   const digest = (value: string) => createHash("sha256").update(value).digest();
   return timingSafeEqual(digest(JSON.stringify([user,password])), digest(JSON.stringify([process.env.ADMIN_USER,process.env.ADMIN_PASSWORD])));
 }
@@ -11,7 +11,7 @@ export function adminToken() {
 }
 export function isAdmin(request: Request): boolean {
   const password = process.env.ADMIN_PASSWORD;
-  if (!process.env.ADMIN_USER || !password || password.length < 16) return false;
+  if (!process.env.ADMIN_USER || !password || password.length < 8) return false;
   const entries = (request.headers.get("cookie") ?? "").split(";").map(v=>v.trim());
   if (entries.some(v=>v.startsWith("akn-customer=") && v.slice(13))) return false;
   const token = entries.find(v=>v.startsWith("akn-admin="))?.slice(10);

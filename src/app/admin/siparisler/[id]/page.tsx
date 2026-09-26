@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { money } from "@/lib/store";
 
 type Item={id?:string;name:string;productName?:string;sku?:string;price:number;unitPrice?:number;quantity:number;lineTotal?:number};
-type Order={id:string;orderNumber:string;createdAt:string;status:string;paymentStatus?:string;paymentMethod:string;customer:{fullName:string;phone:string;email:string};delivery:{city:string;district:string;address:string};invoice:{type:string;companyName:string;taxOffice:string;taxNumber:string};shippingCompany?:string;trackingNumber?:string;subtotal?:number;shippingTotal?:number;discountTotal?:number;total:number;items:Item[]};
+type Order={legalAcceptances?:Array<{id:string;title:string;version:string;content:string;acceptedAt:string}>;id:string;orderNumber:string;createdAt:string;status:string;paymentStatus?:string;paymentMethod:string;customer:{fullName:string;phone:string;email:string};delivery:{city:string;district:string;address:string};invoice:{type:string;companyName:string;taxOffice:string;taxNumber:string};shippingCompany?:string;trackingNumber?:string;subtotal?:number;shippingTotal?:number;discountTotal?:number;total:number;items:Item[]};
 
 export default function OrderDetail({params}:{params:Promise<{id:string}>}){
  const [id,setId]=useState("");
@@ -42,6 +42,7 @@ export default function OrderDetail({params}:{params:Promise<{id:string}>}){
      <div className="flex justify-between"><span>Kargo</span><b>{money(order.shippingTotal??0)}</b></div>
      <div className="flex justify-between text-lg border-t pt-3"><span>Genel toplam</span><b>{money(order.total)}</b></div>
     </div>
+    {!!order.legalAcceptances?.length&&<section className="p-5 md:p-7 border-t print:break-before-page"><h3 className="font-bold mb-4">Sipariş Yasal Kayıtları</h3><p className="text-sm text-slate-500 mb-4">Sipariş anında müşteriye gösterilen ve kaydedilen değiştirilemez metin kopyaları.</p><div className="grid gap-3">{order.legalAcceptances.map(doc=><details key={doc.id} className="border rounded-lg p-4"><summary className="cursor-pointer font-bold">{doc.title} · {doc.version}</summary><p className="text-xs text-slate-500 mt-2">Kabul tarihi: {new Date(doc.acceptedAt).toLocaleString("tr-TR")}</p><div className="whitespace-pre-line text-xs leading-6 mt-3">{doc.content}</div></details>)}</div></section>}
    </section>
   </div>
  </main>

@@ -18,7 +18,7 @@ export async function GET(request:Request,context:{params:Promise<{id:string}>})
  const denied=adminGuard(request);if(denied)return denied;
  try{
   const {id}=await context.params;
-  const order=await prisma.order.findUnique({where:{id},include:{items:true}});
+  const order=await prisma.order.findUnique({where:{id},include:{items:true,legalAcceptances:true}});
   if(!order)return Response.json({message:"Sipariş bulunamadı."},{status:404});
   return Response.json({order:orderView(order)},{headers:{"Cache-Control":"no-store"}});
  }catch(e){return membershipError(e);}
@@ -32,7 +32,7 @@ export async function PATCH(request:Request,context:{params:Promise<{id:string}>
   const {id}=await context.params, data=parsed.data;
   const result=await prisma.$transaction(async tx=>{
    await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${"order:"+id}))::text`;
-   const order=await tx.order.findUniqueOrThrow({where:{id},include:{items:true}});
+   const order=await tx.order.findUniqueOrThrow({where:{id},include:{items:true,legalAcceptances:true}});
    const status=data.status??order.status, changed=status!==order.status;
    if(changed&&!orderTransitions[order.status]?.includes(status))throw new Error("TRANSITION");
    if(status==="İade"&&!(data.returnReason??order.returnReason)?.trim())throw new Error("REASON");
@@ -42,7 +42,7 @@ export async function PATCH(request:Request,context:{params:Promise<{id:string}>
    if(data.paymentStatus==="refunded"&&(!["İptal","İade"].includes(status)||!["paid","refunded"].includes(order.paymentStatus)))throw new Error("REFUND");
    if(order.paymentStatus==="paid"&&data.paymentStatus==="pending")throw new Error("PAYMENT");
    if(order.paymentStatus==="refunded"&&data.paymentStatus&&data.paymentStatus!=="refunded")throw new Error("PAYMENT");
-   const updated=await tx.order.update({where:{id},data:{...data,status,paidAt:payment==="paid"?(order.paidAt??new Date()):order.paidAt,returnedAt:changed&&status==="İade"?new Date():order.returnedAt},include:{items:true}});
+   const updated=await tx.order.update({where:{id},data:{...data,status,paidAt:payment==="paid"?(order.paidAt??new Date()):order.paidAt,returnedAt:changed&&status==="İade"?new Date():order.returnedAt},include:{items:true,legalAcceptances:true}});
    if(changed&&["İptal","İade"].includes(status)){
     for(const item of order.items)if(item.productId)await tx.product.update({where:{id:item.productId},data:{stock:{increment:item.quantity}}});
    }
@@ -66,7 +66,7 @@ async function requestReturn(request:Request,context:{params:Promise<{id:string}
   if(body.data.action==="cancel"){
    const result=await prisma.$transaction(async tx=>{
     await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${"order:"+id}))::text`;
-    const order=await tx.order.findFirst({where:{id,OR:[...(buyer?[{customerId:buyer.id}]:[]),...(guest?[{guestSessionId:guest}]:[])]},include:{items:true}});
+    const order=await tx.order.findFirst({where:{id,OR:[...(buyer?[{customerId:buyer.id}]:[]),...(guest?[{guestSessionId:guest}]:[])]},include:{items:true,legalAcceptances:true}});
     if(!order)return {status:404,message:"Sipariş bulunamadı."};
     if(order.status==="İptal")return {status:200,message:"Siparişiniz zaten iptal edildi."};
     if(!["Yeni","Hazırlanıyor"].includes(order.status))return {status:409,message:"Kargoya verilen sipariş iptal edilemez. İade talebi oluşturabilirsiniz."};

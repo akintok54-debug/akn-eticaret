@@ -221,6 +221,12 @@ export default function CheckoutPage() {
                     },
 
                     paymentMethod,
+                    legal: {
+                        preInformationAccepted: form.get("legalPreInfo") === "on",
+                        distanceSalesAccepted: form.get("legalDistanceSales") === "on",
+                        b2bTermsAccepted: form.get("legalB2b") === "on",
+                        kvkkNoticeRead: form.get("legalKvkk") === "on",
+                    },
 
                     items: items.map((item) => ({
                         productId: item.id,
@@ -600,6 +606,17 @@ export default function CheckoutPage() {
                                 sipariş anında kontrol edilir.
                             </p>
 
+                            <div className="mt-5 border-t pt-5 grid gap-3 text-xs">
+                                {currentCustomer?.type==="dealer"&&currentCustomer?.dealerStatus==="approved" ? (
+                                    <label className="flex items-start gap-2"><input required name="legalB2b" type="checkbox"/><span><Link className="underline font-bold" href="/yasal/bayi-satis-kosullari" target="_blank">Bayi / B2B Satış ve Sipariş Koşulları</Link>'nı okudum ve kabul ediyorum.</span></label>
+                                ) : (<>
+                                    <label className="flex items-start gap-2"><input required name="legalPreInfo" type="checkbox"/><span><Link className="underline font-bold" href="/yasal/on-bilgilendirme" target="_blank">Ön Bilgilendirme Formu</Link>'nu okudum ve bilgi edindim.</span></label>
+                                    <label className="flex items-start gap-2"><input required name="legalDistanceSales" type="checkbox"/><span><Link className="underline font-bold" href="/yasal/mesafeli-satis" target="_blank">Mesafeli Satış Sözleşmesi</Link>'ni okudum ve kabul ediyorum.</span></label>
+                                </>)}
+                                <label className="flex items-start gap-2"><input required name="legalKvkk" type="checkbox"/><span><Link className="underline font-bold" href="/yasal/kvkk" target="_blank">KVKK Aydınlatma Metni</Link>'ni okudum ve bilgi edindim. Bu beyan pazarlama izni değildir.</span></label>
+                                <p className="text-slate-500">Siparişi onayladığınızda, bu siparişe ait sözleşme sürümü, ürünler ve toplam tutar sipariş kaydında saklanır.</p>
+                            </div>
+
                             {error && (
                                 <p
                                     className="notice error-notice mt-4"
@@ -616,7 +633,7 @@ export default function CheckoutPage() {
                             >
                                 {busy
                                     ? "Sipariş kaydediliyor…"
-                                    : paymentMethod==="sipay" ? "Kartla ödemeye geç" : "Havale siparişi oluştur"}{" "}
+                                    : paymentMethod==="sipay" ? "Siparişi onayla ve ödemeye geç" : "Ödeme yükümlülüğü doğuran siparişi ver"}{" "}
                                 <span>→</span>
                             </button>
 

@@ -32,6 +32,12 @@ export const checkoutSchema = z.object({
     "Kurumsal fatura bilgileri eksik.",
   ),
   paymentMethod: z.enum(["transfer", "sipay"]),
+  legal: z.object({
+    preInformationAccepted: z.boolean(),
+    distanceSalesAccepted: z.boolean(),
+    b2bTermsAccepted: z.boolean(),
+    kvkkNoticeRead: z.literal(true),
+  }),
   items: z.array(z.object({
     productId: z.string().min(1).max(100),
     quantity: z.number().int().min(1).max(999),
