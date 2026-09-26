@@ -10,7 +10,7 @@ const allowed=new Map(integrationItems.filter(i=>i.mode==="settings").map(i=>[i.
 
 export async function GET(request:Request){
  const denied=adminGuard(request);if(denied)return denied;
- const rows=await prisma.integrationSetting.findMany({orderBy:{slug:"asc"}});
+ const rows=await prisma.integrationSetting.findMany({where:{NOT:{slug:{startsWith:"akn-design-image-"}}},orderBy:{slug:"asc"}});
  return NextResponse.json({integrations:rows.map(r=>({slug:r.slug,enabled:r.enabled,values:Object.fromEntries(Object.keys((r.values as Record<string,string>)||{}).map(k=>[k,""])),configured:Object.keys((r.values as Record<string,string>)||{})}))},{headers:{"Cache-Control":"no-store"}});
 }
 

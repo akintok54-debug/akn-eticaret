@@ -7,6 +7,7 @@ import { guestSession } from "@/lib/guest-session";
 import { checkoutSchema, shippingCost } from "@/lib/checkout";
 import { orderView } from "@/lib/order-view";
 import { isAdmin } from "@/lib/admin";
+import { pushOrderToErp } from "@/lib/erp-sync";
 
 export async function GET(request: Request) {
  try {
@@ -76,6 +77,7 @@ export async function POST(request: Request) {
    }
    return created;
   },{maxWait:10000,timeout:30000});
+  try { await pushOrderToErp(order.id); } catch (erpError) { console.error("AKN ERP sipariş senkronu başarısız:", erpError); }
   return Response.json({order:orderView(order)},{status:201});
  } catch(error) {
   if(error instanceof Error && error.message==="COUPON") return Response.json({message:"Kupon artık kullanılamıyor. Sepet tutarını yeniden kontrol edin."},{status:409});

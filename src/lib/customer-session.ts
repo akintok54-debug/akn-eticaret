@@ -19,7 +19,18 @@ export async function passwordMatches(password: string, hash: string) {
 }
 export function sameOrigin(request: Request) {
   const origin = request.headers.get("origin");
-  return !!origin && (origin === new URL(request.url).origin || origin === process.env.SITE_URL);
+  if (!origin) return false;
+  const allowed = new Set<string>();
+  try { allowed.add(new URL(request.url).origin); } catch {}
+  if (process.env.SITE_URL) {
+    try { allowed.add(new URL(process.env.SITE_URL).origin); } catch {}
+  }
+  const forwardedHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
+  if (forwardedHost) {
+    const forwardedProto = request.headers.get("x-forwarded-proto") || "https";
+    try { allowed.add(new URL(`${forwardedProto}://${forwardedHost}`).origin); } catch {}
+  }
+  return allowed.has(origin);
 }
 export async function currentCustomer() {
   const raw = (await cookies()).get(cookieName)?.value;

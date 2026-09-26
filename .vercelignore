@@ -4,5 +4,7 @@
 .git
 node_modules
 .next
+.agent-logs
+.continue
 tests
 *.log

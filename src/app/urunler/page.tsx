@@ -8,8 +8,11 @@ import StoreFooter from "@/components/layout/StoreFooter";
 import StoreProductCard from "@/components/product/StoreProductCard";
 import { useProducts } from "@/context/ProductContext";
 import { store } from "@/lib/store";
+import {useStoreDesign} from "@/context/StoreDesignContext";
 
 function Catalog() {
+    const {productsPerPage}=useStoreDesign();
+    const [page,setPage]=useState(1);
     const params = useSearchParams();
     const { products, loaded, error, refreshProducts } = useProducts();
 
@@ -86,6 +89,8 @@ function Catalog() {
                         : 0
         );
 
+    const pageCount=Math.max(1,Math.ceil(filtered.length/productsPerPage));
+    const currentPage=Math.min(page,pageCount);
     return (
         <>
             <StoreHeader />
@@ -218,7 +223,7 @@ function Catalog() {
                             </div>
                         ) : filtered.length ? (
                             <div className="product-grid">
-                                {filtered.map((p) => (
+                                {filtered.slice((currentPage-1)*productsPerPage,currentPage*productsPerPage).map((p) => (
                                     <StoreProductCard
                                         key={p.id}
                                         product={p}
@@ -231,6 +236,7 @@ function Catalog() {
                                 değiştirerek tekrar deneyin.
                             </div>
                         )}
+                        {loaded&&!error&&filtered.length>0&&<nav className="catalog-pagination" aria-label="Ürün sayfaları"><button disabled={currentPage===1} onClick={()=>setPage(currentPage-1)}>← Önceki</button><span>Sayfa {currentPage} / {pageCount}</span><button disabled={currentPage===pageCount} onClick={()=>setPage(currentPage+1)}>Sonraki →</button></nav>}
                     </section>
                 </div>
             </main>

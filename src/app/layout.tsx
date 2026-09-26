@@ -6,6 +6,8 @@ import { CatalogProvider } from "@/context/CatalogContext";
 import { OrderProvider } from "@/context/OrderContext";
 import { CustomerProvider } from "@/context/CustomerContext";
 import "./globals.css";
+import {StoreDesignProvider} from "@/context/StoreDesignContext";
+import {getStoreDesign} from "@/lib/store-design-server";
 
 export async function generateMetadata(): Promise<Metadata> {
  const seo=await publicSeo();
@@ -18,11 +20,12 @@ export async function generateMetadata(): Promise<Metadata> {
 };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const design=await getStoreDesign();
   return (
     <html
       lang="tr"
@@ -30,7 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ProductProvider>
-          <CatalogProvider><CustomerProvider><OrderProvider><CartProvider>{children}</CartProvider></OrderProvider></CustomerProvider></CatalogProvider>
+          <CatalogProvider><CustomerProvider><OrderProvider><CartProvider><StoreDesignProvider design={design}>{children}</StoreDesignProvider></CartProvider></OrderProvider></CustomerProvider></CatalogProvider>
         </ProductProvider>
       </body>
     </html>
