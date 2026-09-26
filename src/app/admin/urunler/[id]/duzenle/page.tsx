@@ -110,6 +110,8 @@ export default function EditProductPage() {
       extraDetail: String(form.get("extraDetail") || ""),
       seoTitle: String(form.get("seoTitle") || ""),
       seoDescription: String(form.get("seoDescription") || ""),
+      recommendedProductIds: form.getAll("recommendedProductIds").map(String),
+      comboProductIds: form.getAll("comboProductIds").map(String),
       active,
     });
 
@@ -141,6 +143,8 @@ export default function EditProductPage() {
       extraDetail: currentProduct.extraDetail || "",
       seoTitle: currentProduct.seoTitle || "",
       seoDescription: currentProduct.seoDescription || "",
+      recommendedProductIds: [],
+      comboProductIds: [],
       active: false,
     });
 
@@ -375,6 +379,43 @@ export default function EditProductPage() {
 
         <Section title="Ekstra Detay">
           <label className="md:col-span-2"><textarea name="extraDetail" defaultValue={currentProduct.extraDetail||""} rows={5} className="w-full rounded-xl border px-4 py-3" placeholder="Ürüne ait ek bilgiler"/></label>
+        </Section>
+
+        <Section title="Varyantlar ve Ürün Özellikleri">
+          <div className="rounded-xl border bg-slate-50 p-4">
+            <div className="font-black">Varyant Sistemi</div>
+            <p className="mt-1 text-sm text-slate-500">Renk, beden, farklı SKU, barkod, fiyat ve stok varyantlarını yönetin.</p>
+            <Link href={`/admin/varyantlar?productId=${currentProduct.id}`} className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-bold text-white">Varyantları Yönet</Link>
+          </div>
+          <div className="rounded-xl border bg-slate-50 p-4">
+            <div className="font-black">Ürün Özellikleri</div>
+            <p className="mt-1 text-sm text-slate-500">Malzeme, ölçü, uyumluluk bilgisi gibi filtrelenebilir özellikleri ekleyin.</p>
+            <Link href={`/admin/ek-ozellikler?productId=${currentProduct.id}`} className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-bold text-white">Özellikleri Yönet</Link>
+          </div>
+        </Section>
+
+        <Section title="Tavsiye Ürünler">
+          <p className="md:col-span-2 text-sm text-slate-500">Bu ürünün detay sayfasında müşteriye önereceğiniz ürünleri seçin.</p>
+          <div className="md:col-span-2 grid max-h-72 gap-2 overflow-y-auto rounded-xl border p-3 sm:grid-cols-2">
+            {products.filter((item) => item.id !== currentProduct.id && item.active).slice(0, 120).map((item) => (
+              <label key={item.id} className="flex items-center gap-3 rounded-lg border bg-white p-3">
+                <input type="checkbox" name="recommendedProductIds" value={item.id} defaultChecked={(currentProduct.recommendedProductIds || []).includes(item.id)} />
+                <span className="min-w-0"><strong className="block truncate text-sm">{item.name}</strong><small className="text-slate-500">{item.sku}</small></span>
+              </label>
+            ))}
+          </div>
+        </Section>
+
+        <Section title="Kombin Ürünler">
+          <p className="md:col-span-2 text-sm text-slate-500">Birlikte kullanılabilecek veya beraber satılabilecek ürünleri seçin.</p>
+          <div className="md:col-span-2 grid max-h-72 gap-2 overflow-y-auto rounded-xl border p-3 sm:grid-cols-2">
+            {products.filter((item) => item.id !== currentProduct.id && item.active).slice(0, 120).map((item) => (
+              <label key={item.id} className="flex items-center gap-3 rounded-lg border bg-white p-3">
+                <input type="checkbox" name="comboProductIds" value={item.id} defaultChecked={(currentProduct.comboProductIds || []).includes(item.id)} />
+                <span className="min-w-0"><strong className="block truncate text-sm">{item.name}</strong><small className="text-slate-500">{item.sku}</small></span>
+              </label>
+            ))}
+          </div>
         </Section>
 
         <Section title="SEO Bilgileri">

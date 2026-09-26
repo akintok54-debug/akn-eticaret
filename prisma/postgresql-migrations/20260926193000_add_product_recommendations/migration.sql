@@ -1,0 +1,3 @@
+ALTER TABLE "Product"
+ADD COLUMN "recommendedProductIds" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+ADD COLUMN "comboProductIds" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];

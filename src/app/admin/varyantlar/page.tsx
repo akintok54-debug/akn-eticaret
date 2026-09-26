@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useProducts } from "@/context/ProductContext";
 
@@ -58,6 +59,8 @@ const emptyForm: FormState = {
 
 export default function VariantsAdminPage() {
     const { products } = useProducts();
+    const searchParams = useSearchParams();
+    const requestedProductId = searchParams.get("productId") || "";
 
     const [variants, setVariants] = useState<Variant[]>([]);
     const [form, setForm] = useState<FormState>(emptyForm);
@@ -84,6 +87,21 @@ export default function VariantsAdminPage() {
     const selectedProduct = products.find(
         (product) => product.id === form.productId
     );
+
+    useEffect(() => {
+        if (!requestedProductId || form.productId || !products.length) return;
+        const requested = products.find((item) => item.id === requestedProductId);
+        if (!requested) return;
+        setForm((current) => ({
+            ...current,
+            productId: requested.id,
+            purchasePrice: String(requested.purchasePrice ?? 0),
+            retailPrice: String(requested.retailPrice ?? 0),
+            dealerPrice: String(requested.dealerPrice ?? 0),
+            image: requested.image || "",
+        }));
+        setSearch(requested.name);
+    }, [requestedProductId, products, form.productId]);
 
     async function loadVariants() {
         setLoading(true);

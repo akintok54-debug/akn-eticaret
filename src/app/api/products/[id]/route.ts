@@ -28,6 +28,8 @@ const updateSchema = z.object({
   extraDetail: z.string().optional(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
+  recommendedProductIds: z.array(z.string()).optional(),
+  comboProductIds: z.array(z.string()).optional(),
   active: z.boolean().optional(),
 });
 
@@ -61,7 +63,7 @@ export async function GET(
     const buyer = await currentCustomer();
     return NextResponse.json({
       success: true,
-      product: isAdmin(_request) ? product : { id: product.id, sku: product.sku, barcode: product.barcode, name: product.name, brand: product.brand, category: product.category, description: product.description, retailPrice: unitPrice(product,buyer), vatRate: product.vatRate, stock: product.stock, image: product.image, additionalImages:product.additionalImages,showcases:product.showcases,shippingStatus:product.shippingStatus,shippingWeight:product.shippingWeight,extraDetail:product.extraDetail,seoTitle:product.seoTitle,seoDescription:product.seoDescription,active: product.active },
+      product: isAdmin(_request) ? product : { id: product.id, sku: product.sku, barcode: product.barcode, name: product.name, brand: product.brand, category: product.category, description: product.description, retailPrice: unitPrice(product,buyer), vatRate: product.vatRate, stock: product.stock, image: product.image, additionalImages:product.additionalImages,showcases:product.showcases,shippingStatus:product.shippingStatus,shippingWeight:product.shippingWeight,extraDetail:product.extraDetail,seoTitle:product.seoTitle,seoDescription:product.seoDescription,recommendedProductIds:product.recommendedProductIds,comboProductIds:product.comboProductIds,active: product.active },
     });
   } catch (error) {
     console.error("GET /api/products/[id]:", error);

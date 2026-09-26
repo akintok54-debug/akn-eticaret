@@ -37,6 +37,8 @@ model Product {
   extraDetail String @default("")
   seoTitle String @default("")
   seoDescription String @default("")
+  recommendedProductIds String[] @default([])
+  comboProductIds String[] @default([])
 
   lastErpSyncAt DateTime?
   createdAt     DateTime  @default(now())

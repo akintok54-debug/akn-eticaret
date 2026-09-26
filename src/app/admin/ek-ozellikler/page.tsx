@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useProducts } from "@/context/ProductContext";
 
@@ -14,6 +15,8 @@ type ProductAttribute = {
 
 export default function ProductAttributesPage() {
     const { products, loaded } = useProducts();
+    const searchParams = useSearchParams();
+    const requestedProductId = searchParams.get("productId") || "";
 
     const [search, setSearch] = useState("");
     const [productId, setProductId] = useState("");
@@ -51,6 +54,14 @@ export default function ProductAttributesPage() {
     const selectedProduct = products.find(
         (product) => product.id === productId
     );
+
+    useEffect(() => {
+        if (!requestedProductId || productId || !products.length) return;
+        const requested = products.find((item) => item.id === requestedProductId);
+        if (!requested) return;
+        setProductId(requested.id);
+        setSearch(requested.name);
+    }, [requestedProductId, products, productId]);
 
     async function loadAttributes(id: string) {
         if (!id) {

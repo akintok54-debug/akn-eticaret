@@ -164,6 +164,40 @@ export default function ProductDetailPage() {
                             </dl>
                         </div>
 
+                        {(p.recommendedProductIds || []).length > 0 && (
+                            <section className="mb-12">
+                                <h2 className="mb-5 text-2xl font-bold">Tavsiye Ürünler</h2>
+                                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                                    {products.filter((item) => (p.recommendedProductIds || []).includes(item.id) && item.active).map((item) => (
+                                        <Link key={item.id} href={`/urun/${item.id}`} className="rounded-xl border bg-white p-3 transition hover:shadow-md">
+                                            <div className="relative mb-3 aspect-square rounded-lg bg-slate-50">
+                                                {item.image && <Image src={item.image} alt={item.name} fill unoptimized sizes="25vw" style={{ objectFit: "contain", padding: 12 }} />}
+                                            </div>
+                                            <strong className="line-clamp-2 text-sm">{item.name}</strong>
+                                            <span className="mt-2 block font-black">{money(item.retailPrice)}</span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {(p.comboProductIds || []).length > 0 && (
+                            <section className="mb-12">
+                                <h2 className="mb-5 text-2xl font-bold">Birlikte Kullanılabilecek Ürünler</h2>
+                                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                                    {products.filter((item) => (p.comboProductIds || []).includes(item.id) && item.active).map((item) => (
+                                        <Link key={item.id} href={`/urun/${item.id}`} className="rounded-xl border bg-white p-3 transition hover:shadow-md">
+                                            <div className="relative mb-3 aspect-square rounded-lg bg-slate-50">
+                                                {item.image && <Image src={item.image} alt={item.name} fill unoptimized sizes="25vw" style={{ objectFit: "contain", padding: 12 }} />}
+                                            </div>
+                                            <strong className="line-clamp-2 text-sm">{item.name}</strong>
+                                            <span className="mt-2 block font-black">{money(item.retailPrice)}</span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
                         {imageOpen && p.image && (
                             <div
                                 className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4"

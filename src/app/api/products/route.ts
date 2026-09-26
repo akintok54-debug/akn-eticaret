@@ -28,6 +28,8 @@ const productSchema = z.object({
   extraDetail: z.string().default(""),
   seoTitle: z.string().default(""),
   seoDescription: z.string().default(""),
+  recommendedProductIds: z.array(z.string()).default([]),
+  comboProductIds: z.array(z.string()).default([]),
   active: z.boolean().default(true),
 });
 
@@ -50,7 +52,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       count: products.length,
-      products: isAdmin(request) ? products : products.map(p => ({ id:p.id,sku:p.sku,barcode:p.barcode,name:p.name,brand:p.brand,category:p.category,description:p.description,retailPrice:unitPrice(p,buyer),vatRate:p.vatRate,stock:p.stock,image:p.image,additionalImages:p.additionalImages,showcases:p.showcases,shippingStatus:p.shippingStatus,shippingWeight:p.shippingWeight,extraDetail:p.extraDetail,seoTitle:p.seoTitle,seoDescription:p.seoDescription,active:p.active })),
+      products: isAdmin(request) ? products : products.map(p => ({ id:p.id,sku:p.sku,barcode:p.barcode,name:p.name,brand:p.brand,category:p.category,description:p.description,retailPrice:unitPrice(p,buyer),vatRate:p.vatRate,stock:p.stock,image:p.image,additionalImages:p.additionalImages,showcases:p.showcases,shippingStatus:p.shippingStatus,shippingWeight:p.shippingWeight,extraDetail:p.extraDetail,seoTitle:p.seoTitle,seoDescription:p.seoDescription,recommendedProductIds:p.recommendedProductIds,comboProductIds:p.comboProductIds,active:p.active })),
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("GET /api/products:", error);

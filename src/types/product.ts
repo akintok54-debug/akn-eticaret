@@ -25,6 +25,8 @@ export type Product = {
   extraDetail?: string;
   seoTitle?: string;
   seoDescription?: string;
+  recommendedProductIds?: string[];
+  comboProductIds?: string[];
 
   active: boolean;
 };
